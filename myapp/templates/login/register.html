@@ -1,0 +1,201 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký - WebGIS Xe Điện</title>
+    <!-- CSS chung -->
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <!-- CSS riêng cho register -->
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+    <!-- Font awesome cho icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="login-container">
+        <!-- Phần bên trái - Hình nền -->
+        <div class="login-left">
+            <div class="overlay">
+                <div class="content">
+                    <i class="fas fa-charging-station"></i>
+                    <h1>WebGIS Xe Điện</h1>
+                    <p>Hệ thống bán xe điện và tìm kiếm trạm sạc thông minh</p>
+                    <div class="features">
+                        <div class="feature-item">
+                            <i class="fas fa-car-battery"></i>
+                            <span>Xe điện chất lượng</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-map-marked-alt"></i>
+                            <span>Bản đồ trạm sạc</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-bolt"></i>
+                            <span>Sạc nhanh tiện lợi</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phần bên phải - Form đăng ký -->
+        <div class="login-right">
+            <div class="login-form-wrapper">
+                <div class="login-header">
+                    <div class="logo">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h2>Đăng ký tài khoản</h2>
+                    <p>Tạo tài khoản mới để sử dụng hệ thống</p>
+                </div>
+
+                <!-- Hiển thị thông báo nếu có -->
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            <i class="fas fa-info-circle"></i>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="POST" action="{% url 'register' %}" class="login-form">
+                    {% csrf_token %}
+                    
+                    <div class="form-group">
+                        <label for="username">
+                            <i class="fas fa-user"></i>
+                            Tên đăng nhập
+                        </label>
+                        <input 
+                            type="text" 
+                            id="username" 
+                            name="username" 
+                            placeholder="Nhập tên đăng nhập"
+                            required
+                            autocomplete="username"
+                        >
+                        <small class="form-text">Tên đăng nhập phải từ 3-150 ký tự, chỉ chứa chữ cái, số và @/./+/-/_</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">
+                            <i class="fas fa-envelope"></i>
+                            Email
+                        </label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            placeholder="Nhập địa chỉ email"
+                            required
+                            autocomplete="email"
+                        >
+                        <small class="form-text">Nhập địa chỉ email hợp lệ</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password1">
+                            <i class="fas fa-lock"></i>
+                            Mật khẩu
+                        </label>
+                        <div class="password-wrapper">
+                            <input 
+                                type="password" 
+                                id="password1" 
+                                name="password1" 
+                                placeholder="Nhập mật khẩu"
+                                required
+                                autocomplete="new-password"
+                            >
+                            <i class="fas fa-eye toggle-password" onclick="togglePassword('password1')"></i>
+                        </div>
+                        <small class="form-text">Mật khẩu phải có ít nhất 8 ký tự, không được toàn số</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password2">
+                            <i class="fas fa-lock"></i>
+                            Nhập lại mật khẩu
+                        </label>
+                        <div class="password-wrapper">
+                            <input 
+                                type="password" 
+                                id="password2" 
+                                name="password2" 
+                                placeholder="Nhập lại mật khẩu"
+                                required
+                                autocomplete="new-password"
+                            >
+                            <i class="fas fa-eye toggle-password" onclick="togglePassword('password2')"></i>
+                        </div>
+                        <small class="form-text">Nhập lại mật khẩu cho khớp</small>
+                    </div>
+
+                    <div class="form-options">
+                        <label class="remember-me">
+                            <input type="checkbox" name="agree_terms" required>
+                            <span>Tôi đồng ý với <a href="#" style="color: #007bff;">Điều khoản sử dụng</a></span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn-login">
+                        <i class="fas fa-user-plus"></i>
+                        Đăng ký
+                    </button>
+                </form>
+
+                <div class="signup-link">
+                    <p>Đã có tài khoản? <a href="{% url 'login' %}">Đăng nhập ngay</a></p>
+                </div>
+
+                <div class="divider">
+                    <span>hoặc đăng ký với</span>
+                </div>
+
+                <div class="social-login">
+                    <button class="social-btn google" onclick="alert('Chức năng đang phát triển!')">
+                        <i class="fab fa-google"></i>
+                        Google
+                    </button>
+                    <button class="social-btn facebook" onclick="alert('Chức năng đang phát triển!')">
+                        <i class="fab fa-facebook-f"></i>
+                        Facebook
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle hiển thị mật khẩu
+        function togglePassword(fieldId) {
+            const passwordInput = document.getElementById(fieldId);
+            const toggleIcon = passwordInput.nextElementSibling;
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        // Kiểm tra mật khẩu khớp
+        document.getElementById('password2').addEventListener('input', function() {
+            const password1 = document.getElementById('password1').value;
+            const password2 = this.value;
+            
+            if (password2 && password1 !== password2) {
+                this.setCustomValidity('Mật khẩu không khớp!');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+    </script>
+</body>
+</html>
