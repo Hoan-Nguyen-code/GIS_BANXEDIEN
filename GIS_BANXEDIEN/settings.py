@@ -55,10 +55,10 @@ ROOT_URLCONF = "GIS_BANXEDIEN.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "myapp" / "templates",],
         "APP_DIRS": True,
         "OPTIONS": {
-            "context_processors": [
+            "context_processors": ["django.template.context_processors.debug",
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
@@ -120,3 +120,19 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = "static/"
+
+# Thư mục chứa static files trong quá trình development
+STATICFILES_DIRS = [
+    BASE_DIR / "myapp" / "static",
+]
+
+# Thư mục để collect static files khi deploy (production)
+STATIC_ROOT = BASE_DIR / "staticfiles"
+#URL chuyển hướng sau khi đăng nhập thành công
+LOGIN_REDIRECT_URL = '/'
+
+# URL chuyển hướng khi chưa đăng nhập  
+LOGIN_URL = '/login/'
+
+# URL chuyển hướng sau khi đăng xuất
+LOGOUT_REDIRECT_URL = '/login/'
