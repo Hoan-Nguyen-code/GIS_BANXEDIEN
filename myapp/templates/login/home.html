@@ -36,7 +36,7 @@
                     <i class="fas fa-info-circle"></i>
                     <span>Thông tin</span>
                 </a>
-                <a href="#" class="nav-link">
+                <a href="{% url 'map' %}" class="nav-link">
                     <i class="fas fa-charging-station"></i>
                     <span>Trạm sạc</span>
                 </a>
@@ -171,7 +171,7 @@
             <div class="filter-bar">
                 <div class="filter-left">
                     <h2>Danh sách sản phẩm</h2>
-                    <span class="product-count">Tìm thấy <strong>12</strong> sản phẩm</span>
+                    <span class="product-count">Tìm thấy <strong>8</strong> sản phẩm</span>
                 </div>
                 <div class="filter-right">
                     <select class="sort-select">
@@ -197,7 +197,7 @@
             <!-- Products Grid -->
             <div class="products-grid" id="productsContainer">
                 <!-- Product Card 1 -->
-                <div class="product-card">
+                <div class="product-card" data-id="1" data-category="bicycle">
                     <div class="product-image">
                         <img src="{% static 'images/products/bike1.jpg' %}" alt="Xe đạp điện A1" onerror="this.src='https://via.placeholder.com/300x300/007bff/ffffff?text=Xe+Đạp+Điện'">
                         <div class="product-badge new">Mới</div>
@@ -233,7 +233,7 @@
                 </div>
 
                 <!-- Product Card 2 -->
-                <div class="product-card">
+                <div class="product-card" data-id="2" data-category="motorbike">
                     <div class="product-image">
                         <img src="{% static 'images/products/bike2.jpg' %}" alt="Xe máy điện B2" onerror="this.src='https://via.placeholder.com/300x300/00c896/ffffff?text=Xe+Máy+Điện'">
                         <div class="product-badge sale">-20%</div>
@@ -269,7 +269,7 @@
                 </div>
 
                 <!-- Product Card 3 -->
-                <div class="product-card">
+                <div class="product-card" data-id="3" data-category="car">
                     <div class="product-image">
                         <img src="{% static 'images/products/car1.jpg' %}" alt="Xe ô tô điện C1" onerror="this.src='https://via.placeholder.com/300x300/6c63ff/ffffff?text=Xe+Ô+Tô+Điện'">
                         <div class="product-badge hot">Hot</div>
@@ -304,7 +304,7 @@
                 </div>
 
                 <!-- Product Card 4 -->
-                <div class="product-card">
+                <div class="product-card" data-id="4" data-category="bicycle">
                     <div class="product-image">
                         <img src="{% static 'images/products/bike3.jpg' %}" alt="Xe đạp điện A2" onerror="this.src='https://via.placeholder.com/300x300/007bff/ffffff?text=Xe+Đạp+Điện'">
                         <div class="product-overlay">
@@ -338,7 +338,7 @@
                 </div>
 
                 <!-- Product Card 5 -->
-                <div class="product-card">
+                <div class="product-card" data-id="5" data-category="motorbike">
                     <div class="product-image">
                         <img src="{% static 'images/products/bike4.jpg' %}" alt="Xe máy điện B3" onerror="this.src='https://via.placeholder.com/300x300/00c896/ffffff?text=Xe+Máy+Điện'">
                         <div class="product-badge new">Mới</div>
@@ -373,7 +373,7 @@
                 </div>
 
                 <!-- Product Card 6 -->
-                <div class="product-card">
+                <div class="product-card" data-id="6" data-category="accessories">
                     <div class="product-image">
                         <img src="{% static 'images/products/accessory1.jpg' %}" alt="Sạc nhanh X1" onerror="this.src='https://via.placeholder.com/300x300/ff6b6b/ffffff?text=Phụ+Kiện'">
                         <div class="product-badge sale">-15%</div>
@@ -409,14 +409,14 @@
                 </div>
 
                 <!-- Product Card 7 -->
-                <div class="product-card">
+                <div class="product-card" data-id="7" data-category="bicycle">
                     <div class="product-image">
                         <img src="{% static 'images/products/bike5.jpg' %}" alt="Xe đạp điện A3" onerror="this.src='https://via.placeholder.com/300x300/007bff/ffffff?text=Xe+Đạp+Điện'">
                         <div class="product-overlay">
-                            <button class="quick-view-btn">
+                            <a class="quick-view-btn" href="#">
                                 <i class="fas fa-eye"></i>
                                 Xem nhanh
-                            </button>
+                            </a>
                         </div>
                     </div>
                     <div class="product-info">
@@ -443,7 +443,7 @@
                 </div>
 
                 <!-- Product Card 8 -->
-                <div class="product-card">
+                <div class="product-card" data-id="8" data-category="motorbike">
                     <div class="product-image">
                         <img src="{% static 'images/products/bike6.jpg' %}" alt="Xe máy điện B4" onerror="this.src='https://via.placeholder.com/300x300/00c896/ffffff?text=Xe+Máy+Điện'">
                         <div class="product-badge hot">Hot</div>
