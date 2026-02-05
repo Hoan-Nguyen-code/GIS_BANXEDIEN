@@ -8,39 +8,41 @@ def login_view(request):
     """
     View xử lý đăng nhập
     """
-    # Nếu user đã đăng nhập, chuyển về trang home
+
+    # Nếu user đã đăng nhập
     if request.user.is_authenticated:
+        if request.user.is_staff or request.user.is_superuser:
+            return redirect('admin_dashboard')
         return redirect('home')
-    
-    # Xử lý khi user submit form
+
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
         remember = request.POST.get('remember')
-        
-        # Xác thực thông tin đăng nhập
+
         user = authenticate(request, username=username, password=password)
-        
+
         if user is not None:
-            # Đăng nhập thành công
             login(request, user)
-            
-            # Xử lý "Ghi nhớ đăng nhập"
+
+            # Ghi nhớ đăng nhập
             if not remember:
-                # Session hết hạn khi đóng browser
                 request.session.set_expiry(0)
             else:
-                # Session tồn tại 2 tuần
                 request.session.set_expiry(1209600)
-            
+
+            # 👉 PHÂN LUỒNG ADMIN / USER
+            if user.is_staff or user.is_superuser:
+                return redirect('admin_dashboard')
+
             messages.success(request, f'Chào mừng {user.username}!')
             return redirect('home')
+
         else:
-            # Đăng nhập thất bại
             messages.error(request, 'Tên đăng nhập hoặc mật khẩu không đúng!')
-    
-    # Hiển thị form đăng nhập
+
     return render(request, 'login/login.html')
+
 
 
 def register_view(request):

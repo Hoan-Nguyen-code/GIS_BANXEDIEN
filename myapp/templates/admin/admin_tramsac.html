@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý Trạm sạc - Admin</title>
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo"><i class="fas fa-bolt"></i><h2>Admin Panel</h2></div>
+        <nav class="menu">
+            <a href="{% url 'admin_dashboard' %}" class="menu-item"><i class="fas fa-dashboard"></i><span>Dashboard</span></a>
+            <a href="{% url 'admin_users' %}" class="menu-item"><i class="fas fa-users"></i><span>Users</span></a>
+            <a href="{% url 'admin_kho' %}" class="menu-item"><i class="fas fa-warehouse"></i><span>Kho</span></a>
+            <a href="{% url 'admin_taichinh' %}" class="menu-item"><i class="fas fa-chart-line"></i><span>Tài chính</span></a>
+            <a href="{% url 'admin_donhang' %}" class="menu-item"><i class="fas fa-shopping-cart"></i><span>Đơn hàng</span></a>
+            <a href="{% url 'admin_tramsac' %}" class="menu-item active"><i class="fas fa-charging-station"></i><span>Trạm sạc</span></a>
+            <a href="{% url 'admin_thongke' %}" class="menu-item"><i class="fas fa-chart-pie"></i><span>Thống kê</span></a>
+        </nav>
+        <div class="sidebar-footer"><a href="{% url 'logout' %}" class="logout-btn"><i class="fas fa-sign-out-alt"></i><span>Đăng xuất</span></a></div>
+    </div>
+
+    <div class="main-content">
+        <div class="navbar">
+            <div class="navbar-left"><h1><i class="fas fa-charging-station"></i> Quản lý Trạm sạc</h1></div>
+            <div class="navbar-right">
+                <div class="admin-info"><span class="admin-name">Admin</span><div class="admin-avatar"><i class="fas fa-user-shield"></i></div></div>
+            </div>
+        </div>
+
+        <div class="content fade-in">
+            <div class="stats-grid">
+                <div class="stat-card blue"><div class="stat-icon"><i class="fas fa-charging-station"></i></div><div class="stat-info"><h3>{{ stats.total }}</h3><p>Tổng trạm</p></div></div>
+                <div class="stat-card green"><div class="stat-icon"><i class="fas fa-check-circle"></i></div><div class="stat-info"><h3>{{ stats.active }}</h3><p>Hoạt động</p></div></div>
+                <div class="stat-card orange"><div class="stat-icon"><i class="fas fa-wrench"></i></div><div class="stat-info"><h3>{{ stats.maintenance }}</h3><p>Bảo trì</p></div></div>
+                <div class="stat-card red"><div class="stat-icon"><i class="fas fa-times-circle"></i></div><div class="stat-info"><h3>{{ stats.inactive }}</h3><p>Ngừng hoạt động</p></div></div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <h2>Danh sách trạm sạc</h2>
+                    <button class="btn-primary"><i class="fas fa-plus"></i> Thêm trạm sạc</button>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr><th>ID</th><th>Tên trạm</th><th>Địa chỉ</th><th>Loại sạc</th><th>Công suất</th><th>Tổng cổng</th><th>Còn trống</th><th>Trạng thái</th><th>Thao tác</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for station in stations %}
+                            <tr>
+                                <td>{{ station.id }}</td>
+                                <td><strong>{{ station.name }}</strong></td>
+                                <td>{{ station.address }}</td>
+                                <td>{{ station.type }}</td>
+                                <td>{{ station.power }}</td>
+                                <td>{{ station.ports }}</td>
+                                <td>{{ station.available }}</td>
+                                <td><span class="status-badge {{ station.status }}">
+                                    {% if station.status == 'active' %}Hoạt động
+                                    {% elif station.status == 'maintenance' %}Bảo trì
+                                    {% else %}Ngừng{% endif %}
+                                </span></td>
+                                <td>
+                                    <button class="btn-action view"><i class="fas fa-eye"></i></button>
+                                    <button class="btn-action edit"><i class="fas fa-edit"></i></button>
+                                    <button class="btn-action delete"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
