@@ -88,20 +88,17 @@ sidebarItems.forEach(item => {
 
 function filterByCategory(category) {
     let visibleCount = 0;
-    
-    if (category === 'all') {
-        productCards.forEach(card => {
+
+    productCards.forEach(card => {
+        const cardCategory = card.dataset.category;
+
+        if (category === 'all' || cardCategory === category) {
             card.style.display = '';
             visibleCount++;
-        });
-    } else {
-        // Logic lọc theo danh mục (cần backend hỗ trợ)
-        // Hiện tại chỉ hiển thị tất cả
-        productCards.forEach(card => {
-            card.style.display = '';
-            visibleCount++;
-        });
-    }
+        } else {
+            card.style.display = 'none';
+        }
+    });
     
     updateProductCount(visibleCount);
     showNotification(`Đang hiển thị ${visibleCount} sản phẩm`, 'info');
@@ -381,3 +378,14 @@ console.log('🚀 WebGIS Xe Điện - Home page loaded successfully!');
 setTimeout(() => {
     showNotification('Chào mừng bạn đến với WebGIS Xe Điện!', 'success');
 }, 500);
+
+document.querySelectorAll(".quick-view-btn").forEach(btn => {
+    btn.addEventListener("click", function (e) {
+        e.preventDefault();
+
+        const productCard = this.closest(".product-card");
+        const productId = productCard.dataset.id;
+
+        window.location.href = `/product/${productId}/`;
+    });
+});

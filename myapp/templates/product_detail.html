@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ product.name }}</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/product_detail.css' %}">
+</head>
+<body>
+
+<a href="{% url 'home' %}" class="back-home-btn">
+    ← Quay về trang chủ
+</a>
+
+<div class="product-detail">
+
+    <!-- MAIN PRODUCT -->
+    <div class="product-main">
+        <div class="image-box">
+            <img src="{% static product.image %}" alt="{{ product.name }}">
+        </div>
+
+        <div class="info">
+            <h1>{{ product.name }}</h1>
+            <p class="price">{{ product.price }}</p>
+            <p class="desc">{{ product.description }}</p>
+
+            <div class="action-buttons">
+                <button class="buy-now-btn">Mua ngay</button>
+                <button class="add-to-cart-btn">Thêm vào giỏ hàng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- RELATED -->
+    <div class="related-section">
+        <h2>Sản phẩm đề xuất</h2>
+
+        <div class="related-products">
+            {% for p in related_products %}
+            <div class="related-card">
+                <div class="related-img">
+                    <img src="{% static p.image %}" alt="{{ p.name }}">
+                </div>
+                <h4>{{ p.name }}</h4>
+                <p class="related-price">{{ p.price }}</p>
+                <a href="/product/{{ p.id }}/" class="view-btn">Xem chi tiết</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

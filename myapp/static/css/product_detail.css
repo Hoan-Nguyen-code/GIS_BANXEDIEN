@@ -1,0 +1,224 @@
+/* =========================
+   Tổng thể
+========================= */
+body {
+    background: #f4f6f9;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.product-detail {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 30px;
+}
+
+/* Nút quay về */
+.back-home-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    margin-bottom: 25px;
+    padding: 10px 18px;
+
+    background: #ffffff;
+    color: #0a2540;
+    font-weight: 600;
+    font-size: 15px;
+    text-decoration: none;
+
+    border-radius: 30px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    transition: all 0.25s ease;
+}
+
+.back-home-btn:hover {
+    transform: translateX(-4px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+    color: #007bff;
+}
+
+/* =========================
+   MAIN PRODUCT
+========================= */
+.product-main {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 40px;
+    background: #fff;
+    padding: 35px;
+    border-radius: 14px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+}
+
+/* Ảnh */
+.image-box {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.image-box img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+/* Thông tin */
+.info h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #0a2540;
+    margin-bottom: 10px;
+}
+
+/* Giá – LÀM NỔI BẬT */
+.price {
+    font-size: 36px;
+    font-weight: 800;
+    color: #e60023;
+    margin: 15px 0;
+    position: relative;
+    z-index: 2;
+}
+
+/* Mô tả */
+.desc {
+    font-size: 17px;
+    color: #444;
+    line-height: 1.7;
+    margin-bottom: 30px;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+.action-buttons {
+    display: flex;
+    gap: 18px;
+}
+
+.buy-now-btn {
+    padding: 14px 36px;
+    background: linear-gradient(90deg, #007bff, #00c6a9);
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.buy-now-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0,123,255,0.35);
+}
+
+.add-to-cart-btn {
+    padding: 14px 36px;
+    background: #fff;
+    color: #00a88f;
+    border: 2px solid #00c6a9;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.add-to-cart-btn:hover {
+    background: #00c6a9;
+    color: #fff;
+}
+
+/* =========================
+   RELATED PRODUCTS
+========================= */
+.related-section {
+    margin-top: 60px;
+}
+
+.related-section h2 {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    color: #0a2540;
+}
+
+.related-products {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 25px;
+}
+
+/* Card */
+.related-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 18px;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    transition: 0.3s;
+}
+
+.related-card:hover {
+    transform: translateY(-6px);
+}
+
+/* Ảnh card */
+.related-img {
+    height: 160px;
+    margin-bottom: 12px;
+}
+
+.related-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Tên */
+.related-card h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #222;
+    margin: 10px 0 6px;
+}
+
+/* Giá */
+.related-price {
+    font-size: 18px;
+    font-weight: 700;
+    color: #e60023;
+    margin-bottom: 10px;
+}
+
+/* Nút xem */
+.view-btn {
+    display: inline-block;
+    padding: 8px 18px;
+    background: #007bff;
+    color: #fff;
+    border-radius: 20px;
+    font-size: 14px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.view-btn:hover {
+    background: #0056b3;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 900px) {
+    .product-main {
+        grid-template-columns: 1fr;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+}

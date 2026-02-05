@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'django.contrib.humanize',
     "myapp"
 ]
 
@@ -78,7 +79,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "GIS_BANXEDIEN",
         "USER": "postgres",
-        "PASSWORD": "", #nhập mật khẩu mà dùng để đăng nhập portgreSQL
+        "PASSWORD": "1234", # chỉnh lại mật khẩu là được
         "HOST": "localhost",
         "PORT": "5432",
     }
