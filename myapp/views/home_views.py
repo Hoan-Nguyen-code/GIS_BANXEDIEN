@@ -8,10 +8,10 @@ def home(request):
     }
     return render(request, 'login/home.html', context)
 
-def home(request):
+def home_view(request):
     cart = request.session.get("cart", {})
     cart_count = sum(item["quantity"] for item in cart.values())
 
-    return render(request, "login/home.html", {
+    return render(request, "home/home.html", {
         "cart_count": cart_count
     })
