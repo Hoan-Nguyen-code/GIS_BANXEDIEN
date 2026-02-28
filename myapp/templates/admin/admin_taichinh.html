@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý Tài chính - Admin</title>
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo"><i class="fas fa-bolt"></i><h2>Admin Panel</h2></div>
+        <nav class="menu">
+            <a href="{% url 'admin_dashboard' %}" class="menu-item"><i class="fas fa-dashboard"></i><span>Dashboard</span></a>
+            <a href="{% url 'admin_users' %}" class="menu-item"><i class="fas fa-users"></i><span>Users</span></a>
+            <a href="{% url 'admin_kho' %}" class="menu-item"><i class="fas fa-warehouse"></i><span>Kho</span></a>
+            <a href="{% url 'admin_taichinh' %}" class="menu-item active"><i class="fas fa-chart-line"></i><span>Tài chính</span></a>
+            <a href="{% url 'admin_donhang' %}" class="menu-item"><i class="fas fa-shopping-cart"></i><span>Đơn hàng</span></a>
+            <a href="{% url 'admin_tramsac' %}" class="menu-item"><i class="fas fa-charging-station"></i><span>Trạm sạc</span></a>
+            <a href="{% url 'admin_thongke' %}" class="menu-item"><i class="fas fa-chart-pie"></i><span>Thống kê</span></a>
+        </nav>
+        <div class="sidebar-footer"><a href="{% url 'logout' %}" class="logout-btn"><i class="fas fa-sign-out-alt"></i><span>Đăng xuất</span></a></div>
+    </div>
+
+    <div class="main-content">
+        <div class="navbar">
+            <div class="navbar-left"><h1><i class="fas fa-chart-line"></i> Quản lý Tài chính</h1></div>
+            <div class="navbar-right">
+                <div class="admin-info"><span class="admin-name">Admin</span><div class="admin-avatar"><i class="fas fa-user-shield"></i></div></div>
+            </div>
+        </div>
+
+        <div class="content fade-in">
+            <div class="stats-grid">
+                <div class="stat-card cyan">
+                    <div class="stat-icon"><i class="fas fa-money-bill-wave"></i></div>
+                    <div class="stat-info"><h3>{{ stats.revenue_month }}</h3><p>Doanh thu tháng</p></div>
+                </div>
+                <div class="stat-card orange">
+                    <div class="stat-icon"><i class="fas fa-hand-holding-usd"></i></div>
+                    <div class="stat-info"><h3>{{ stats.expense_month }}</h3><p>Chi tiêu tháng</p></div>
+                </div>
+                <div class="stat-card green">
+                    <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="stat-info"><h3>{{ stats.profit_month }}</h3><p>Lợi nhuận tháng</p></div>
+                </div>
+                <div class="stat-card blue">
+                    <div class="stat-icon"><i class="fas fa-calendar-day"></i></div>
+                    <div class="stat-info"><h3>{{ stats.revenue_today }}</h3><p>Doanh thu hôm nay</p></div>
+                </div>
+            </div>
+
+            <div class="chart-grid">
+                <div class="chart-card">
+                    <h3><i class="fas fa-chart-area"></i> Biểu đồ Doanh thu - Chi tiêu</h3>
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-fire"></i> Top sản phẩm bán chạy</h2>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead><tr><th>Sản phẩm</th><th>Đã bán</th><th>Doanh thu</th></tr></thead>
+                        <tbody>
+                            {% for product in top_products %}
+                            <tr>
+                                <td><strong>{{ product.name }}</strong></td>
+                                <td>{{ product.sold }} xe</td>
+                                <td><strong>{{ product.revenue }} VNĐ</strong></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const ctx = document.getElementById('revenueChart').getContext('2d');
+        const data = {{ revenue_data|safe }};
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.labels,
+                datasets: [
+                    {label: 'Doanh thu', data: data.revenue, borderColor: '#0891b2', backgroundColor: 'rgba(8, 145, 178, 0.1)', fill: true},
+                    {label: 'Chi tiêu', data: data.expense, borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.1)', fill: true},
+                    {label: 'Lợi nhuận', data: data.profit, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true}
+                ]
+            },
+            options: {responsive: true, maintainAspectRatio: false, plugins: {legend: {position: 'top'}}}
+        });
+    </script>
+</body>
+</html>
