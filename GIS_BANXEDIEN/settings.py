@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'django.contrib.humanize',
     "myapp"
 ]
 
@@ -62,6 +63,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "myapp.context_processors.cart_count",
             ],
         },
     },
@@ -78,7 +80,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "GIS_BANXEDIEN",
         "USER": "postgres",
-        "PASSWORD": "", #nhập mật khẩu mà dùng để đăng nhập portgreSQL
+        "PASSWORD": "1234", # chỉnh lại mật khẩu là được
         "HOST": "localhost",
         "PORT": "5432",
     }
@@ -136,3 +138,4 @@ LOGIN_URL = '/login/'
 
 # URL chuyển hướng sau khi đăng xuất
 LOGOUT_REDIRECT_URL = '/login/'
+AUTH_USER_MODEL = 'myapp.User'

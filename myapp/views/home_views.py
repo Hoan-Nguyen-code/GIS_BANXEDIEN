@@ -1,12 +1,28 @@
 from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
+from myapp.models import Product, Category  # chỉnh lại theo app của bạn
 
-@login_required
+
 def home(request):
-    """
-    View cho trang chủ sau khi đăng nhập
-    """
+    # Lấy category từ query string (?category=1)
+    category_id = request.GET.get("category")
+
+    # Chỉ lấy sản phẩm active
+    products = Product.objects.filter(is_active=True)
+
+    if category_id:
+        products = products.filter(category_id=category_id)
+
+    # Lấy toàn bộ category để render sidebar
+    categories = Category.objects.all()
+
+    # Lấy giỏ hàng từ session
+    cart = request.session.get("cart", {})
+    cart_count = sum(item["quantity"] for item in cart.values())
+
     context = {
-        'user': request.user,
+        "products": products,
+        "categories": categories,
+        "cart_count": cart_count,
     }
-    return render(request, 'login/home.html', context)
+
+    return render(request, "home/home.html", context)

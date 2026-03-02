@@ -1,35 +1,140 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>
-      {% block title %}
-        Django App
-      {% endblock %}
-    </title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"  rel="stylesheet" />
-  </head>
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="#">My Django App</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-          <li class="nav-item active">
-            <a class="nav-link" href="#">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">About</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Contact</a>
-          </li>
-        </ul>
-      </div>
-    </nav>
-    <div class="container">{% block content %} {% endblock %}</div>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js" ></script>
-  </body>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}GIS BÁN XE ĐIỆN{% endblock %}</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Base CSS -->
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+<header class="no-print" style="background:white; box-shadow:0 4px 15px rgba(0,0,0,0.08);">
+    <div style="max-width:1400px; margin:auto; padding:15px 25px; display:flex; align-items:center; justify-content:space-between;">
+
+        <!-- Logo -->
+        <a href="{% url 'home' %}" style="text-decoration:none;">
+            <h2 style="color:#007bff; font-weight:800;">
+                <i class="fas fa-bolt"></i> GIS XE ĐIỆN
+            </h2>
+        </a>
+
+        <!-- Navigation -->
+        <nav style="display:flex; gap:25px; align-items:center;">
+
+            <a href="{% url 'home' %}" class="btn btn-outline">
+                Trang chủ
+            </a>
+
+            <a href="#" class="btn btn-outline">
+                Tin tức
+            </a>
+
+            <a href="{% url 'map' %}" class="btn btn-outline">
+                Trạm sạc
+            </a>
+        </nav>
+
+        <!-- Auth Area -->
+        <div style="display:flex; gap:15px; align-items:center;">
+            <a href="{% url 'cart' %}" class="cart-icon">
+                <i class="fa-solid fa-cart-shopping"></i>
+                {% if cart_count > 0 %}
+                    <span class="cart-badge">{{ cart_count }}</span>
+                {% endif %}
+            </a>
+
+            {% if user.is_authenticated %}
+
+                <span class="badge badge-primary">
+                    <i class="fas fa-user"></i>
+                    {{ user.username }}
+                </span>
+
+                <a href="#" class="btn btn-danger">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Đăng xuất
+                </a>
+
+            {% else %}
+
+                <a href="{% url 'login' %}" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Đăng nhập
+                </a>
+
+            {% endif %}
+        </div>
+
+    </div>
+</header>
+
+
+<!-- ================= ALERT MESSAGES ================= -->
+<div style="max-width:1400px; margin:20px auto; padding:0 25px;">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                <i class="fas fa-info-circle"></i>
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+
+<!-- ================= MAIN CONTENT ================= -->
+<main style="min-height:70vh; max-width:1400px; margin:auto; padding:0 25px 40px;">
+    {% block content %}
+    {% endblock %}
+</main>
+
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer no-print">
+    <div class="footer-container">
+
+        <!-- Left -->
+        <div class="footer-brand">
+            <h3>
+                <i class="fas fa-motorcycle"></i>
+                GIS BÁN XE ĐIỆN
+            </h3>
+            <p>© {{ now|date:"Y" }} - Hệ thống bán xe điện trực tuyến</p>
+        </div>
+
+        <!-- Center -->
+        <div class="footer-social">
+            <a href="#"><i class="fa-brands fa-facebook"></i></a>
+            <a href="#"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="#"><i class="fa-brands fa-youtube"></i></a>
+            <a href="#"><i class="fa-brands fa-tiktok"></i></a>
+        </div>
+
+        <!-- Right -->
+        <div class="footer-policy">
+            <a href="#">Chính sách bảo mật</a>
+            <span>•</span>
+            <a href="#">Chính sách đổi trả</a>
+        </div>
+
+    </div>
+</footer>
+
+
+{% block extra_js %}{% endblock %}
+
+</body>
 </html>

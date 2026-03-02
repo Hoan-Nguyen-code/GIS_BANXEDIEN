@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Trang chủ{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+
+<div class="main-container">
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar">
+
+        <div class="sidebar-header">
+            <h3>
+                <i class="fas fa-list"></i>
+                Danh mục sản phẩm
+            </h3>
+        </div>
+
+        <div class="sidebar-nav">
+            <a href="{% url 'home' %}"
+               class="sidebar-item {% if not request.GET.category %}active{% endif %}">
+                <i class="fas fa-th-large"></i>
+                Tất cả sản phẩm
+            </a>
+
+            {% for category in categories %}
+            <a href="?category={{ category.id }}"
+               class="sidebar-item {% if request.GET.category == category.id|stringformat:'s' %}active{% endif %}">
+                <i class="fas fa-angle-right"></i>
+                {{ category.name }}
+            </a>
+            {% endfor %}
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="info-card">
+                <i class="fas fa-bolt"></i>
+                <h4>Xe điện chất lượng</h4>
+                <p>Cam kết chính hãng 100%</p>
+            </div>
+        </div>
+
+    </aside>
+
+
+    <!-- ===== CONTENT AREA ===== -->
+    <main class="content-area">
+
+        <!-- ===== SEARCH ===== -->
+        <div class="search-section">
+            <form method="GET" class="search-wrapper">
+                <i class="fas fa-search"></i>
+                <input type="text" name="q"
+                       value="{{ request.GET.q }}"
+                       placeholder="Tìm kiếm sản phẩm...">
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i> Tìm
+                </button>
+            </form>
+        </div>
+
+
+        <!-- ===== WELCOME BANNER ===== -->
+        <div class="welcome-banner">
+            <div class="welcome-content">
+                <h1>
+                    Chào mừng,
+                    <span class="highlight">
+                        {% if user.is_authenticated %}
+                            {{ user.username }}
+                        {% else %}
+                            Khách
+                        {% endif %}
+                    </span>
+                </h1>
+                <p>Khám phá các sản phẩm xe điện chất lượng cao</p>
+            </div>
+            <div class="welcome-icon">
+                <i class="fas fa-motorcycle"></i>
+            </div>
+        </div>
+
+
+        <!-- ===== FILTER BAR ===== -->
+        <div class="filter-bar">
+
+            <div class="filter-left">
+                <h2>Danh sách sản phẩm</h2>
+                <div class="product-count">
+                    Tìm thấy <strong>{{ products|length }}</strong> sản phẩm
+                </div>
+            </div>
+
+            <div class="filter-right">
+
+                <!-- SORT DROPDOWN -->
+                <div class="sort-dropdown">
+                    <div class="sort-selected">
+                        <span id="selected-text">Mặc định</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+
+                    <ul class="sort-options">
+                        <li data-value="">Mặc định</li>
+                        <li data-value="price_asc">Giá tăng dần ↑</li>
+                        <li data-value="price_desc">Giá giảm dần ↓</li>
+                    </ul>
+                </div>
+
+                <input type="hidden" name="sort" id="sort-input">
+
+                <!-- VIEW TOGGLE -->
+                <div class="view-toggle">
+                    <button class="view-btn active" data-view="grid">
+                        <i class="fas fa-th"></i>
+                    </button>
+                    <button class="view-btn" data-view="list">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ===== PRODUCTS GRID ===== -->
+        {% if products %}
+        <div class="products-grid">
+
+            {% for product in products %}
+            <div class="product-card">
+
+                <div class="product-image">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                    {% else %}
+                        <img src="https://via.placeholder.com/400x300">
+                    {% endif %}
+
+                    <div class="product-overlay">
+                        <a href="{% url 'product_detail' product.id %}"
+                           class="quick-view-btn">
+                            <i class="fas fa-eye"></i> Xem nhanh
+                        </a>
+                    </div>
+                </div>
+
+                <div class="product-info">
+
+                    <h3 class="product-name">
+                        {{ product.name }}
+                    </h3>
+
+                    <div class="product-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                        <i class="far fa-star"></i>
+                        <span class="rating-count">(24)</span>
+                    </div>
+
+                    <p class="product-description">
+                        {{ product.description|truncatechars:80 }}
+                    </p>
+
+                    <div class="product-footer">
+                        <div class="product-price">
+                            <span class="current-price">
+                                {{ product.price }} đ
+                            </span>
+                        </div>
+
+                        <button class="add-to-cart-btn">
+                            <i class="fas fa-shopping-cart"></i>
+                            Thêm
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+        <div style="text-align:center; padding:50px; background:white; border-radius:15px;">
+            <h3>Không có sản phẩm nào</h3>
+            <p>Vui lòng quay lại sau.</p>
+        </div>
+        {% endif %}
+
+        <script src="{% static 'js/home.js' %}" defer></script>
+    </main>
+
+</div>
+
+{% endblock %}

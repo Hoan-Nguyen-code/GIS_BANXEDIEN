@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="cart-container">
+
+    <h2 class="cart-title">
+        <i class="fas fa-shopping-cart"></i>
+        Giỏ hàng của bạn
+    </h2>
+
+    {% if cart.items.all %}
+    
+        <div class="cart-table">
+
+            <div class="cart-header">
+                <div>Sản phẩm</div>
+                <div>Giá</div>
+                <div>Số lượng</div>
+                <div>Tổng</div>
+                <div></div>
+            </div>
+
+            {% for item in items %}
+            <div class="cart-row">
+
+                <!-- Product -->
+                <div class="cart-product">
+                    {% if item.product.image %}
+                        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                    {% endif %}
+                    <span>{{ item.product.name }}</span>
+                </div>
+
+                <!-- Price -->
+                <div>
+                    {{ item.product.price|floatformat:0 }} ₫
+                </div>
+
+                <!-- Quantity -->
+                <div>
+                    <span class="quantity-box">
+                        {{ item.quantity }}
+                    </span>
+                </div>
+
+                <!-- Subtotal -->
+                <div>
+                    {{ item.product.price|floatformat:0|add:"0" }} ₫
+                </div>
+
+                <!-- Remove -->
+                <div>
+                    <a href="{% url 'remove_from_cart' item.id %}" class="remove-btn">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </div>
+
+            </div>
+            {% endfor %}
+
+        </div>
+
+        <!-- TOTAL -->
+        <div class="cart-summary">
+            <h3>
+                Tổng tiền:
+                <span>
+                    {{ total_price|floatformat:0 }} ₫
+                </span>
+            </h3>
+
+            <a href="#" class="checkout-btn">
+                Thanh toán
+            </a>
+        </div>
+
+    {% else %}
+
+        <div class="empty-cart">
+            <i class="fas fa-shopping-bag"></i>
+            <p>Giỏ hàng của bạn đang trống</p>
+            <a href="{% url 'home' %}" class="continue-btn">
+                Tiếp tục mua sắm
+            </a>
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
