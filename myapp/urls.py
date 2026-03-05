@@ -1,21 +1,17 @@
 from django.urls import path
-from myapp.views import auth_views, home_views , admin_views
 from django.contrib import admin
+from myapp.views import auth_views, home_views, map_views, product_detail_views, admin_views, cart
 
 urlpatterns = [
-    # Trang đăng nhập
     path('login/', auth_views.login_view, name='login'),
-    
-    # Trang đăng xuất
     path('logout/', auth_views.logout_view, name='logout'),
-    
-    # Trang chủ - SỬA DÒNG NÀY
-    path('', home_views.home_view, name='home'),  # Đổi từ auth_views.home_view thành home_views.home
-    
-    # Trang đăng ký
+    path('', home_views.home, name='home'),
     path('register/', auth_views.register_view, name='register'),
-    
- # ADMIN CUSTOM (ĐỔI PREFIX)
+    path("cart/", cart.cart_view, name="cart"),
+    path("map/", map_views.map_view, name="map"),
+    path("product/<int:product_id>/", product_detail_views.product_detail, name="product_detail"),
+
+    # ADMIN CUSTOM
     path('dashboard/', admin_views.admin_dashboard, name='admin_dashboard'),
     path('dashboard/users/', admin_views.admin_users, name='admin_users'),
     path('dashboard/kho/', admin_views.admin_kho, name='admin_kho'),
@@ -24,6 +20,6 @@ urlpatterns = [
     path('dashboard/tramsac/', admin_views.admin_tramsac, name='admin_tramsac'),
     path('dashboard/thongke/', admin_views.admin_thongke, name='admin_thongke'),
 
-    # Django Admin GIỮ NGUYÊN
+    # Django Admin
     path('admin/', admin.site.urls),
 ]

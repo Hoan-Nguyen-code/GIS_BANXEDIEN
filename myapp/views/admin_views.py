@@ -10,34 +10,30 @@ from django.db.models import Sum, Count, Avg
 from django.utils import timezone
 from datetime import timedelta
 import json
+from myapp.models import User  # ✅ Sửa chỗ 1: import đúng custom User
 
 # Decorator kiểm tra user là admin
 def admin_required(user):
-    return user.is_staff or user.is_superuser
+    return user.is_authenticated and user.role == User.Role.ADMIN  # ✅ Sửa chỗ 2
 
 # ==================== DASHBOARD ====================
 @login_required
-@user_passes_test(admin_required, login_url='login')
+@user_passes_test(admin_required, login_url='/login/')  # ✅ Sửa chỗ 3
 def admin_dashboard(request):
     """
     Dashboard tổng quan - Trang chính Admin
     """
-    # Thống kê tổng quan
-    from django.contrib.auth.models import User
-    # from .models import Product, ChargingStation, Order  # Uncomment khi có models
-    
     stats = {
-        'total_users': User.objects.count(),
-        'total_products': 45,  # Product.objects.count(),
-        'total_stations': 32,  # ChargingStation.objects.count(),
-        'total_orders': 128,   # Order.objects.count(),
-        'revenue_month': 15000000000,  # Doanh thu tháng này
-        'expense_month': 8000000000,   # Chi tiêu tháng này
-        'profit_month': 7000000000,    # Lợi nhuận
-        'stock_low': 5,  # Số sản phẩm sắp hết hàng
+        'total_users': User.objects.count(),  # ✅ Không cần import lại
+        'total_products': 45,
+        'total_stations': 32,
+        'total_orders': 128,
+        'revenue_month': 15000000000,
+        'expense_month': 8000000000,
+        'profit_month': 7000000000,
+        'stock_low': 5,
     }
     
-    # Đơn hàng gần đây (mock data - thay bằng database thực)
     recent_orders = [
         {
             'id': '#1234',
@@ -82,20 +78,17 @@ def admin_dashboard(request):
 
 # ==================== QUẢN LÝ USERS ====================
 @login_required
-@user_passes_test(admin_required, login_url='login')
+@user_passes_test(admin_required, login_url='/login/')
 def admin_users(request):
     """
     Quản lý Users - Danh sách, thêm, sửa, xóa
     """
-    from django.contrib.auth.models import User
-    
     users = User.objects.all().order_by('-date_joined')
     
-    # Thống kê users
     stats = {
         'total': users.count(),
         'active': users.filter(is_active=True).count(),
-        'admin': users.filter(is_staff=True).count(),
+        'admin': users.filter(role=User.Role.ADMIN).count(),  # ✅ Dùng role
         'new_this_month': users.filter(
             date_joined__gte=timezone.now() - timedelta(days=30)
         ).count()
@@ -111,12 +104,11 @@ def admin_users(request):
 
 # ==================== QUẢN LÝ KHO ====================
 @login_required
-@user_passes_test(admin_required, login_url='login')
+@user_passes_test(admin_required, login_url='/login/')
 def admin_kho(request):
     """
     Quản lý Kho - Sản phẩm, tồn kho, nhập xuất
     """
-    # Mock data - thay bằng database thực
     products = [
         {
             'id': 1,
@@ -178,20 +170,18 @@ def admin_kho(request):
 
 # ==================== QUẢN LÝ TÀI CHÍNH ====================
 @login_required
-@user_passes_test(admin_required, login_url='login')
+@user_passes_test(admin_required, login_url='/login/')
 def admin_taichinh(request):
     """
     Quản lý Tài chính - Doanh thu, Chi tiêu, Lợi nhuận
     """
-    # Dữ liệu doanh thu 12 tháng (mock)
     revenue_data = {
         'labels': ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
-        'revenue': [12, 15, 18, 14, 20, 22, 19, 25, 23, 28, 30, 35],  # Tỷ VNĐ
+        'revenue': [12, 15, 18, 14, 20, 22, 19, 25, 23, 28, 30, 35],
         'expense': [8, 9, 10, 9, 11, 12, 10, 13, 12, 14, 15, 16],
         'profit': [4, 6, 8, 5, 9, 10, 9, 12, 11, 14, 15, 19]
     }
     
-    # Thống kê tài chính
     stats = {
         'revenue_today': '850,000,000 VNĐ',
         'revenue_month': '15,000,000,000 VNĐ',
@@ -203,7 +193,6 @@ def admin_taichinh(request):
         'pending_payments': '3,200,000,000 VNĐ',
     }
     
-    # Top sản phẩm bán chạy
     top_products = [
         {'name': 'VinFast VF8', 'sold': 25, 'revenue': '30,000,000,000'},
         {'name': 'Tesla Model 3', 'sold': 32, 'revenue': '48,000,000,000'},
@@ -221,12 +210,11 @@ def admin_taichinh(request):
 
 # ==================== QUẢN LÝ ĐƠN HÀNG ====================
 @login_required
-@user_passes_test(admin_required, login_url='login')
+@user_passes_test(admin_required, login_url='/login/')
 def admin_donhang(request):
     """
     Quản lý Đơn hàng - Xem, sửa trạng thái
     """
-    # Mock data
     orders = [
         {
             'id': '#1234',
@@ -275,12 +263,11 @@ def admin_donhang(request):
 
 # ==================== QUẢN LÝ TRẠM SẠC ====================
 @login_required
-@user_passes_test(admin_required, login_url='login')
+@user_passes_test(admin_required, login_url='/login/')
 def admin_tramsac(request):
     """
     Quản lý Trạm sạc - Vị trí, trạng thái
     """
-    # Mock data
     stations = [
         {
             'id': 1,
@@ -339,28 +326,26 @@ def admin_tramsac(request):
 
 # ==================== THỐNG KÊ & BÁO CÁO ====================
 @login_required
-@user_passes_test(admin_required, login_url='login')
+@user_passes_test(admin_required, login_url='/login/')
 def admin_thongke(request):
     """
     Thống kê & Báo cáo - Biểu đồ chi tiết
     """
-    # Dữ liệu cho biểu đồ
     chart_data = {
         'daily_revenue': {
             'labels': ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'],
-            'data': [450, 520, 480, 650, 720, 800, 680]  # Triệu VNĐ
+            'data': [450, 520, 480, 650, 720, 800, 680]
         },
         'product_distribution': {
             'labels': ['Xe ô tô điện', 'Xe máy điện', 'Xe đạp điện', 'Phụ kiện'],
-            'data': [45, 35, 15, 5]  # %
+            'data': [45, 35, 15, 5]
         },
         'customer_age': {
             'labels': ['18-25', '26-35', '36-45', '46-55', '56+'],
-            'data': [15, 35, 30, 15, 5]  # %
+            'data': [15, 35, 30, 15, 5]
         }
     }
     
-    # Top khách hàng
     top_customers = [
         {'name': 'Công ty TNHH ABC', 'orders': 25, 'spent': '45,000,000,000'},
         {'name': 'Nguyễn Văn A', 'orders': 12, 'spent': '18,000,000,000'},

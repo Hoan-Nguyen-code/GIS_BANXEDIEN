@@ -1,0 +1,182 @@
+/* ===============================
+   GLOBAL
+================================ */
+* {
+    box-sizing: border-box;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+    margin: 0;
+    background: #f4f6f9;
+}
+
+/* ===============================
+   LAYOUT
+================================ */
+.map-wrapper {
+    display: flex;
+    height: calc(100vh - 70px); /* trừ header */
+}
+
+/* ===============================
+   SIDEBAR
+================================ */
+.map-sidebar {
+    width: 320px;
+    background: #ffffff;
+    padding: 24px;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.08);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    border-radius: 16px;
+}
+
+.map-sidebar h2 {
+    margin: 0 0 24px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+/* ===============================
+   BACK BUTTON
+================================ */
+.back-home-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    padding: 8px 12px;
+    background: #f1f5f9;
+    color: #1e293b;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.back-home-btn:hover {
+    background: #e2e8f0;
+    transform: translateX(-3px);
+}
+
+/* ===============================
+   FORM
+================================ */
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #555;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #2d8cf0;
+}
+
+/* ===============================
+   BUTTON
+================================ */
+.search-btn {
+    margin-top: auto;
+    width: 100%;
+    padding: 12px;
+    background: #2d8cf0;
+    border: none;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.search-btn:hover {
+    background: #1f6fd1;
+    transform: translateY(-2px);
+}
+
+/* ===============================
+   MAP
+================================ */
+#map {
+    flex: 1;
+    height: 100%;
+}
+
+/* ===============================
+   LEAFLET FIX
+================================ */
+.leaflet-control-zoom {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.leaflet-control-zoom a {
+    font-weight: bold;
+}
+
+.leaflet-popup-content {
+    font-size: 14px;
+}
+
+.leaflet-popup-content-wrapper {
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+/* ===============================
+   RESPONSIVE
+================================ */
+@media (max-width: 900px) {
+
+    .map-wrapper {
+        position: relative;
+        height: calc(100vh - 70px);
+    }
+
+    #map {
+        position: absolute;
+        inset: 0;
+        height: 100%;
+        z-index: 1;
+    }
+
+    .map-sidebar {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        width: 90%;
+        max-width: 360px;
+        max-height: calc(100vh - 100px);
+        overflow-y: auto;
+
+        z-index: 1000;
+        border-radius: 14px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+        padding: 20px;
+    }
+
+    .search-btn {
+        margin-top: 16px;
+    }
+}

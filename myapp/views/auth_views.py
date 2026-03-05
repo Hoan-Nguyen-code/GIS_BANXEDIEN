@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
+from myapp.models import User
 
 def login_view(request):
     """
@@ -11,7 +11,7 @@ def login_view(request):
 
     # Nếu user đã đăng nhập
     if request.user.is_authenticated:
-        if request.user.is_staff or request.user.is_superuser:
+        if request.user.role == User.Role.ADMIN:  # ✅ Sửa chỗ 1
             return redirect('admin_dashboard')
         return redirect('home')
 
@@ -32,7 +32,7 @@ def login_view(request):
                 request.session.set_expiry(1209600)
 
             # 👉 PHÂN LUỒNG ADMIN / USER
-            if user.is_staff or user.is_superuser:
+            if user.role == User.Role.ADMIN:  # ✅ Sửa chỗ 2
                 return redirect('admin_dashboard')
 
             messages.success(request, f'Chào mừng {user.username}!')
@@ -42,7 +42,6 @@ def login_view(request):
             messages.error(request, 'Tên đăng nhập hoặc mật khẩu không đúng!')
 
     return render(request, 'login/login.html')
-
 
 
 def register_view(request):
@@ -88,12 +87,13 @@ def register_view(request):
             for error in errors:
                 messages.error(request, error)
         else:
-            # Tạo user mới
+            # Tạo user mới - mặc định role CUSTOMER
             try:
                 user = User.objects.create_user(
                     username=username,
                     email=email,
-                    password=password1
+                    password=password1,
+                    role=User.Role.CUSTOMER  # ✅ Rõ ràng là CUSTOMER
                 )
                 messages.success(request, 'Đăng ký thành công! Vui lòng đăng nhập.')
                 return redirect('login')
@@ -102,11 +102,10 @@ def register_view(request):
     
     # Hiển thị form đăng ký
     return render(request, 'login/register.html')
-def admin_dashboard_view(request):
-    """
-    View tạm cho admin dashboard
-    """
-    return render(request, 'admin/admin_dashboard.html')
+
+
+# ✅ Sửa chỗ 3: Xóa 2 hàm thừa admin_dashboard_view và home_view
+
 
 def logout_view(request):
     """
@@ -114,11 +113,4 @@ def logout_view(request):
     """
     logout(request)
     messages.success(request, 'Bạn đã đăng xuất thành công!')
-    return redirect('login')
-
-
-def home_view(request):
-    """
-    View cho trang chủ (tạm thời)
-    """
-    return render(request, 'login/home.html')
+    return redirect('home')
