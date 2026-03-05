@@ -145,10 +145,18 @@
                     {% endif %}
 
                     <div class="product-overlay">
-                        <a href="{% url 'product_detail' product.id %}"
-                           class="quick-view-btn">
-                            <i class="fas fa-eye"></i> Xem nhanh
-                        </a>
+                        {% if user.is_authenticated %}
+                            <!-- ✅ User đã đăng nhập → xem được -->
+                            <a href="{% url 'product_detail' product.id %}"
+                               class="quick-view-btn">
+                                <i class="fas fa-eye"></i> Xem nhanh
+                            </a>
+                        {% else %}
+                            <!-- ❌ Chưa đăng nhập → redirect login -->
+                            <a href="/login/" class="quick-view-btn">
+                                <i class="fas fa-eye"></i> Xem nhanh
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -178,10 +186,20 @@
                             </span>
                         </div>
 
-                        <button class="add-to-cart-btn">
-                            <i class="fas fa-shopping-cart"></i>
-                            Thêm
-                        </button>
+                        {% if user.is_authenticated %}
+                            <!-- ✅ User đã đăng nhập → thêm được vào giỏ -->
+                            <button class="add-to-cart-btn">
+                                <i class="fas fa-shopping-cart"></i>
+                                Thêm
+                            </button>
+                        {% else %}
+                            <!-- ❌ Chưa đăng nhập → redirect login -->
+                            <a href="/login/" class="add-to-cart-btn">
+                                <i class="fas fa-shopping-cart"></i>
+                                Thêm
+                            </a>
+                        {% endif %}
+
                     </div>
 
                 </div>
@@ -201,5 +219,4 @@
     </main>
 
 </div>
-
 {% endblock %}

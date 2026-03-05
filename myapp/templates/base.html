@@ -62,10 +62,10 @@
                     {{ user.username }}
                 </span>
 
-                <a href="#" class="btn btn-danger">
+            <a href="{% url 'logout' %}" class="btn btn-danger">
                     <i class="fas fa-sign-out-alt"></i>
-                    Đăng xuất
-                </a>
+                Đăng xuất
+             </a>
 
             {% else %}
 

@@ -1,8 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from myapp.models import Product, Category  # chỉnh lại theo app của bạn
 
-
 def home(request):
+    if request.user.is_authenticated and request.user.role == 'ADMIN':
+        return redirect('admin_dashboard')
     # Lấy category từ query string (?category=1)
     category_id = request.GET.get("category")
 

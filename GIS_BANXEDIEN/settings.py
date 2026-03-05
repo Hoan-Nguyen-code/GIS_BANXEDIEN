@@ -80,7 +80,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "GIS_BANXEDIEN",
         "USER": "postgres",
-        "PASSWORD": "1234", # chỉnh lại mật khẩu là được
+        "PASSWORD": "123456", # chỉnh lại mật khẩu là được
         "HOST": "localhost",
         "PORT": "5432",
     }
@@ -137,5 +137,5 @@ LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login/'
 
 # URL chuyển hướng sau khi đăng xuất
-LOGOUT_REDIRECT_URL = '/login/'
+LOGOUT_REDIRECT_URL = '/'
 AUTH_USER_MODEL = 'myapp.User'
