@@ -1,93 +1,134 @@
 {% extends "base.html" %}
-{% load static %}
-
 {% block content %}
 
 <div class="cart-container">
 
-    <h2 class="cart-title">
-        <i class="fas fa-shopping-cart"></i>
-        Giỏ hàng của bạn
-    </h2>
+    <h2 class="cart-title">Giỏ hàng của bạn</h2>
 
     {% if cart.items.all %}
-    
-        <div class="cart-table">
 
-            <div class="cart-header">
-                <div>Sản phẩm</div>
-                <div>Giá</div>
-                <div>Số lượng</div>
-                <div>Tổng</div>
-                <div></div>
-            </div>
+    <table class="cart-table">
+        <thead>
+            <tr>
+                <th>Sản phẩm</th>
+                <th>Giá</th>
+                <th>Số lượng</th>
+                <th>Tạm tính</th>
+                <th></th>
+            </tr>
+        </thead>
 
-            {% for item in items %}
-            <div class="cart-row">
+        <tbody>
+            {% for item in cart.items.all %}
+            <tr>
+               <td>{{ item.product.name }}</td>
 
-                <!-- Product -->
-                <div class="cart-product">
-                    {% if item.product.image %}
-                        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
-                    {% endif %}
-                    <span>{{ item.product.name }}</span>
-                </div>
+                <td class="product-price">
+                    {{ item.product.price }} VND
+                </td>
 
-                <!-- Price -->
-                <div>
-                    {{ item.product.price|floatformat:0 }} ₫
-                </div>
+                <td>
+                    {{ item.quantity }}
+                </td>
 
-                <!-- Quantity -->
-                <div>
-                    <span class="quantity-box">
-                        {{ item.quantity }}
-                    </span>
-                </div>
+                <td class="product-subtotal">
+                    {{ item.subtotal }} VND
+                </td>
 
-                <!-- Subtotal -->
-                <div>
-                    {{ item.product.price|floatformat:0|add:"0" }} ₫
-                </div>
-
-                <!-- Remove -->
-                <div>
+                <td>
                     <a href="{% url 'remove_from_cart' item.id %}" class="remove-btn">
-                        <i class="fas fa-trash"></i>
+                        Xóa
                     </a>
-                </div>
-
-            </div>
+                </td>
+            </tr>
             {% endfor %}
+        </tbody>
 
-        </div>
+    </table>
 
-        <!-- TOTAL -->
-        <div class="cart-summary">
-            <h3>
-                Tổng tiền:
-                <span>
-                    {{ total_price|floatformat:0 }} ₫
-                </span>
-            </h3>
+    <div class="cart-summary">
 
-            <a href="#" class="checkout-btn">
-                Thanh toán
-            </a>
-        </div>
+        <h3>
+            Tổng tiền:
+            <span class="total-price">
+                {{ cart.items.all|length }}
+            </span>
+        </h3>
+
+        <a href="{% url 'checkout' %}" class="checkout-btn">
+            Thanh toán
+        </a>
+
+    </div>
 
     {% else %}
 
-        <div class="empty-cart">
-            <i class="fas fa-shopping-bag"></i>
-            <p>Giỏ hàng của bạn đang trống</p>
-            <a href="{% url 'home' %}" class="continue-btn">
-                Tiếp tục mua sắm
-            </a>
-        </div>
+    <p>Giỏ hàng của bạn đang trống.</p>
 
     {% endif %}
 
 </div>
+
+
+<style>
+
+.cart-container{
+    max-width:1000px;
+    margin:auto;
+    padding:40px 20px;
+}
+
+.cart-title{
+    font-size:28px;
+    margin-bottom:20px;
+}
+
+.cart-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.cart-table th,
+.cart-table td{
+    padding:12px;
+    border-bottom:1px solid #ddd;
+    text-align:left;
+}
+
+.product-price{
+    color:#1677ff;
+    font-weight:600;
+}
+
+.remove-btn{
+    color:red;
+    text-decoration:none;
+}
+
+.cart-summary{
+    margin-top:30px;
+    text-align:right;
+}
+
+.total-price{
+    color:#1677ff;
+    font-size:22px;
+}
+
+.checkout-btn{
+    display:inline-block;
+    margin-top:10px;
+    background:#1677ff;
+    color:white;
+    padding:12px 25px;
+    border-radius:8px;
+    text-decoration:none;
+}
+
+.checkout-btn:hover{
+    background:#0d5ed7;
+}
+
+</style>
 
 {% endblock %}

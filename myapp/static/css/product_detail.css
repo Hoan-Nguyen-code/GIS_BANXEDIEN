@@ -12,6 +12,12 @@ body {
     padding: 30px;
 }
 
+.product-detail-container{
+    max-width:1200px;
+    margin:auto;
+    padding:40px;
+}
+
 /* Nút quay về */
 .back-home-btn {
     display: inline-flex;
@@ -51,25 +57,89 @@ body {
     box-shadow: 0 12px 30px rgba(0,0,0,0.08);
 }
 
-/* Ảnh */
-.image-box {
-    width: 100%;
-    overflow: hidden;
-    border-radius: 12px;
+.product-image img{
+    width:450px;
+    border-radius:10px;
 }
 
-.image-box img {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
+.product-info{
+    flex:1;
 }
 
-/* Thông tin */
-.info h1 {
-    font-size: 32px;
-    font-weight: 700;
-    color: #0a2540;
-    margin-bottom: 10px;
+.product-title{
+    font-size:28px;
+    margin-bottom:10px;
+}
+
+.product-price{
+    font-size:30px;
+    color:#ff4d4f;
+    font-weight:bold;
+    margin:15px 0;
+}
+
+.product-stock{
+    margin-bottom:15px;
+    color:#555;
+}
+
+.product-actions{
+    margin-top:20px;
+    display:flex;
+    gap:15px;
+}
+
+.buy-now-btn{
+    background:#ff4d4f;
+    color:white;
+    padding:12px 25px;
+    border:none;
+    border-radius:8px;
+}
+
+.add-cart-btn{
+    background: #1677ff;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    transition: all 0.25s ease;
+}
+
+.add-cart-btn:hover{
+    background: #0958d9;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.add-cart-btn:active{
+    transform: scale(0.97);
+}
+
+.related-products-section{
+    margin-top:60px;
+}
+
+.related-products-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
+}
+
+.related-product-card{
+    background:white;
+    padding:15px;
+    border-radius:10px;
+    text-align:center;
 }
 
 /* Giá – LÀM NỔI BẬT */
@@ -80,14 +150,6 @@ body {
     margin: 15px 0;
     position: relative;
     z-index: 2;
-}
-
-/* Mô tả */
-.desc {
-    font-size: 17px;
-    color: #444;
-    line-height: 1.7;
-    margin-bottom: 30px;
 }
 
 /* =========================

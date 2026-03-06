@@ -638,22 +638,63 @@
 
 .product-footer {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 15px;
-    border-top: 2px solid #f0f2f5;
+    flex-direction: column;
+    gap: 8px;
 }
 
-.product-price {
+.product-bottom{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.price-cart-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+/* ===== STOCK ===== */
+
+.product-meta {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    font-size: 12px;
+    line-height: 1.2;
+}
+
+.stock {
+    font-weight: 700;
+    color: #2ecc71;
+}
+
+.product-stock{
+    font-size:12px;
+    background:#f1f5f9;
+    padding:4px 8px;
+    border-radius:6px;
+    width:fit-content;
+}
+
+.stock-label {
+    color: #7f8c8d;
+}
+
+/* ===== PRICE ===== */
+
+.product-price {
+    font-size: 20px;
+    font-weight: 700;
+    color: #ff4d4f;
 }
 
 .current-price {
-    font-size: 18px;
-    font-weight: 700;
+    font-size: 20px;
+    font-weight: 800;
     color: #ff4757;
+    white-space: nowrap;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
 }
 
 .old-price {
@@ -663,23 +704,30 @@
 }
 
 .add-to-cart-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 10px 16px;
-    background: linear-gradient(135deg, #007bff, #00c896);
-    color: white;
-    border: none;
-    border-radius: 8px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    background:linear-gradient(135deg,#007bff,#00c896);
+    color:white;
+    border:none;
+    padding:8px 14px;
+    font-size:14px;
+    border-radius:12px;
+    cursor:pointer;
+    text-decoration:none;
+}
+
+.add-to-cart-btn i {
     font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
 }
 
 .add-to-cart-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.add-to-cart-btn:active {
+    transform: scale(0.95);
 }
 
 /* ===== PAGINATION ===== */

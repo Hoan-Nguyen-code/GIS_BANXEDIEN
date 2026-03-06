@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load humanize %}
 {% load static %}
 
 {% block title %}Trang chủ{% endblock %}
@@ -30,7 +31,7 @@
             </a>
 
             {% for category in categories %}
-            <a href="?category={{ category.id }}"
+            <a href="?category={{ category.id }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}"
                class="sidebar-item {% if request.GET.category == category.id|stringformat:'s' %}active{% endif %}">
                 <i class="fas fa-angle-right"></i>
                 {{ category.name }}
@@ -55,10 +56,22 @@
         <!-- ===== SEARCH ===== -->
         <div class="search-section">
             <form method="GET" class="search-wrapper">
+
+                {% if request.GET.category %}
+                    <input type="hidden" name="category" value="{{ request.GET.category }}">
+                {% endif %}
+
+                {% if request.GET.sort %}
+                    <input type="hidden" name="sort" value="{{ request.GET.sort }}">
+                {% endif %}
+
                 <i class="fas fa-search"></i>
-                <input type="text" name="q"
-                       value="{{ request.GET.q }}"
-                       placeholder="Tìm kiếm sản phẩm...">
+
+                <input type="text"
+                    name="q"
+                    value="{{ request.GET.q }}"
+                    placeholder="Tìm kiếm sản phẩm...">
+
                 <button type="submit" class="search-btn">
                     <i class="fas fa-search"></i> Tìm
                 </button>
@@ -93,7 +106,7 @@
             <div class="filter-left">
                 <h2>Danh sách sản phẩm</h2>
                 <div class="product-count">
-                    Tìm thấy <strong>{{ products|length }}</strong> sản phẩm
+                    Tìm thấy <strong>{{ products.count }}</strong> sản phẩm
                 </div>
             </div>
 
@@ -138,8 +151,9 @@
             <div class="product-card">
 
                 <div class="product-image">
+
                     {% if product.image %}
-                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        <img src="{% static 'images/' %}{{ product.image }}" alt="{{ product.name }}">
                     {% else %}
                         <img src="https://via.placeholder.com/400x300">
                     {% endif %}
@@ -161,6 +175,9 @@
                 </div>
 
                 <div class="product-info">
+                    <!-- <div class = "product-category">
+                        {{ product.category.name }}
+                    </div> -->
 
                     <h3 class="product-name">
                         {{ product.name }}
@@ -180,9 +197,13 @@
                     </p>
 
                     <div class="product-footer">
+                        <div class = "product-stock">
+                            Còn {{ product.inventory.stock_quantity }} sản phẩm
+                        </div>
+
                         <div class="product-price">
                             <span class="current-price">
-                                {{ product.price }} đ
+                                {{ product.price|floatformat:0|intcomma }}đ
                             </span>
                         </div>
 
