@@ -1,0 +1,138 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GIS 3 – 2 Đường đi ngắn nhất đến trạm sạc</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <link rel="stylesheet" href="{% static 'css/map.css' %}">
+
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<div id="sidebar">
+  <div class="sidebar-header">
+    <div class="tag">⚡ GIS Chức năng 3</div>
+    <h1>Hai đường đi ngắn nhất<br>đến trạm sạc</h1>
+    <p>Powered by OpenRouteService + Leaflet</p>
+  </div>
+
+  <!-- API KEY ẨN - hardcoded -->
+  <input type="hidden" id="apiKey" value="eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjMyZGIyMGFlMjkwYTRjYmQ5MTVkYmU4NWM1YWU3MzFjIiwiaCI6Im11cm11cjY0In0="/>
+
+  <!-- VỊ TRÍ -->
+  <div class="section">
+    <div class="section-title">📍 Vị trí người dùng</div>
+    <button class="btn btn-primary" onclick="getLocation()">📡 Lấy vị trí hiện tại</button>
+    <div id="locInfo" style="margin-top:10px; font-size:11px; color:var(--text-muted);">Chưa lấy vị trí</div>
+
+    <div style="margin-top:12px;">
+      <label>Bán kính tìm trạm (m)</label>
+      <div class="slider-row">
+        <input type="range" id="radiusSlider" min="100" max="5000" step="100" value="1500"
+               oninput="document.getElementById('radiusVal').textContent=this.value+' m'"/>
+        <span class="slider-val" id="radiusVal">1500 m</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRẠM SẠC -->
+  <div class="section">
+    <div class="section-title">⚡ Dữ liệu trạm sạc (PostgreSQL)</div>
+    <div class="add-station-row">
+      <input type="text" id="newName" placeholder="Tên trạm"/>
+      <input type="number" id="newLat" placeholder="Lat" step="any"/>
+      <input type="number" id="newLon" placeholder="Lon" step="any"/>
+    </div>
+    <button class="btn btn-sm" style="width:100%" onclick="addStation()">+ Thêm trạm</button>
+
+    <div style="margin-top:10px; font-size:11px; color:var(--text-muted); margin-bottom:6px;">
+      Dữ liệu mẫu (thay bằng query PostgreSQL thực tế):
+    </div>
+
+    <button class="btn btn-sm" style="width:100%; margin-bottom:6px;" onclick="loadNearbyStations()">
+      🌍 Tìm trạm sạc gần vị trí tôi (OSM)
+    </button>
+
+    <div id="stationList">
+      <div class="empty">
+        <div class="empty-icon">🔌</div>
+        Chưa có trạm sạc
+      </div>
+    </div>
+  </div>
+
+  <!-- TÌM ĐƯỜNG -->
+  <div class="section">
+    <div class="section-title">🗺️ Tìm đường</div>
+
+    <div id="selectedStationBox" style="display:none; background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:8px 12px; margin-bottom:10px; font-size:11px;">
+      <div style="color:var(--text-muted); margin-bottom:3px;">Trạm đích đã chọn:</div>
+      <div id="selectedStationName" style="color:var(--accent1); font-weight:600;"></div>
+
+      <div style="margin-top:4px;">
+        <span style="color:var(--text-muted); font-size:10px;">Hoặc </span>
+        <span onclick="clearSelectedStation()" style="color:var(--accent2); font-size:10px; cursor:pointer; text-decoration:underline;">
+          dùng trạm gần nhất tự động
+        </span>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="findBtn" onclick="findRoutes()" disabled>
+      🔍 Tìm 2 đường ngắn nhất
+    </button>
+
+    <div id="status" style="padding:10px 0 0 0;">
+      <div class="dot-pulse" id="statusDot" style="display:none"></div>
+      <span id="statusText">Chưa sẵn sàng</span>
+    </div>
+  </div>
+
+  <!-- KẾT QUẢ -->
+  <div class="section">
+    <div class="section-title">📊 Kết quả</div>
+    <div id="routeResults">
+      <div class="empty">
+        <div class="empty-icon">🛣️</div>
+        Chưa có kết quả
+      </div>
+    </div>
+  </div>
+
+  <!-- CHÚ THÍCH -->
+  <div class="section">
+    <div class="section-title">🎨 Chú thích</div>
+
+    <div class="legend-row">
+      <div class="legend-line" style="background:#00d4ff; height:4px;"></div>
+      <span style="font-size:11px;">Đường ngắn nhất (1)</span>
+    </div>
+
+    <div class="legend-row">
+      <div class="legend-line" style="background:#ff6b35; height:3px; border-top: 2px dashed #ff6b35; height:0;"></div>
+      <span style="font-size:11px;">Đường ngắn thứ 2 (2)</span>
+    </div>
+
+    <div class="legend-row">
+      <div style="width:12px;height:12px;border-radius:50%;background:#ef4444;flex-shrink:0;"></div>
+      <span style="font-size:11px;">Vị trí của bạn</span>
+    </div>
+
+    <div class="legend-row">
+      <div style="width:12px;height:12px;border-radius:50%;background:#22c55e;flex-shrink:0;"></div>
+      <span style="font-size:11px;">Trạm sạc đích</span>
+    </div>
+  </div>
+</div>
+
+<!-- MAP -->
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{% static 'js/map.js' %}"></script>
+
+</body>
+</html>

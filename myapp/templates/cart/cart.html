@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="cart-container">
+
+    <h2 class="cart-title">Giỏ hàng của bạn</h2>
+
+    {% if cart.items.all %}
+
+    <table class="cart-table">
+        <thead>
+            <tr>
+                <th>Sản phẩm</th>
+                <th>Giá</th>
+                <th>Số lượng</th>
+                <th>Tạm tính</th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for item in cart.items.all %}
+            <tr>
+               <td>{{ item.product.name }}</td>
+
+                <td class="product-price">
+                    {{ item.product.price }} VND
+                </td>
+
+                <td>
+                    {{ item.quantity }}
+                </td>
+
+                <td class="product-subtotal">
+                    {{ item.subtotal }} VND
+                </td>
+
+                <td>
+                    <a href="{% url 'remove_from_cart' item.id %}" class="remove-btn">
+                        Xóa
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+
+    <div class="cart-summary">
+
+        <h3>
+            Tổng tiền:
+            <span class="total-price">
+                {{ cart.items.all|length }}
+            </span>
+        </h3>
+
+        <a href="{% url 'checkout' %}" class="checkout-btn">
+            Thanh toán
+        </a>
+
+    </div>
+
+    {% else %}
+
+    <p>Giỏ hàng của bạn đang trống.</p>
+
+    {% endif %}
+
+</div>
+
+
+<style>
+
+.cart-container{
+    max-width:1000px;
+    margin:auto;
+    padding:40px 20px;
+}
+
+.cart-title{
+    font-size:28px;
+    margin-bottom:20px;
+}
+
+.cart-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.cart-table th,
+.cart-table td{
+    padding:12px;
+    border-bottom:1px solid #ddd;
+    text-align:left;
+}
+
+.product-price{
+    color:#1677ff;
+    font-weight:600;
+}
+
+.remove-btn{
+    color:red;
+    text-decoration:none;
+}
+
+.cart-summary{
+    margin-top:30px;
+    text-align:right;
+}
+
+.total-price{
+    color:#1677ff;
+    font-size:22px;
+}
+
+.checkout-btn{
+    display:inline-block;
+    margin-top:10px;
+    background:#1677ff;
+    color:white;
+    padding:12px 25px;
+    border-radius:8px;
+    text-decoration:none;
+}
+
+.checkout-btn:hover{
+    background:#0d5ed7;
+}
+
+</style>
+
+{% endblock %}

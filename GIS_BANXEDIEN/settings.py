@@ -63,6 +63,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "myapp.context_processors.cart_count",
             ],
         },
     },
@@ -79,7 +80,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "GIS_BANXEDIEN",
         "USER": "postgres",
-        "PASSWORD": "hoan2606", # chỉnh lại mật khẩu là được
+        "PASSWORD": "1234", # chỉnh lại mật khẩu là được
         "HOST": "localhost",
         "PORT": "5432",
     }
@@ -136,5 +137,5 @@ LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login/'
 
 # URL chuyển hướng sau khi đăng xuất
-LOGOUT_REDIRECT_URL = '/login/'
+LOGOUT_REDIRECT_URL = '/'
 AUTH_USER_MODEL = 'myapp.User'
