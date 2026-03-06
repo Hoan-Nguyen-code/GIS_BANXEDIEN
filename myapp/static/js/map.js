@@ -159,6 +159,10 @@ function loadSampleData() {
     { name: "Trạm Sạc ChargePoint - QL50",          lat: 10.6720, lon: 106.6100 },
     { name: "Trạm Sạc Vinfast - Aeon Mall BT",      lat: 10.7435, lon: 106.6221 },
     { name: "Trạm Sạc EVgo - KCN Lê Minh Xuân",    lat: 10.6540, lon: 106.5750 },
+    { name: "Trạm Sạc 1",  lat: 10.809, lon: 106.564},
+    { name: "Trạm Sạc 2",  lat: 10.812, lon: 106.570},
+    { name: "Trạm Sạc 3",  lat: 10.800, lon: 106.550},
+    { name: "Trạm Sạc 4",  lat: 10.820, lon: 106.600},
     // Quận 7 / Nhà Bè (gần Bình Chánh)
     { name: "Trạm Sạc Vinfast - Crescent Mall",     lat: 10.7327, lon: 106.7178 },
     { name: "Trạm Sạc Tesla - Phú Mỹ Hưng",        lat: 10.7262, lon: 106.7017 },
