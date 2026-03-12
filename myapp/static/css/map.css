@@ -315,3 +315,70 @@
       color: var(--accent3);
       margin-bottom: 10px;
     }
+
+    /* ── VEHICLE SELECTOR ── */
+    #vehicleSelector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .vehicle-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 10px 8px;
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      color: var(--text);
+      font-family: 'Be Vietnam Pro', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .vehicle-btn:hover {
+      border-color: var(--accent1);
+      color: var(--accent1);
+    }
+
+    .vehicle-btn.active {
+      border-color: var(--accent1);
+      background: rgba(0, 212, 255, 0.1);
+      color: var(--accent1);
+    }
+
+    .v-icon { font-size: 22px; }
+    .v-label { font-size: 11px; font-weight: 600; }
+    
+    .station-popup{
+    width:240px;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.station-img{
+    width:100%;
+    height:130px;
+    object-fit:cover;
+    border-radius:10px;
+}
+
+.station-popup h3{
+    font-size:16px;
+    margin:8px 0 6px;
+    color:#333;
+}
+
+.station-popup div{
+    font-size:13px;
+    color:#555;
+    margin-bottom:4px;
+}
+
+.leaflet-popup-content-wrapper{
+    border-radius:14px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.15);
+}
