@@ -209,7 +209,7 @@
 
                         {% if user.is_authenticated %}
                             <!-- ✅ User đã đăng nhập → thêm được vào giỏ -->
-                            <button class="add-to-cart-btn">
+                            <button class="add-to-cart-btn" data-product-id="{{ product.id }}">
                                 <i class="fas fa-shopping-cart"></i>
                                 Thêm
                             </button>

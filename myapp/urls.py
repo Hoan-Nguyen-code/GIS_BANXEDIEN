@@ -10,6 +10,9 @@ urlpatterns = [
     path("cart/", cart.cart_view, name="cart"),
     path("map/", map_views.map_view, name="map"),
     path("product/<int:product_id>/", product_detail_views.product_detail, name="product_detail"),
+    path("cart/add/<int:product_id>/", cart.add_to_cart, name="add_to_cart"),
+    path("cart/remove/<int:item_id>/", cart.remove_from_cart, name="remove_from_cart"),
+    path("checkout/", cart.checkout, name="checkout"),
 
     # ADMIN CUSTOM
     path('dashboard/', admin_views.admin_dashboard, name='admin_dashboard'),

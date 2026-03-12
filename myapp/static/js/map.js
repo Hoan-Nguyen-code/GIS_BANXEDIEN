@@ -235,10 +235,10 @@ function loadSampleData() {
       },
 
       {
-      name: "Trạm Sạc EVN - Bình Chánh",
+      name: "Trạm Sạc 2",
       lat: 10.6850,
       lon: 106.5980,
-      image: "/static/images/places/binhchanh.jpg"
+      //image: "/static/images/places/binhchanh.jpg"
       },
 
       {
@@ -275,7 +275,12 @@ function loadSampleData() {
       lat: 10.7262,
       lon: 106.7017,
       image: "/static/images/places/phumyhung.jpg"
-      }
+      },
+
+    {name: "Trạm Sạc 1", lat: 10.809, lon: 106.564},
+    {name: "Trạm Sạc EVN - Bình Chánh", lat: 10.812, lon: 106.570, image: "/static/images/places/binhchanh.jpg"},
+    {name: "Trạm Sạc 3", lat: 10.800, lon: 106.550},
+    {name: "Trạm Sạc 4", lat: 10.820, lon: 106.600}
   ];
 
   if (userLat) {

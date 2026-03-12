@@ -51,7 +51,7 @@
             <a href="{% url 'cart' %}" class="cart-icon">
                 <i class="fa-solid fa-cart-shopping"></i>
                 {% if cart_count > 0 %}
-                    <span class="cart-badge">{{ cart_count }}</span>
+                    <span id="cart-count" class="cart-badge">{{ cart_count }}</span>
                 {% endif %}
             </a>
 
