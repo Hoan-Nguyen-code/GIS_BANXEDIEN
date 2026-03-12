@@ -8,6 +8,53 @@ let map, userMarker, radiusCircle;
 let stationMarkers = [];
 let routeLayers = [];
 
+// ✅ THÊM: Phương tiện mặc định
+let selectedProfile = 'driving-car';
+
+// ═══════════════════════════════════════════
+// ✅ THÊM: VEHICLE PROFILES
+// ═══════════════════════════════════════════
+const VEHICLE_PROFILES = {
+  'driving-car':      { label: 'Xe hơi',  icon: '🚗' },
+  'driving-car-moto': { label: 'Xe máy',  icon: '🏍️' },
+  'cycling-regular':  { label: 'Xe đạp',  icon: '🚲' },
+  'foot-walking':     { label: 'Đi bộ',   icon: '🚶' },
+};
+
+// ✅ THÊM: Map profile sang ORS (xe máy dùng driving-car)
+function getOrsProfile(profile) {
+  if (profile === 'driving-car-moto') return 'driving-car';
+  return profile;
+}
+
+// ✅ THÊM: Build UI vehicle selector
+function buildVehicleSelector() {
+  const container = document.getElementById('vehicleSelector');
+  if (!container) return;
+  container.innerHTML = '';
+  Object.entries(VEHICLE_PROFILES).forEach(([key, v]) => {
+    const btn = document.createElement('button');
+    btn.className = 'vehicle-btn' + (key === selectedProfile ? ' active' : '');
+    btn.innerHTML = `<span class="v-icon">${v.icon}</span><span class="v-label">${v.label}</span>`;
+    btn.onclick = () => {
+
+  selectedProfile = key;
+
+  document.querySelectorAll('.vehicle-btn')
+    .forEach(b => b.classList.remove('active'));
+
+  btn.classList.add('active');
+
+  // nếu đã có route thì tự tính lại
+  if (routeLayers.length > 0) {
+      findRoutes();
+  }
+
+  };
+    container.appendChild(btn);
+    });
+  }
+
 // ═══════════════════════════════════════════
 // MAP INIT
 // ═══════════════════════════════════════════
@@ -143,29 +190,92 @@ async function loadNearbyStations() {
   }
 }
 
-
 function loadSampleData() {
   // Data mẫu toàn quốc - tự động chọn theo vị trí người dùng
   const ALL_STATIONS = [
-    // Biên Hòa - Đồng Nai
-    { name: "Trạm Sạc Vinfast - Vincom Biên Hòa", lat: 10.9741, lon: 106.8986 },
-    { name: "Trạm Sạc Evgo - Lottemart Biên Hòa",  lat: 10.9680, lon: 106.8830 },
-    { name: "Trạm Sạc EVN - Khu CN Amata",          lat: 10.9590, lon: 106.8920 },
-    { name: "Trạm Sạc ChargePoint - QL1A",          lat: 10.9820, lon: 106.8760 },
-    { name: "Trạm Sạc Tesla - TTTM Go! Biên Hòa",  lat: 10.9500, lon: 106.8650 },
-    // Bình Chánh - TP.HCM
-    { name: "Trạm Sạc Vinfast - SC VivoCity",       lat: 10.7290, lon: 106.7218 },
-    { name: "Trạm Sạc EVN - Bình Chánh",            lat: 10.6850, lon: 106.5980 },
-    { name: "Trạm Sạc ChargePoint - QL50",          lat: 10.6720, lon: 106.6100 },
-    { name: "Trạm Sạc Vinfast - Aeon Mall BT",      lat: 10.7435, lon: 106.6221 },
-    { name: "Trạm Sạc EVgo - KCN Lê Minh Xuân",    lat: 10.6540, lon: 106.5750 },
-    { name: "Trạm Sạc 1",  lat: 10.809, lon: 106.564},
-    { name: "Trạm Sạc 2",  lat: 10.812, lon: 106.570},
-    { name: "Trạm Sạc 3",  lat: 10.800, lon: 106.550},
-    { name: "Trạm Sạc 4",  lat: 10.820, lon: 106.600},
-    // Quận 7 / Nhà Bè (gần Bình Chánh)
-    { name: "Trạm Sạc Vinfast - Crescent Mall",     lat: 10.7327, lon: 106.7178 },
-    { name: "Trạm Sạc Tesla - Phú Mỹ Hưng",        lat: 10.7262, lon: 106.7017 },
+// Biên Hòa - Đồng Nai
+      {
+      name: "Trạm Sạc Vinfast - Vincom Biên Hòa",
+      lat: 10.9741,
+      lon: 106.8986,
+      image: "/static/images/places/vincom.jpg"
+      },
+
+      {
+      name: "Trạm Sạc Evgo - LotteMart Biên Hòa",
+      lat: 10.9680,
+      lon: 106.8830,
+      image: "/static/images/places/lotte.jpg"
+      },
+
+      {
+      name: "Trạm Sạc EVN - Khu CN Amata",
+      lat: 10.9590,
+      lon: 106.8920,
+      image: "/static/images/places/amata.jpg"
+      },
+
+      {
+      name: "Trạm Sạc ChargePoint - QL1A",
+      lat: 10.9820,
+      lon: 106.8760,
+      image: "/static/images/places/ql1a.jpg"
+      },
+      {
+      name: "Trạm Sạc Tesla - TTTM Go! Biên Hòa",  lat: 10.9500, 
+      lon: 106.8650,
+      image: "/static/images/places/go.jpg"
+     },
+      // Bình Chánh - TP.HCM
+      {
+      name: "Trạm Sạc Vinfast - SC VivoCity",
+      lat: 10.7290,
+      lon: 106.7218,
+      image: "/static/images/places/vivocity.jpg"
+      },
+
+      {
+      name: "Trạm Sạc EVN - Bình Chánh",
+      lat: 10.6850,
+      lon: 106.5980,
+      image: "/static/images/places/binhchanh.jpg"
+      },
+
+      {
+      name: "Trạm Sạc ChargePoint - QL50",
+      lat: 10.6720,
+      lon: 106.6100,
+      image: "/static/images/places/ql50.jpg"
+      },
+
+      {
+      name: "Trạm Sạc Vinfast - Aeon Mall BT",
+      lat: 10.7435,
+      lon: 106.6221,
+      image: "/static/images/places/aeon.jpg"
+      },
+
+      {
+      name: "Trạm Sạc Evgo - KCN Lê Minh Xuân",
+      lat: 10.6540,
+      lon: 106.5750,
+      image: "/static/images/places/leminhxuan.jpg"
+      },
+
+      // Quận 7 / Nhà Bè
+      {
+      name: "Trạm Sạc Vinfast - Crescent Mall",
+      lat: 10.7327,
+      lon: 106.7178,
+      image: "/static/images/places/crescent.jpg"
+      },
+
+      {
+      name: "Trạm Sạc Tesla - Phú Mỹ Hưng",
+      lat: 10.7262,
+      lon: 106.7017,
+      image: "/static/images/places/phumyhung.jpg"
+      }
   ];
 
   if (userLat) {
@@ -235,7 +345,23 @@ function renderStations() {
 
     const m = L.marker([s.lat, s.lon], { icon: stationIcon(color) })
       .addTo(map)
-      .bindPopup(`<b>⚡ ${s.name}</b><br>${s.lat.toFixed(5)}, ${s.lon.toFixed(5)}`);
+     .bindPopup(`
+      <div class="station-popup">
+
+      <img src="${s.image}" class="station-img">
+
+      <h3>⚡ ${s.name}</h3>
+
+      <div class="station-coord">
+      📍 ${s.lat.toFixed(5)}, ${s.lon.toFixed(5)}
+      </div>
+
+      <div>🔌 CCS2 / Type2</div>
+
+      <div>⚡ Công suất: 120kW</div>
+
+      </div>
+      `);
     stationMarkers.push(m);
   });
 
@@ -265,7 +391,6 @@ function clearSelectedStation() {
   document.querySelectorAll('.station-item').forEach(el => el.classList.remove('active'));
   setStatus('Sẽ dùng trạm gần nhất tự động', 'ok');
 }
-
 
 function filterStationsInRadius() {
   if (!userLat) return;
@@ -297,6 +422,10 @@ async function findRoutes() {
 
   const radius = parseInt(document.getElementById('radiusSlider').value);
 
+  // ✅ THÊM: Lấy profile và thông tin phương tiện
+  const vehicle = VEHICLE_PROFILES[selectedProfile];
+  const orsProfile = getOrsProfile(selectedProfile);
+
   // Dùng trạm đã chọn thủ công, hoặc tự động lấy trạm gần nhất
   let target;
   if (selectedStation) {
@@ -313,7 +442,9 @@ async function findRoutes() {
     }
     target = nearby[0];
   }
-  setStatus(`Đang tính 2 đường đến "${target.name}"...`, 'pulse');
+
+  // ✅ THÊM: Hiện icon phương tiện trong status
+  setStatus(`${vehicle.icon} Đang tính đường cho ${vehicle.label} đến "${target.name}"...`, 'pulse');
   document.getElementById('findBtn').disabled = true;
 
   // Xóa route cũ
@@ -321,8 +452,8 @@ async function findRoutes() {
   routeLayers = [];
 
   try {
-    // Gọi ORS với alternative_routes để lấy 2 đường cùng lúc
-    const data = await fetchAlternativeRoutes(apiKey, userLat, userLon, target.lat, target.lon);
+    // ✅ THÊM: Truyền orsProfile vào
+    const data = await fetchAlternativeRoutes(apiKey, userLat, userLon, target.lat, target.lon, orsProfile);
     const features = data.features;
 
     if (!features || features.length < 1) {
@@ -369,8 +500,9 @@ async function findRoutes() {
     const el = document.getElementById(`st-${target.i}`);
     if (el) el.classList.add('active');
 
-    renderRouteResults(results, lineColors, target);
-    setStatus(`Đã tìm thấy ${results.length} đường đi đến ${target.name}`, 'ok');
+    // ✅ THÊM: Truyền vehicle vào renderRouteResults
+    renderRouteResults(results, lineColors, target, vehicle);
+    setStatus(`${vehicle.icon} Đã tìm thấy ${results.length} đường đi (${vehicle.label}) đến ${target.name}`, 'ok');
 
   } catch (e) {
     setStatus('Lỗi ORS API: ' + e.message, 'err');
@@ -379,8 +511,9 @@ async function findRoutes() {
   document.getElementById('findBtn').disabled = false;
 }
 
-async function fetchAlternativeRoutes(apiKey, fromLat, fromLon, toLat, toLon) {
-  const res = await fetch('https://api.openrouteservice.org/v2/directions/driving-car/geojson', {
+// ✅ THÊM: Nhận thêm tham số profile
+async function fetchAlternativeRoutes(apiKey, fromLat, fromLon, toLat, toLon, profile) {
+  const res = await fetch(`https://api.openrouteservice.org/v2/directions/${profile}/geojson`, {
     method: 'POST',
     headers: {
       'Authorization': apiKey,
@@ -404,14 +537,18 @@ async function fetchAlternativeRoutes(apiKey, fromLat, fromLon, toLat, toLon) {
   return res.json();
 }
 
-function renderRouteResults(results, lineColors, target) {
+// ✅ THÊM: Hiện thêm icon phương tiện trong kết quả
+function renderRouteResults(results, lineColors, target, vehicle) {
   const container = document.getElementById('routeResults');
   container.innerHTML = '';
 
-  // Header trạm đích
+  // Header trạm đích + phương tiện
   const header = document.createElement('div');
-  header.style.cssText = 'font-size:11px;color:var(--text-muted);margin-bottom:10px;padding:8px 10px;background:var(--bg);border-radius:8px;';
-  header.innerHTML = `🎯 Đích đến: <span style="color:var(--accent1);font-weight:600">${target.name}</span>`;
+  header.style.cssText = 'font-size:11px;color:var(--text-muted);margin-bottom:10px;padding:8px 10px;background:var(--bg);border-radius:8px;line-height:1.8;';
+  header.innerHTML = `
+    🎯 Đích đến: <span style="color:var(--accent1);font-weight:600">${target.name}</span><br>
+    ${vehicle.icon} Phương tiện: <span style="color:var(--accent1);font-weight:600">${vehicle.label}</span>
+  `;
   container.appendChild(header);
 
   results.forEach(({ label, dist_m, time_s }, idx) => {
@@ -457,3 +594,8 @@ function checkReady() {
   const ok = userLat && stations.length >= 1;
   document.getElementById('findBtn').disabled = !ok;
 }
+
+// ✅ THÊM: Khởi tạo vehicle selector khi DOM ready
+document.addEventListener('DOMContentLoaded', () => {
+  buildVehicleSelector();
+});
