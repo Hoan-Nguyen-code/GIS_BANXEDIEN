@@ -60,9 +60,11 @@ function buildVehicleSelector() {
 // ═══════════════════════════════════════════
 map = L.map('map', { zoomControl: true }).setView([10.95, 106.82], 13);
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '© OpenStreetMap | © ORS',
-  maxZoom: 19
+// Sử dụng CartoDB tile server (ổn định hơn và không yêu cầu referer)
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+  subdomains: 'abcd',
+  maxZoom: 20
 }).addTo(map);
 
 // ═══════════════════════════════════════════
@@ -350,22 +352,17 @@ function renderStations() {
 
     const m = L.marker([s.lat, s.lon], { icon: stationIcon(color) })
       .addTo(map)
-     .bindPopup(`
-      <div class="station-popup">
-
-      <img src="${s.image}" class="station-img">
-
-      <h3>⚡ ${s.name}</h3>
-
-      <div class="station-coord">
-      📍 ${s.lat.toFixed(5)}, ${s.lon.toFixed(5)}
-      </div>
-
-      <div>🔌 CCS2 / Type2</div>
-
-      <div>⚡ Công suất: 120kW</div>
-
-      </div>
+      .bindPopup(`
+          <div class="station-popup">
+              ${s.image ? `<img src="${s.image}" class="station-img" style="width:100%;border-radius:8px;margin-bottom:8px;">` : ''}
+              <h3>⚡ ${s.name}</h3>
+              <div class="station-coord">📍 ${s.lat.toFixed(5)}, ${s.lon.toFixed(5)}</div>
+              <div>📌 ${s.address || ''}</div>
+              <div>🔌 Loại: ${s.type || 'DC Fast'}</div>
+              <div>⚡ Công suất: ${s.power || '50kW'}</div>
+              <div>🅿️ Tổng cổng: ${s.total_ports || 0} | Còn trống: ${s.available_ports || 0}</div>
+              <div>🟢 Trạng thái: ${s.status === 'ACTIVE' ? 'Hoạt động' : s.status === 'MAINTENANCE' ? 'Bảo trì' : 'Ngừng'}</div>
+          </div>
       `);
     stationMarkers.push(m);
   });
@@ -602,5 +599,433 @@ function checkReady() {
 
 // ✅ THÊM: Khởi tạo vehicle selector khi DOM ready
 document.addEventListener('DOMContentLoaded', () => {
-  buildVehicleSelector();
+    buildVehicleSelector();
+
+    // Đọc destination từ URL params
+    const params = new URLSearchParams(window.location.search);
+    const destLat = params.get('dest_lat');
+    const destLon = params.get('dest_lon');
+    const destName = params.get('dest_name');
+
+    if (destLat && destLon && destName) {
+        const lat = parseFloat(destLat);
+        const lon = parseFloat(destLon);
+        const name = decodeURIComponent(destName);
+
+        setTimeout(() => {
+            stations.push({ name, lat, lon });
+            renderStations();
+            selectStation(stations.length - 1);
+            map.setView([lat, lon], 16);
+            setStatus(`✅ Đã chọn điểm đến: ${name}`, 'ok');
+        }, 500);
+    }
 });
+// ═══════════════════════════════════════════
+// 🔍 PLACE SEARCH FUNCTIONALITY
+// ═══════════════════════════════════════════
+
+let searchMarker = null;
+let searchTimeout = null;
+let searchResults = [];
+let selectedSearchIndex = -1;
+let currentPlace = null;
+
+// Initialize search functionality
+function initPlaceSearch() {
+  const searchInput = document.getElementById('placeSearch');
+  const resultsContainer = document.getElementById('searchResults');
+  
+  if (!searchInput) return;
+
+  // Input event - search as user types
+  searchInput.addEventListener('input', (e) => {
+    const query = e.target.value.trim();
+    
+    clearTimeout(searchTimeout);
+    
+    if (query.length < 3) {
+      hideSearchResults();
+      return;
+    }
+
+    // Debounce search
+    searchTimeout = setTimeout(() => {
+      searchPlaces(query);
+    }, 500);
+  });
+
+  // Keyboard navigation
+  searchInput.addEventListener('keydown', (e) => {
+    if (!resultsContainer.classList.contains('active')) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      selectedSearchIndex = Math.min(selectedSearchIndex + 1, searchResults.length - 1);
+      highlightSearchResult(selectedSearchIndex);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      selectedSearchIndex = Math.max(selectedSearchIndex - 1, 0);
+      highlightSearchResult(selectedSearchIndex);
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (selectedSearchIndex >= 0 && searchResults[selectedSearchIndex]) {
+        selectPlace(searchResults[selectedSearchIndex]);
+      }
+    } else if (e.key === 'Escape') {
+      hideSearchResults();
+    }
+  });
+
+  // Click outside to close
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-box')) {
+      hideSearchResults();
+    }
+  });
+}
+
+// Search for places using Nominatim API
+async function searchPlaces(query) {
+  const resultsContainer = document.getElementById('searchResults');
+  const statusEl = document.getElementById('searchStatus');
+  
+  // Show loading
+  resultsContainer.innerHTML = `
+    <div class="search-loading">
+      <div class="search-spinner"></div>
+      <div style="margin-top:8px;">Đang tìm kiếm...</div>
+    </div>
+  `;
+  resultsContainer.classList.add('active');
+  
+  if (statusEl) {
+    statusEl.innerHTML = '<span class="search-spinner"></span> Đang tìm kiếm...';
+  }
+
+  try {
+    // Use Nominatim API (OpenStreetMap geocoding)
+    // Thêm countrycodes=vn để ưu tiên kết quả ở Việt Nam
+    const url = `https://nominatim.openstreetmap.org/search?` +
+      `q=${encodeURIComponent(query)}&` +
+      `format=json&` +
+      `addressdetails=1&` +
+      `limit=10&` +
+      `countrycodes=vn&` +
+      `accept-language=vi`;
+
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'WebGIS-XeDien/1.0' // Required by Nominatim
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Search API error');
+    }
+
+    const data = await response.json();
+    searchResults = data;
+    selectedSearchIndex = -1;
+
+    if (data.length === 0) {
+      resultsContainer.innerHTML = `
+        <div class="search-empty">
+          <div class="search-empty-icon">🔍</div>
+          <div>Không tìm thấy "${query}"</div>
+        </div>
+      `;
+      if (statusEl) {
+        statusEl.textContent = 'Không tìm thấy kết quả';
+      }
+      return;
+    }
+
+    // Render results
+    renderSearchResults(data);
+    
+    if (statusEl) {
+      statusEl.textContent = `Tìm thấy ${data.length} kết quả`;
+    }
+
+  } catch (error) {
+    console.error('Search error:', error);
+    resultsContainer.innerHTML = `
+      <div class="search-empty">
+        <div class="search-empty-icon">❌</div>
+        <div>Lỗi tìm kiếm. Vui lòng thử lại.</div>
+      </div>
+    `;
+    if (statusEl) {
+      statusEl.textContent = 'Lỗi tìm kiếm';
+    }
+  }
+}
+
+// Render search results
+function renderSearchResults(results) {
+  const container = document.getElementById('searchResults');
+  
+  container.innerHTML = results.map((place, index) => {
+    const icon = getPlaceIcon(place.type);
+    const name = place.display_name.split(',')[0];
+    const address = place.display_name;
+    const type = getPlaceType(place.type);
+
+    return `
+      <div class="search-result-item" onclick="selectPlace(searchResults[${index}])" data-index="${index}">
+        <div class="search-result-name">
+          <span class="search-result-icon">${icon}</span>
+          <span>${name}</span>
+        </div>
+        <div class="search-result-address">${address}</div>
+        ${type ? `<span class="search-result-type">${type}</span>` : ''}
+      </div>
+    `;
+  }).join('');
+
+  container.classList.add('active');
+}
+
+// Get icon based on place type
+function getPlaceIcon(type) {
+  const icons = {
+    'university': '🎓',
+    'school': '🏫',
+    'hospital': '🏥',
+    'pharmacy': '💊',
+    'restaurant': '🍽️',
+    'cafe': '☕',
+    'hotel': '🏨',
+    'shopping': '🛒',
+    'mall': '🏬',
+    'park': '🌳',
+    'museum': '🏛️',
+    'theatre': '🎭',
+    'cinema': '🎬',
+    'stadium': '🏟️',
+    'airport': '✈️',
+    'train_station': '🚂',
+    'bus_station': '🚌',
+    'place_of_worship': '⛪',
+    'bank': '🏦',
+    'atm': '🏧',
+    'fuel': '⛽',
+    'charging_station': '🔌',
+    'building': '🏢',
+    'residential': '🏘️',
+    'default': '📍'
+  };
+
+  return icons[type] || icons['default'];
+}
+
+// Get Vietnamese place type
+function getPlaceType(type) {
+  const types = {
+    'university': 'Đại học',
+    'school': 'Trường học',
+    'hospital': 'Bệnh viện',
+    'pharmacy': 'Nhà thuốc',
+    'restaurant': 'Nhà hàng',
+    'cafe': 'Quán cà phê',
+    'hotel': 'Khách sạn',
+    'shopping': 'Mua sắm',
+    'mall': 'Trung tâm thương mại',
+    'park': 'Công viên',
+    'museum': 'Bảo tàng',
+    'cinema': 'Rạp chiếu phim',
+    'stadium': 'Sân vận động',
+    'airport': 'Sân bay',
+    'train_station': 'Ga tàu',
+    'bus_station': 'Bến xe',
+    'place_of_worship': 'Nhà thờ/Chùa',
+    'bank': 'Ngân hàng',
+    'fuel': 'Cây xăng',
+    'charging_station': 'Trạm sạc',
+  };
+
+  return types[type] || '';
+}
+
+// Select a place from search results
+async function selectPlace(place) {
+  if (!place) return;
+
+  const lat = parseFloat(place.lat);
+  const lon = parseFloat(place.lon);
+
+  // Hide search results
+  hideSearchResults();
+
+  // Clear search input
+  document.getElementById('placeSearch').value = place.display_name.split(',')[0];
+
+  // Remove old search marker
+  if (searchMarker) {
+    map.removeLayer(searchMarker);
+  }
+
+  // Create custom icon for search result
+  const searchIcon = L.divIcon({
+    className: '',
+    html: `<div style="position:relative; width:32px; height:42px;">
+      <svg viewBox="0 0 32 42" xmlns="http://www.w3.org/2000/svg" style="width:32px;height:42px;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.4));">
+        <path d="M16 0 C7.163 0 0 7.163 0 16 C0 28 16 42 16 42 C16 42 32 28 32 16 C32 7.163 24.837 0 16 0 Z" fill="#00d4ff"/>
+        <circle cx="16" cy="16" r="7" fill="white"/>
+        <circle cx="16" cy="16" r="4" fill="#00d4ff"/>
+      </svg>
+    </div>`,
+    iconSize: [32, 42],
+    iconAnchor: [16, 42]
+  });
+
+  // Add marker
+  searchMarker = L.marker([lat, lon], { icon: searchIcon })
+    .addTo(map)
+    .bindPopup(`
+      <div style="min-width:200px;">
+        <b>${place.display_name.split(',')[0]}</b><br>
+        <small>${place.display_name}</small>
+      </div>
+    `)
+    .openPopup();
+
+  // Fly to location with smooth animation
+  map.flyTo([lat, lon], 17, {
+    duration: 1.5,
+    easeLinearity: 0.25
+  });
+
+  // Store current place
+  currentPlace = place;
+
+  // Update status
+  const statusEl = document.getElementById('searchStatus');
+  if (statusEl) {
+    statusEl.innerHTML = `
+      <span style="color:var(--accent1);">📍 Đã chọn: ${place.display_name.split(',')[0]}</span>
+    `;
+  }
+
+  // Try to get place image from Wikimedia (optional)
+  fetchPlaceImage(place);
+
+  // Show place detail card
+  showPlaceDetail(place);
+}
+
+// Fetch place image from Wikimedia Commons (optional enhancement)
+async function fetchPlaceImage(place) {
+    try {
+        const name = place.display_name.split(',')[0];
+        const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(name)}`;
+        const res = await fetch(url);
+        if (!res.ok) return null;
+        const data = await res.json();
+        return data.thumbnail?.source || null;
+    } catch (e) {
+        return null;
+    }
+}
+
+// Show place detail card
+function showPlaceDetail(place) {
+  const statusEl = document.getElementById('searchStatus');
+  if (!statusEl) return;
+
+  const detailHTML = `
+    <div class="place-detail-card">
+      <div class="place-detail-content">
+        <div class="place-detail-name">${place.display_name.split(',')[0]}</div>
+        <div class="place-detail-address">${place.display_name}</div>
+        <div class="place-detail-coords">
+          📍 Lat: ${parseFloat(place.lat).toFixed(5)}, Lon: ${parseFloat(place.lon).toFixed(5)}
+        </div>
+        <div class="place-detail-actions">
+          <button class="place-detail-btn primary" onclick="setAsDestination(currentPlace)">
+            🎯 Đặt làm điểm đến
+          </button>
+          <button class="place-detail-btn secondary" onclick="clearSearchPlace()">
+            ✖️ Xóa
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  statusEl.innerHTML = detailHTML;
+}
+
+// Set search place as destination (for routing)
+function setAsDestination(place) {
+  if (!place) return;
+
+  const lat = parseFloat(place.lat);
+  const lon = parseFloat(place.lon);
+  const name = place.display_name.split(',')[0];
+
+  // Add as a custom station
+  stations.push({
+    name: name,
+    lat: lat,
+    lon: lon
+  });
+
+  renderStations();
+  
+  // Select this station
+  selectStation(stations.length - 1);
+
+  // Show notification
+  setStatus(`✅ Đã thêm "${name}" làm trạm đích`, 'ok');
+}
+
+// Clear search place
+function clearSearchPlace() {
+  if (searchMarker) {
+    map.removeLayer(searchMarker);
+    searchMarker = null;
+  }
+
+  currentPlace = null;
+  document.getElementById('placeSearch').value = '';
+  
+  const statusEl = document.getElementById('searchStatus');
+  if (statusEl) {
+    statusEl.textContent = '';
+  }
+
+  setStatus('Đã xóa địa điểm tìm kiếm', 'ok');
+}
+
+// Highlight search result (keyboard navigation)
+function highlightSearchResult(index) {
+  const items = document.querySelectorAll('.search-result-item');
+  items.forEach((item, i) => {
+    item.classList.remove('keyboard-focus');
+    if (i === index) {
+      item.classList.add('keyboard-focus');
+      item.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  });
+}
+
+// Hide search results
+function hideSearchResults() {
+  const container = document.getElementById('searchResults');
+  if (container) {
+    container.classList.remove('active');
+  }
+  selectedSearchIndex = -1;
+}
+
+// Initialize on page load
+if (typeof document !== 'undefined') {
+  // Wait for DOM to be ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPlaceSearch);
+  } else {
+    initPlaceSearch();
+  }
+}

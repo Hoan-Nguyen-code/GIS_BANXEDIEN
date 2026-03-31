@@ -1,0 +1,99 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xóa User - Admin</title>
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="logo">
+            <i class="fas fa-bolt"></i>
+            <h2>Admin Panel</h2>
+        </div>
+        <nav class="menu">
+            <a href="{% url 'admin_dashboard' %}" class="menu-item">
+                <i class="fas fa-dashboard"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="{% url 'admin_users' %}" class="menu-item active">
+                <i class="fas fa-users"></i>
+                <span>Quản lý Users</span>
+            </a>
+            <a href="{% url 'admin_kho' %}" class="menu-item">
+                <i class="fas fa-warehouse"></i>
+                <span>Quản lý Kho</span>
+            </a>
+            <a href="{% url 'admin_taichinh' %}" class="menu-item">
+                <i class="fas fa-chart-line"></i>
+                <span>Tài chính</span>
+            </a>
+            <a href="{% url 'admin_donhang' %}" class="menu-item">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Đơn hàng</span>
+            </a>
+            <a href="{% url 'admin_tramsac' %}" class="menu-item">
+                <i class="fas fa-charging-station"></i>
+                <span>Trạm sạc</span>
+            </a>
+            <a href="{% url 'admin_thongke' %}" class="menu-item">
+                <i class="fas fa-chart-pie"></i>
+                <span>Thống kê</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="{% url 'logout' %}" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Đăng xuất</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="navbar">
+            <div class="navbar-left">
+                <h1><i class="fas fa-trash"></i> Xóa User</h1>
+            </div>
+            <div class="navbar-right">
+                <div class="admin-info">
+                    <span class="admin-name">{{ request.user.username }}</span>
+                    <div class="admin-avatar">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content fade-in">
+            <div class="confirm-wrapper">
+                <div class="confirm-card">
+                    <div class="confirm-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h2>Xác nhận xóa</h2>
+                    <p>
+                        Bạn có chắc muốn xóa user <strong>{{ user.username }}</strong>?<br>
+                        Hành động này <strong>không thể hoàn tác</strong>.
+                    </p>
+                    <div class="confirm-actions">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-danger">
+                                <i class="fas fa-trash"></i> Xóa
+                            </button>
+                        </form>
+                        <a href="{% url 'admin_users' %}" class="btn-cancel">
+                            <i class="fas fa-times"></i> Hủy
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
