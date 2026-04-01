@@ -1,0 +1,146 @@
+body {
+    background: #f5f7fb;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.checkout-container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 30px 20px;
+}
+
+.checkout-title {
+    font-size: 28px;
+    margin-bottom: 25px;
+    font-weight: 700;
+}
+
+.checkout-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 25px;
+}
+
+.card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+}
+
+.form-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+input:focus, textarea:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.payment-options {
+    margin-top: 10px;
+}
+
+.payment-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.payment-item:hover {
+    border-color: #007bff;
+}
+
+.payment-item input {
+    margin-right: 10px;
+}
+
+.payment-item.active {
+    border-color: #007bff;
+    background: #f0f7ff;
+}
+
+.btn-order {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    margin-top: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-order:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+}
+
+.order-list {
+    margin-top: 10px;
+}
+
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.product-name {
+    font-weight: 600;
+}
+
+.quantity {
+    font-size: 13px;
+    color: #777;
+}
+
+.price {
+    font-weight: 600;
+}
+
+.divider {
+    height: 1px;
+    background: #eee;
+    margin: 15px 0;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.summary-row.total {
+    font-size: 18px;
+    font-weight: bold;
+    color: #e53935;
+}
+
+.sticky {
+    position: sticky;
+    top: 90px;
+}
+
+@media (max-width: 768px) {
+    .checkout-grid {
+        grid-template-columns: 1fr;
+    }
+}

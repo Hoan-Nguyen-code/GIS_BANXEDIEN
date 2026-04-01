@@ -1,0 +1,45 @@
+.success-container {
+    max-width: 500px;
+    margin: 80px auto;
+    background: #ffffff;
+    padding: 50px 30px;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+}
+
+.success-container h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #00b383;
+    margin-bottom: 15px;
+}
+
+.success-container p {
+    font-size: 15px;
+    color: #666;
+    margin-bottom: 25px;
+}
+
+.success-container h2::before {
+    content: "✔";
+    display: block;
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+.btn-order {
+    display: inline-block;
+    padding: 12px 24px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.25s;
+}
+
+.btn-order:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0,123,255,0.3);
+}

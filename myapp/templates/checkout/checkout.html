@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/checkout.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="checkout-container">
+
+    <h2 class="checkout-title">🧾 Thanh toán đơn hàng</h2>
+
+    <div class="checkout-grid">
+
+        <!-- LEFT -->
+        <div class="checkout-left">
+
+            <!-- CUSTOMER INFO -->
+            <div class="card">
+                <h3>Thông tin nhận hàng</h3>
+
+                <form method="POST" id="checkout-form" data-total="{{ total_price|floatformat:0 }}">
+                    {% csrf_token %}
+
+                    <div class="form-row">
+                        <input type="text" name="fullname" placeholder="Họ và tên" required>
+                        <input type="text" name="phone" placeholder="Số điện thoại" required>
+                    </div>
+
+                    <textarea name="address" placeholder="Địa chỉ nhận hàng" required></textarea>
+
+                    <textarea name="note" placeholder="Ghi chú (không bắt buộc)"></textarea>
+
+                    <h4>Phương thức thanh toán</h4>
+
+                    <div class="payment-options">
+
+                        <label class="payment-item active">
+                            <input type="radio" name="payment" value="cod" checked>
+                            <span>💵 Thanh toán khi nhận hàng</span>
+                        </label>
+
+                        <label class="payment-item">
+                            <input type="radio" name="payment" value="bank">
+                            <span>🏦 Chuyển khoản ngân hàng</span>
+                        </label>
+
+                    </div>
+
+                    <div id="bank-info" style="display:none; margin-top:15px; text-align:center;">
+                        <p style="font-weight:600;">Quét mã QR để thanh toán</p>
+
+                        <img id="qr-preview" width="200" style="margin:10px 0;">
+
+                        <p style="font-size:13px; color:#666;">
+                            Nội dung: <b>ORDER (tạm)</b>
+                        </p>
+                    </div>
+
+                    <button type="submit" class="btn-order">
+                        🚀 Đặt hàng ngay
+                    </button>
+
+                </form>
+            </div>
+
+        </div>
+
+        <!-- RIGHT -->
+        <div class="checkout-right">
+
+            <div class="card sticky">
+
+                <h3>🛒 Đơn hàng của bạn</h3>
+
+                <div class="order-list">
+                    {% for item in items %}
+                    <div class="order-item">
+                        <div>
+                            <p class="product-name">{{ item.product.name }}</p>
+                            <span class="quantity">x{{ item.quantity }}</span>
+                        </div>
+                        <div class="price">
+                            {{ item.subtotal|floatformat:0|intcomma }}đ
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="summary-row">
+                    <span>Tạm tính</span>
+                    <span>{{ total_price|floatformat:0|intcomma }}đ</span>
+                </div>
+
+                <div class="summary-row total">
+                    <span>Tổng cộng</span>
+                    <span>{{ total_price|floatformat:0|intcomma }}đ</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

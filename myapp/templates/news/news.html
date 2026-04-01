@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Tin tức{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/news.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<h1 class="news-title">
+    <i class="fas fa-newspaper"></i> Tin nổi nhất hiện nay 🔥
+</h1>
+
+<div id="loading" class="loading">
+    Đang tải tin tức từ Google News...
+</div>
+
+<div class="news-layout">
+    <div class="news-left" id="newsLeft"></div>
+    <div class="news-right" id="newsRight"></div>
+</div>
+
+<div class="news-grid" id="newsGrid"></div>
+
+<script src="{% static 'js/news.js' %}" defer></script>
+{% endblock %}
