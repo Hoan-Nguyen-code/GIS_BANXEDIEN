@@ -17,12 +17,32 @@ urlpatterns = [
     # ADMIN CUSTOM
     path('dashboard/', admin_views.admin_dashboard, name='admin_dashboard'),
     path('dashboard/users/', admin_views.admin_users, name='admin_users'),
+    path('dashboard/users/add/', admin_views.admin_user_add, name='admin_user_add'),
+    path('dashboard/users/<int:user_id>/', admin_views.admin_user_detail, name='admin_user_detail'),
+    path('dashboard/users/<int:user_id>/edit/', admin_views.admin_user_edit, name='admin_user_edit'),
+    path('dashboard/users/<int:user_id>/delete/', admin_views.admin_user_delete, name='admin_user_delete'),
     path('dashboard/kho/', admin_views.admin_kho, name='admin_kho'),
+    path('dashboard/kho/add/', admin_views.admin_product_add, name='admin_product_add'),
+    path('dashboard/kho/<int:product_id>/', admin_views.admin_product_detail, name='admin_product_detail'),
+    path('dashboard/kho/<int:product_id>/edit/', admin_views.admin_product_edit, name='admin_product_edit'),
+    path('dashboard/kho/<int:product_id>/delete/', admin_views.admin_product_delete, name='admin_product_delete'),
     path('dashboard/taichinh/', admin_views.admin_taichinh, name='admin_taichinh'),
     path('dashboard/donhang/', admin_views.admin_donhang, name='admin_donhang'),
+    path('dashboard/donhang/<int:order_id>/', admin_views.admin_order_detail, name='admin_order_detail'),
+    path('dashboard/donhang/<int:order_id>/edit/', admin_views.admin_order_edit, name='admin_order_edit'),
+    path('dashboard/donhang/<int:order_id>/delete/', admin_views.admin_order_delete, name='admin_order_delete'),
     path('dashboard/tramsac/', admin_views.admin_tramsac, name='admin_tramsac'),
+    path('dashboard/tramsac/add/', admin_views.admin_station_add, name='admin_station_add'),
+    path('dashboard/tramsac/<int:station_id>/', admin_views.admin_station_detail, name='admin_station_detail'),
+    path('dashboard/tramsac/<int:station_id>/edit/', admin_views.admin_station_edit, name='admin_station_edit'),
+    path('dashboard/tramsac/<int:station_id>/delete/', admin_views.admin_station_delete, name='admin_station_delete'),
     path('dashboard/thongke/', admin_views.admin_thongke, name='admin_thongke'),
-
+    
+    # API Station
+    path('api/stations/', admin_views.api_stations, name='api_stations'),
+    path('api/search-history/', admin_views.api_search_history, name='api_search_history'),
+    path('search/', admin_views.search_page, name='search_page'),
+    
     # Django Admin
     path('admin/', admin.site.urls),
 ]

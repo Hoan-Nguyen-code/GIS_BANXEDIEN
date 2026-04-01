@@ -218,11 +218,11 @@ class CartItem(models.Model):
 
 class Order(models.Model):
     class OrderStatus(TextChoices):
-        PENDING = "PENDING", "Pending"
-        CONFIRMED = "CONFIRMED", "Confirmed"
-        SHIPPED = "SHIPPED", "Shipped"
-        COMPLETED = "COMPLETED", "Completed"
-        CANCELLED = "CANCELLED", "Cancelled"
+        PENDING = "PENDING", "Chờ xác nhận"
+        CONFIRMED = "CONFIRMED", "Đã xác nhận"
+        SHIPPED = "SHIPPED", "Đang giao hàng"
+        COMPLETED = "COMPLETED", "Hoàn thành"
+        CANCELLED = "CANCELLED", "Đã hủy"
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     total_price = models.DecimalField(max_digits=14, decimal_places=2, default=0)
@@ -366,3 +366,65 @@ class RevenueReport(models.Model):
 
     def __str__(self):
         return f"Revenue {self.date}"
+
+# ==============================
+# 13. CHARGING STATION (TRẠM SẠC)
+# ==============================
+
+class ChargingStation(models.Model):
+    class StationStatus(TextChoices):
+        ACTIVE = "ACTIVE", "Hoạt động"
+        MAINTENANCE = "MAINTENANCE", "Bảo trì"
+        INACTIVE = "INACTIVE", "Ngừng hoạt động"
+
+    class ChargerType(TextChoices):
+        DC_FAST = "DC_FAST", "DC Fast"
+        AC_SLOW = "AC_SLOW", "AC Slow"
+        SUPERCHARGER = "SUPERCHARGER", "Supercharger"
+
+    name = models.CharField(max_length=200)
+    address = models.TextField()
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+    charger_type = models.CharField(
+        max_length=20,
+        choices=ChargerType.choices,
+        default=ChargerType.DC_FAST
+    )
+    power = models.CharField(max_length=20, default='50kW')
+    total_ports = models.PositiveIntegerField(default=0)
+    available_ports = models.PositiveIntegerField(default=0)
+    status = models.CharField(
+        max_length=20,
+        choices=StationStatus.choices,
+        default=StationStatus.ACTIVE
+    )
+    image = models.ImageField(upload_to='stations/', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.name
+    # ==============================
+# 14. SEARCH HISTORY
+# ==============================
+class SearchHistory(models.Model):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE,
+        null=True, blank=True
+    )
+    query = models.CharField(max_length=300)
+    display_name = models.TextField(blank=True)
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
+    image_url = models.URLField(max_length=500, blank=True)
+    searched_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-searched_at']
+
+    def __str__(self):
+        return f"{self.query} - {self.searched_at}"

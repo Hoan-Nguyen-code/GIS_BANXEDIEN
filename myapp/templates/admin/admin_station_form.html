@@ -1,0 +1,187 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if action == 'add' %}Thêm trạm sạc{% else %}Sửa trạm sạc{% endif %} - Admin</title>
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body data-action="{{ action }}">
+
+    <div class="sidebar">
+        <div class="logo">
+            <i class="fas fa-bolt"></i>
+            <h2>Admin Panel</h2>
+        </div>
+        <nav class="menu">
+            <a href="{% url 'admin_dashboard' %}" class="menu-item">
+                <i class="fas fa-dashboard"></i><span>Dashboard</span>
+            </a>
+            <a href="{% url 'admin_users' %}" class="menu-item">
+                <i class="fas fa-users"></i><span>Quản lý Users</span>
+            </a>
+            <a href="{% url 'admin_kho' %}" class="menu-item">
+                <i class="fas fa-warehouse"></i><span>Quản lý Kho</span>
+            </a>
+            <a href="{% url 'admin_taichinh' %}" class="menu-item">
+                <i class="fas fa-chart-line"></i><span>Tài chính</span>
+            </a>
+            <a href="{% url 'admin_donhang' %}" class="menu-item">
+                <i class="fas fa-shopping-cart"></i><span>Đơn hàng</span>
+            </a>
+            <a href="{% url 'admin_tramsac' %}" class="menu-item active">
+                <i class="fas fa-charging-station"></i><span>Trạm sạc</span>
+            </a>
+            <a href="{% url 'admin_thongke' %}" class="menu-item">
+                <i class="fas fa-chart-pie"></i><span>Thống kê</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="{% url 'logout' %}" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i><span>Đăng xuất</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="navbar">
+            <div class="navbar-left">
+                <h1>
+                    <i class="fas fa-{% if action == 'add' %}plus{% else %}edit{% endif %}"></i>
+                    {% if action == 'add' %}Thêm trạm sạc mới{% else %}Sửa trạm: {{ station.name }}{% endif %}
+                </h1>
+            </div>
+            <div class="navbar-right">
+                <div class="admin-info">
+                    <span class="admin-name">{{ request.user.username }}</span>
+                    <div class="admin-avatar"><i class="fas fa-user-shield"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content fade-in">
+
+            {% if messages %}
+            <div class="alert-messages">
+                {% for message in messages %}
+                <div class="alert {{ message.tags }}">
+                    <i class="fas fa-{% if message.tags == 'error' %}times-circle{% else %}check-circle{% endif %}"></i>
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="form-card">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-charging-station"></i> Tên trạm *</label>
+                            <input type="text" name="name" required
+                                   placeholder="Nhập tên trạm sạc..."
+                                   value="{% if action == 'edit' %}{{ station.name }}{% else %}{{ request.POST.name }}{% endif %}">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-bolt"></i> Loại sạc</label>
+                            <select name="charger_type">
+                                {% for value, label in charger_types %}
+                                <option value="{{ value }}"
+                                    {% if action == 'edit' and station.charger_type == value %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-map-marker-alt"></i> Địa chỉ *</label>
+                        <textarea name="address" rows="2"
+                                  placeholder="Nhập địa chỉ trạm sạc...">{% if action == 'edit' %}{{ station.address }}{% else %}{{ request.POST.address }}{% endif %}</textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-map"></i> Latitude</label>
+                            <input type="number" name="latitude" step="any"
+                                   placeholder="VD: 10.9741"
+                                   value="{% if action == 'edit' %}{{ station.latitude }}{% else %}{{ request.POST.latitude }}{% endif %}">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-map"></i> Longitude</label>
+                            <input type="number" name="longitude" step="any"
+                                   placeholder="VD: 106.8986"
+                                   value="{% if action == 'edit' %}{{ station.longitude }}{% else %}{{ request.POST.longitude }}{% endif %}">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-tachometer-alt"></i> Công suất</label>
+                            <input type="text" name="power"
+                                   placeholder="VD: 150kW"
+                                   value="{% if action == 'edit' %}{{ station.power }}{% else %}{{ request.POST.power }}{% endif %}">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-tasks"></i> Trạng thái</label>
+                            <select name="status">
+                                {% for value, label in status_choices %}
+                                <option value="{{ value }}"
+                                    {% if action == 'edit' and station.status == value %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-plug"></i> Tổng số cổng</label>
+                            <input type="number" name="total_ports" min="0"
+                                   placeholder="Nhập số cổng..."
+                                   value="{% if action == 'edit' %}{{ station.total_ports }}{% else %}{{ request.POST.total_ports }}{% endif %}">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-plug"></i> Số cổng còn trống</label>
+                            <input type="number" name="available_ports" min="0"
+                                   placeholder="Nhập số cổng trống..."
+                                   value="{% if action == 'edit' %}{{ station.available_ports }}{% else %}{{ request.POST.available_ports }}{% endif %}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-image"></i> Hình ảnh
+                            {% if action == 'edit' %}<small style="color:var(--gray-700); font-weight:400;">(để trống nếu không đổi)</small>{% endif %}
+                        </label>
+                        <input type="file" name="image" accept="image/*">
+                        {% if action == 'edit' and station.image %}
+                        <div style="margin-top:8px;">
+                            <img src="{{ station.image.url }}" alt="{{ station.name }}"
+                                 style="width:80px; height:80px; object-fit:cover; border-radius:8px;">
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-save">
+                            <i class="fas fa-save"></i>
+                            {% if action == 'add' %}Thêm trạm sạc{% else %}Lưu thay đổi{% endif %}
+                        </button>
+                        <a href="{% url 'admin_tramsac' %}" class="btn-cancel">
+                            <i class="fas fa-times"></i> Hủy
+                        </a>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="{% static 'js/admin_user_form.js' %}"></script>
+</body>
+</html>

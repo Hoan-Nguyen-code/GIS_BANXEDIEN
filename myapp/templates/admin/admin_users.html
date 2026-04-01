@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Sidebar -->
+
     <div class="sidebar">
         <div class="logo">
             <i class="fas fa-bolt"></i>
@@ -53,7 +53,6 @@
         </div>
     </div>
 
-    <!-- Main Content -->
     <div class="main-content">
         <div class="navbar">
             <div class="navbar-left">
@@ -61,7 +60,7 @@
             </div>
             <div class="navbar-right">
                 <div class="admin-info">
-                    <span class="admin-name">Admin</span>
+                    <span class="admin-name">{{ request.user.username }}</span>
                     <div class="admin-avatar">
                         <i class="fas fa-user-shield"></i>
                     </div>
@@ -70,7 +69,18 @@
         </div>
 
         <div class="content fade-in">
-            <!-- Statistics -->
+
+            {% if messages %}
+            <div class="alert-messages">
+                {% for message in messages %}
+                <div class="alert {{ message.tags }}">
+                    <i class="fas fa-{% if message.tags == 'error' %}times-circle{% else %}check-circle{% endif %}"></i>
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
             <div class="stats-grid">
                 <div class="stat-card blue">
                     <div class="stat-icon"><i class="fas fa-users"></i></div>
@@ -102,13 +112,12 @@
                 </div>
             </div>
 
-            <!-- Users Table -->
             <div class="section">
                 <div class="section-header">
                     <h2>Danh sách Users</h2>
-                    <button class="btn-primary" onclick="alert('Thêm user mới')">
+                    <a href="{% url 'admin_user_add' %}" class="btn-primary">
                         <i class="fas fa-plus"></i> Thêm User
-                    </button>
+                    </a>
                 </div>
                 <div class="table-container">
                     <table class="data-table">
@@ -129,15 +138,13 @@
                             <tr>
                                 <td>{{ user.id }}</td>
                                 <td><strong>{{ user.username }}</strong></td>
-                                <td>{{ user.email }}</td>
+                                <td>{{ user.email|default:"-" }}</td>
                                 <td>{{ user.get_full_name|default:"-" }}</td>
                                 <td>
-                                    {% if user.is_superuser %}
-                                    <span class="status-badge completed">Super Admin</span>
-                                    {% elif user.is_staff %}
-                                    <span class="status-badge confirmed">Admin</span>
+                                    {% if user.role == 'ADMIN' %}
+                                    <span class="status-badge completed">Admin</span>
                                     {% else %}
-                                    <span class="status-badge pending">User</span>
+                                    <span class="status-badge pending">Customer</span>
                                     {% endif %}
                                 </td>
                                 <td>
@@ -148,10 +155,26 @@
                                     {% endif %}
                                 </td>
                                 <td>{{ user.date_joined|date:"d/m/Y" }}</td>
-                                <td>
-                                    <button class="btn-action view"><i class="fas fa-eye"></i></button>
-                                    <button class="btn-action edit"><i class="fas fa-edit"></i></button>
-                                    <button class="btn-action delete"><i class="fas fa-trash"></i></button>
+                                <td class="actions">
+                            <a href="{% url 'admin_user_detail' user.id %}" class="btn-action view">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{% url 'admin_user_edit' user.id %}" class="btn-action edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <button class="btn-action delete btn-delete-user"
+                                    data-username="{{ user.username }}"
+                                    data-url="{% url 'admin_user_delete' user.id %}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="8" style="text-align:center; padding: 40px; color: var(--gray-700);">
+                                    <i class="fas fa-users" style="font-size:32px; margin-bottom:8px; display:block;"></i>
+                                    Chưa có user nào
                                 </td>
                             </tr>
                             {% endfor %}
@@ -159,17 +182,10 @@
                     </table>
                 </div>
             </div>
+
         </div>
     </div>
 
-    <script>
-        document.querySelectorAll('.btn-action.delete').forEach(btn => {
-            btn.addEventListener('click', function() {
-                if(confirm('Bạn có chắc muốn xóa user này?')) {
-                    alert('Đã xóa user!');
-                }
-            });
-        });
-    </script>
+    <script src="{% static 'js/admin_users.js' %}"></script>
 </body>
 </html>

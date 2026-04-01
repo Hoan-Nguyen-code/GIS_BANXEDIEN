@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="referrer" content="no-referrer-when-downgrade">
   <title>GIS 3 – 2 Đường đi ngắn nhất đến trạm sạc</title>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
@@ -17,8 +18,16 @@
   <div class="sidebar-header">
     <div class="tag">⚡ GIS Chức năng 3</div>
     <h1>Hai đường đi ngắn nhất<br>đến trạm sạc</h1>
-    <p>Powered by OpenRouteService + Leaflet</p>
-  </div>
+<a href="{% url 'search_page' %}" class="sidebar-btn sidebar-btn-search">
+    <i class="fas fa-search"></i>
+    🗺️ Tìm kiếm địa danh
+</a>
+
+<a href="{% url 'admin_dashboard' %}" class="sidebar-btn sidebar-btn-dashboard">
+    <i class="fas fa-th-large"></i>
+    Quay về Dashboard
+</a>
+</div>
 
   <!-- API KEY ẨN - hardcoded -->
   <input type="hidden" id="apiKey" value="eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjMyZGIyMGFlMjkwYTRjYmQ5MTVkYmU4NWM1YWU3MzFjIiwiaCI6Im11cm11cjY0In0="/>

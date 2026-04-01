@@ -1,0 +1,159 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if action == 'add' %}Thêm sản phẩm{% else %}Sửa sản phẩm{% endif %} - Admin</title>
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body data-action="{{ action }}">
+
+    <div class="sidebar">
+        <div class="logo">
+            <i class="fas fa-bolt"></i>
+            <h2>Admin Panel</h2>
+        </div>
+        <nav class="menu">
+            <a href="{% url 'admin_dashboard' %}" class="menu-item">
+                <i class="fas fa-dashboard"></i><span>Dashboard</span>
+            </a>
+            <a href="{% url 'admin_users' %}" class="menu-item">
+                <i class="fas fa-users"></i><span>Quản lý Users</span>
+            </a>
+            <a href="{% url 'admin_kho' %}" class="menu-item active">
+                <i class="fas fa-warehouse"></i><span>Quản lý Kho</span>
+            </a>
+            <a href="{% url 'admin_taichinh' %}" class="menu-item">
+                <i class="fas fa-chart-line"></i><span>Tài chính</span>
+            </a>
+            <a href="{% url 'admin_donhang' %}" class="menu-item">
+                <i class="fas fa-shopping-cart"></i><span>Đơn hàng</span>
+            </a>
+            <a href="{% url 'admin_tramsac' %}" class="menu-item">
+                <i class="fas fa-charging-station"></i><span>Trạm sạc</span>
+            </a>
+            <a href="{% url 'admin_thongke' %}" class="menu-item">
+                <i class="fas fa-chart-pie"></i><span>Thống kê</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="{% url 'logout' %}" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i><span>Đăng xuất</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="navbar">
+            <div class="navbar-left">
+                <h1>
+                    <i class="fas fa-{% if action == 'add' %}plus{% else %}edit{% endif %}"></i>
+                    {% if action == 'add' %}Thêm sản phẩm mới{% else %}Sửa sản phẩm: {{ product.name }}{% endif %}
+                </h1>
+            </div>
+            <div class="navbar-right">
+                <div class="admin-info">
+                    <span class="admin-name">{{ request.user.username }}</span>
+                    <div class="admin-avatar"><i class="fas fa-user-shield"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content fade-in">
+
+            {% if messages %}
+            <div class="alert-messages">
+                {% for message in messages %}
+                <div class="alert {{ message.tags }}">
+                    <i class="fas fa-{% if message.tags == 'error' %}times-circle{% else %}check-circle{% endif %}"></i>
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="form-card">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-box"></i> Tên sản phẩm *</label>
+                            <input type="text" name="name" required
+                                   placeholder="Nhập tên sản phẩm..."
+                                   value="{% if action == 'edit' %}{{ product.name }}{% else %}{{ request.POST.name }}{% endif %}">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-tag"></i> Danh mục *</label>
+                            <select name="category">
+                                {% for cat in categories %}
+                                <option value="{{ cat.id }}"
+                                    {% if action == 'edit' and product.category.id == cat.id %}selected{% endif %}>
+                                    {{ cat.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-money-bill"></i> Giá bán *</label>
+                            <input type="number" name="price" required
+                                min="0"
+                                placeholder="Nhập giá bán..."
+                                value="{% if action == 'edit' %}{{ product.price }}{% else %}{{ request.POST.price }}{% endif %}">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-cubes"></i> Số lượng tồn kho</label>
+                            <input type="number" name="stock_quantity" min="0"
+                                placeholder="Nhập số lượng..."
+                                value="{% if action == 'edit' %}{{ inventory.stock_quantity }}{% else %}{{ request.POST.stock_quantity }}{% endif %}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-align-left"></i> Mô tả</label>
+                        <textarea name="description" rows="3"
+                                  placeholder="Nhập mô tả sản phẩm...">{% if action == 'edit' %}{{ product.description }}{% else %}{{ request.POST.description }}{% endif %}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-image"></i> Hình ảnh {% if action == 'edit' %}<small style="color:var(--gray-700); font-weight:400;">(để trống nếu không đổi)</small>{% endif %}</label>
+                        <input type="file" name="image" accept="image/*">
+                        {% if action == 'edit' and product.image %}
+                        <div style="margin-top:8px;">
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}"
+                                 style="width:80px; height:80px; object-fit:cover; border-radius:8px;">
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" name="is_active" id="is_active"
+                                   {% if action == 'add' or product.is_active %}checked{% endif %}>
+                            <label for="is_active">Hiển thị sản phẩm</label>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-save">
+                            <i class="fas fa-save"></i>
+                            {% if action == 'add' %}Thêm sản phẩm{% else %}Lưu thay đổi{% endif %}
+                        </button>
+                        <a href="{% url 'admin_kho' %}" class="btn-cancel">
+                            <i class="fas fa-times"></i> Hủy
+                        </a>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="{% static 'js/admin_user_form.js' %}"></script>
+</body>
+</html>
