@@ -29,7 +29,10 @@
                         <input type="text" name="phone" placeholder="Số điện thoại" required>
                     </div>
 
-                    <textarea name="address" placeholder="Địa chỉ nhận hàng" required></textarea>
+                    <div class="address-wrapper" style="position:relative;">
+                        <textarea name="address" id="addressInput" placeholder="Địa chỉ nhận hàng" required></textarea>
+                        <div id="addressSuggestions" class="address-suggestions"></div>
+                    </div>
 
                     <textarea name="note" placeholder="Ghi chú (không bắt buộc)"></textarea>
 
@@ -108,5 +111,8 @@
     </div>
 
 </div>
+{% block extra_js %}
+<script src="{% static 'js/checkout.js' %}"></script>
+{% endblock %}
 
 {% endblock %}

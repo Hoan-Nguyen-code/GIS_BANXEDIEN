@@ -193,7 +193,7 @@ def admin_product_delete(request, product_id):
         return redirect('admin_kho')
 
     return render(request, 'admin/admin_product_confirm_delete.html', {'product': product})
-# ==================== QUẢN LÝ TÀI CHÍNH ====================
+
 # ==================== QUẢN LÝ TÀI CHÍNH ====================
 @login_required
 @user_passes_test(admin_required, login_url='/login/')
@@ -201,28 +201,31 @@ def admin_taichinh(request):
     from myapp.models import Order, OrderItem, Product
     from django.db.models import Sum, F, Count
     from django.utils import timezone
-    from datetime import timedelta
     import json
 
     now = timezone.now()
-    this_month = now.month
-    this_year = now.year
+    
+    # ✅ Lấy tháng/năm từ filter, mặc định là tháng hiện tại
+    selected_month = int(request.GET.get('month', now.month))
+    selected_year = int(request.GET.get('year', now.year))
     today = now.date()
 
-    # Doanh thu tháng này
+    VALID_STATUS = ['CONFIRMED', 'COMPLETED']
+
+    # Doanh thu tháng được chọn
     revenue_month = Order.objects.filter(
-        created_at__month=this_month,
-        created_at__year=this_year,
-        status__in=['COMPLETED', 'SHIPPED', 'CONFIRMED']
+        created_at__month=selected_month,
+        created_at__year=selected_year,
+        status__in=VALID_STATUS
     ).aggregate(total=Sum('total_price'))['total'] or 0
 
     # Doanh thu hôm nay
     revenue_today = Order.objects.filter(
         created_at__date=today,
-        status__in=['COMPLETED', 'SHIPPED', 'CONFIRMED']
+        status__in=VALID_STATUS
     ).aggregate(total=Sum('total_price'))['total'] or 0
 
-    # Doanh thu theo tháng (12 tháng)
+    # Doanh thu theo tháng (12 tháng trong năm được chọn)
     monthly_revenue = []
     monthly_expense = []
     monthly_profit = []
@@ -230,8 +233,8 @@ def admin_taichinh(request):
     for month in range(1, 13):
         rev = Order.objects.filter(
             created_at__month=month,
-            created_at__year=this_year,
-            status__in=['COMPLETED', 'SHIPPED', 'CONFIRMED']
+            created_at__year=selected_year,
+            status__in=VALID_STATUS
         ).aggregate(total=Sum('total_price'))['total'] or 0
 
         rev_billion = round(float(rev) / 1_000_000_000, 2)
@@ -249,11 +252,9 @@ def admin_taichinh(request):
         'profit': monthly_profit,
     }
 
-    # Chi tiêu và lợi nhuận tháng (ước tính)
     expense_month = round(float(revenue_month) * 0.6, 2)
     profit_month = round(float(revenue_month) * 0.4, 2)
 
-    # Format số
     def fmt(num):
         return f"{int(num):,} VNĐ".replace(',', '.')
 
@@ -264,7 +265,7 @@ def admin_taichinh(request):
         'revenue_today': fmt(revenue_today),
     }
 
-    # Top sản phẩm bán chạy từ OrderItem
+    # Top sản phẩm
     top_products_qs = OrderItem.objects.values(
         'product__name'
     ).annotate(
@@ -280,14 +281,21 @@ def admin_taichinh(request):
             'revenue': f"{int(p['revenue']):,}".replace(',', '.'),
         })
 
+    # ✅ Dữ liệu cho dropdown filter
+    months = [{'value': m} for m in range(1, 13)]
+    years = list(range(2024, now.year + 1))
+
     context = {
         'stats': stats,
         'revenue_data': json.dumps(revenue_data),
         'top_products': top_products,
+        'selected_month': selected_month,
+        'selected_year': selected_year,
+        'months': months,
+        'years': years,
     }
 
     return render(request, 'admin/admin_taichinh.html', context)
-
 
 # ==================== QUẢN LÝ ĐƠN HÀNG ====================
 @login_required
@@ -489,7 +497,7 @@ def admin_station_delete(request, station_id):
 
     return render(request, 'admin/admin_station_confirm_delete.html', {'station': station})
 
-# ==================== THỐNG KÊ & BÁO CÁO ====================
+
 # ==================== THỐNG KÊ & BÁO CÁO ====================
 @login_required
 @user_passes_test(admin_required, login_url='/login/')
@@ -511,7 +519,7 @@ def admin_thongke(request):
         daily_labels.append(label)
         rev = Order.objects.filter(
             created_at__date=day.date(),
-            status__in=['COMPLETED', 'SHIPPED', 'CONFIRMED']
+            status__in=['CONFIRMED', 'COMPLETED']
         ).aggregate(total=Sum('total_price'))['total'] or 0
         daily_data.append(round(float(rev) / 1_000_000, 2))
 
