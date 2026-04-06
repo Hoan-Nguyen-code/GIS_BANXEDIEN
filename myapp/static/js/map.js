@@ -192,119 +192,44 @@ async function loadNearbyStations() {
   }
 }
 
-function loadSampleData() {
-  // Data mẫu toàn quốc - tự động chọn theo vị trí người dùng
-  const ALL_STATIONS = [
-// Biên Hòa - Đồng Nai
-      {
-      name: "Trạm Sạc Vinfast - Vincom Biên Hòa",
-      lat: 10.9741,
-      lon: 106.8986,
-      image: "/static/images/places/vincom.jpg"
-      },
+async function loadSampleData() {
+    try {
+        const res = await fetch('/api/stations/');
+        const data = await res.json();
 
-      {
-      name: "Trạm Sạc Evgo - LotteMart Biên Hòa",
-      lat: 10.9680,
-      lon: 106.8830,
-      image: "/static/images/places/lotte.jpg"
-      },
+        stations = data.stations.map(s => ({
+            id: s.id,
+            name: s.name,
+            lat: s.lat,
+            lon: s.lon,
+            address: s.address,
+            type: s.type,
+            power: s.power,
+            total_ports: s.total_ports,
+            available_ports: s.available_ports,
+            status: s.status,
+        }));
 
-      {
-      name: "Trạm Sạc EVN - Khu CN Amata",
-      lat: 10.9590,
-      lon: 106.8920,
-      image: "/static/images/places/amata.jpg"
-      },
+        if (userLat) {
+            const radius = parseInt(document.getElementById('radiusSlider').value);
+            const autoRadius = Math.max(radius, 15000);
+            const filtered = stations.filter(s => {
+                const phi1 = Math.cos(userLat * Math.PI / 180);
+                const dLat = (s.lat - userLat) * 111000;
+                const dLon = (s.lon - userLon) * 111000 * phi1;
+                return Math.sqrt(dLat * dLat + dLon * dLon) <= autoRadius;
+            });
+            if (filtered.length > 0) stations = filtered;
+        }
 
-      {
-      name: "Trạm Sạc ChargePoint - QL1A",
-      lat: 10.9820,
-      lon: 106.8760,
-      image: "/static/images/places/ql1a.jpg"
-      },
-      {
-      name: "Trạm Sạc Tesla - TTTM Go! Biên Hòa",  lat: 10.9500, 
-      lon: 106.8650,
-      image: "/static/images/places/go.jpg"
-     },
-      // Bình Chánh - TP.HCM
-      {
-      name: "Trạm Sạc Vinfast - SC VivoCity",
-      lat: 10.7290,
-      lon: 106.7218,
-      image: "/static/images/places/vivocity.jpg"
-      },
+        renderStations();
+        setStatus(`Đã load ${stations.length} trạm sạc từ database`, 'ok');
+        checkReady();
 
-      {
-      name: "Trạm Sạc 2",
-      lat: 10.6850,
-      lon: 106.5980,
-      //image: "/static/images/places/binhchanh.jpg"
-      },
-
-      {
-      name: "Trạm Sạc ChargePoint - QL50",
-      lat: 10.6720,
-      lon: 106.6100,
-      image: "/static/images/places/ql50.jpg"
-      },
-
-      {
-      name: "Trạm Sạc Vinfast - Aeon Mall BT",
-      lat: 10.7435,
-      lon: 106.6221,
-      image: "/static/images/places/aeon.jpg"
-      },
-
-      {
-      name: "Trạm Sạc Evgo - KCN Lê Minh Xuân",
-      lat: 10.6540,
-      lon: 106.5750,
-      image: "/static/images/places/leminhxuan.jpg"
-      },
-
-      // Quận 7 / Nhà Bè
-      {
-      name: "Trạm Sạc Vinfast - Crescent Mall",
-      lat: 10.7327,
-      lon: 106.7178,
-      image: "/static/images/places/crescent.jpg"
-      },
-
-      {
-      name: "Trạm Sạc Tesla - Phú Mỹ Hưng",
-      lat: 10.7262,
-      lon: 106.7017,
-      image: "/static/images/places/phumyhung.jpg"
-      },
-
-    {name: "Trạm Sạc 1", lat: 10.809, lon: 106.564},
-    {name: "Trạm Sạc EVN - Bình Chánh", lat: 10.812, lon: 106.570, image: "/static/images/places/binhchanh.jpg"},
-    {name: "Trạm Sạc 3", lat: 10.800, lon: 106.550},
-    {name: "Trạm Sạc 4", lat: 10.820, lon: 106.600}
-  ];
-
-  if (userLat) {
-    // Tự động lọc theo vị trí hiện tại + bán kính rộng để chắc có data
-    const radius = parseInt(document.getElementById('radiusSlider').value);
-    const autoRadius = Math.max(radius, 15000); // tối thiểu 15km để có data
-    stations = ALL_STATIONS.filter(s => {
-      const phi1 = Math.cos(userLat * Math.PI / 180);
-      const dLat = (s.lat - userLat) * 111000;
-      const dLon = (s.lon - userLon) * 111000 * phi1;
-      return Math.sqrt(dLat*dLat + dLon*dLon) <= autoRadius;
-    });
-    if (stations.length === 0) stations = ALL_STATIONS; // fallback: load hết
-  } else {
-    stations = ALL_STATIONS;
-  }
-
-  renderStations();
-  setStatus(`Đã load ${stations.length} trạm mẫu gần bạn`, 'ok');
-  checkReady();
+    } catch (e) {
+        setStatus('Lỗi load data: ' + e.message, 'err');
+    }
 }
-
 function addStation() {
   const name = document.getElementById('newName').value.trim();
   const lat  = parseFloat(document.getElementById('newLat').value);

@@ -98,26 +98,15 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label><i class="fas fa-map-marker-alt"></i> Địa chỉ *</label>
-                        <textarea name="address" rows="2"
-                                  placeholder="Nhập địa chỉ trạm sạc...">{% if action == 'edit' %}{{ station.address }}{% else %}{{ request.POST.address }}{% endif %}</textarea>
+           <!-- Thay form-group địa chỉ -->
+                <div class="form-group">
+                    <label><i class="fas fa-map-marker-alt"></i> Địa chỉ *</label>
+                    <div class="address-wrapper">
+                        <textarea name="address" id="addressInput" rows="2"
+                                placeholder="Nhập địa chỉ trạm sạc...">{% if action == 'edit' %}{{ station.address }}{% else %}{{ request.POST.address }}{% endif %}</textarea>
+                        <div id="addressSuggestions" class="address-suggestions"></div>
                     </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label><i class="fas fa-map"></i> Latitude</label>
-                            <input type="number" name="latitude" step="any"
-                                   placeholder="VD: 10.9741"
-                                   value="{% if action == 'edit' %}{{ station.latitude }}{% else %}{{ request.POST.latitude }}{% endif %}">
-                        </div>
-                        <div class="form-group">
-                            <label><i class="fas fa-map"></i> Longitude</label>
-                            <input type="number" name="longitude" step="any"
-                                   placeholder="VD: 106.8986"
-                                   value="{% if action == 'edit' %}{{ station.longitude }}{% else %}{{ request.POST.longitude }}{% endif %}">
-                        </div>
-                    </div>
+                </div>
 
                     <div class="form-row">
                         <div class="form-group">
@@ -154,18 +143,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label><i class="fas fa-image"></i> Hình ảnh
-                            {% if action == 'edit' %}<small style="color:var(--gray-700); font-weight:400;">(để trống nếu không đổi)</small>{% endif %}
-                        </label>
-                        <input type="file" name="image" accept="image/*">
-                        {% if action == 'edit' and station.image %}
-                        <div style="margin-top:8px;">
-                            <img src="{{ station.image.url }}" alt="{{ station.name }}"
-                                 style="width:80px; height:80px; object-fit:cover; border-radius:8px;">
-                        </div>
-                        {% endif %}
-                    </div>
+                   
 
                     <div class="form-actions">
                         <button type="submit" class="btn-save">
@@ -176,12 +154,13 @@
                             <i class="fas fa-times"></i> Hủy
                         </a>
                     </div>
+                    <input type="hidden" name="latitude" id="latitude" value="{% if action == 'edit' %}{{ station.latitude }}{% else %}0{% endif %}">
+                    <input type="hidden" name="longitude" id="longitude" value="{% if action == 'edit' %}{{ station.longitude }}{% else %}0{% endif %}">
                 </form>
             </div>
-
         </div>
     </div>
-
     <script src="{% static 'js/admin_user_form.js' %}"></script>
+    <script src="{% static 'js/admin_station_form.js' %}"></script>
 </body>
 </html>

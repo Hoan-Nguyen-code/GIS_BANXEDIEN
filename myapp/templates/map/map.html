@@ -48,7 +48,7 @@
     </div>
   </div>
 
-  <!-- TRẠM SẠC -->
+  {% comment %} <!-- TRẠM SẠC -->
   <div class="section">
     <div class="section-title">⚡ Dữ liệu trạm sạc (PostgreSQL)</div>
     <div class="add-station-row">
@@ -60,11 +60,11 @@
 
     <div style="margin-top:10px; font-size:11px; color:var(--text-muted); margin-bottom:6px;">
       Dữ liệu mẫu (thay bằng query PostgreSQL thực tế):
-    </div>
-
-    <button class="btn btn-sm" style="width:100%; margin-bottom:6px;" onclick="loadNearbyStations()">
-      🌍 Tìm trạm sạc gần vị trí tôi (OSM)
-    </button>
+    </div> {% endcomment %}
+  <div class="section">
+  <button class="btn btn-sm" style="width:100%; margin-bottom:6px;" onclick="loadSampleData()">
+      ⚡ 🌍 Tìm trạm sạc gần vị trí tôi
+  </button>
 
     <div id="stationList">
       <div class="empty">

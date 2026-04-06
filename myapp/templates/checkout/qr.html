@@ -11,7 +11,8 @@
 
     <h2>Thanh toán đơn hàng</h2>
 
-    <img src="{{ qr_url }}" width="300" style="margin:20px 0;">
+    <!-- Thay qr_url bằng ảnh QR Vietinbank cố định -->
+  <img src="{% static 'images/QR/qr_vietinbank.png' %}" width="300" style="margin:20px 0;">
 
     <p><b>Số tiền:</b> {{ order.total_price|floatformat:0|intcomma }}đ</p>
 
