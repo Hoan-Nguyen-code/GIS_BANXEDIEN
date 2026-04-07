@@ -1,9 +1,3 @@
-/**
- * Admin Panel JavaScript
- * WebGIS Xe Điện - Admin Dashboard
- */
-
-// ==================== MENU NAVIGATION ====================
 document.addEventListener('DOMContentLoaded', function() {
     // Highlight active menu based on current URL
     const currentPath = window.location.pathname;
@@ -15,14 +9,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// ==================== SIDEBAR TOGGLE (Mobile) ====================
 function toggleSidebar() {
     const sidebar = document.querySelector('.sidebar');
     sidebar.classList.toggle('active');
 }
 
-// ==================== TABLE ACTIONS ====================
-// View action
 document.querySelectorAll('.btn-action.view').forEach(btn => {
     btn.addEventListener('click', function() {
         const row = this.closest('tr');
@@ -31,7 +22,6 @@ document.querySelectorAll('.btn-action.view').forEach(btn => {
     });
 });
 
-// Edit action
 document.querySelectorAll('.btn-action.edit').forEach(btn => {
     btn.addEventListener('click', function() {
         const row = this.closest('tr');
@@ -40,7 +30,6 @@ document.querySelectorAll('.btn-action.edit').forEach(btn => {
     });
 });
 
-// Delete action
 document.querySelectorAll('.btn-action.delete').forEach(btn => {
     btn.addEventListener('click', function() {
         const row = this.closest('tr');
@@ -53,7 +42,6 @@ document.querySelectorAll('.btn-action.delete').forEach(btn => {
     });
 });
 
-// ==================== CRUD OPERATIONS ====================
 async function deleteItem(id, rowElement) {
     try {
         // Uncomment when API ready
@@ -81,7 +69,6 @@ async function deleteItem(id, rowElement) {
     }
 }
 
-// ==================== MODAL ====================
 function showModal(title, content) {
     // Create modal if not exists
     let modal = document.getElementById('adminModal');
@@ -102,7 +89,6 @@ function showModal(title, content) {
         `;
         document.body.appendChild(modal);
         
-        // Close modal events
         modal.querySelector('.modal-close').addEventListener('click', () => {
             modal.style.display = 'none';
         });
@@ -120,7 +106,6 @@ function showModal(title, content) {
     modal.style.display = 'block';
 }
 
-// ==================== NOTIFICATIONS ====================
 function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
@@ -131,13 +116,11 @@ function showNotification(message, type = 'info') {
     
     document.body.appendChild(notification);
     
-    // Show notification
     setTimeout(() => {
         notification.style.opacity = '1';
         notification.style.transform = 'translateY(0)';
     }, 100);
     
-    // Hide and remove
     setTimeout(() => {
         notification.style.opacity = '0';
         notification.style.transform = 'translateY(-20px)';
@@ -145,7 +128,6 @@ function showNotification(message, type = 'info') {
     }, 3000);
 }
 
-// ==================== SEARCH & FILTER ====================
 function filterTable(searchTerm) {
     const table = document.querySelector('.data-table tbody');
     const rows = table.querySelectorAll('tr');
@@ -160,7 +142,6 @@ function filterTable(searchTerm) {
     });
 }
 
-// ==================== PAGINATION ====================
 function setupPagination(itemsPerPage = 10) {
     const table = document.querySelector('.data-table tbody');
     const rows = Array.from(table.querySelectorAll('tr'));
@@ -176,7 +157,6 @@ function setupPagination(itemsPerPage = 10) {
         });
     }
     
-    // Create pagination controls
     const pagination = document.createElement('div');
     pagination.className = 'pagination';
     
@@ -197,7 +177,6 @@ function setupPagination(itemsPerPage = 10) {
     showPage(1);
 }
 
-// ==================== UTILITIES ====================
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -224,7 +203,6 @@ function formatDate(date) {
     return new Intl.DateTimeFormat('vi-VN').format(new Date(date));
 }
 
-// ==================== EXPORT DATA ====================
 function exportToCSV(filename = 'data.csv') {
     const table = document.querySelector('.data-table');
     const rows = Array.from(table.querySelectorAll('tr'));
@@ -241,7 +219,6 @@ function exportToCSV(filename = 'data.csv') {
     link.click();
 }
 
-// ==================== CHARTS SETUP ====================function createChart(canvasId, type, data, options = {}) {
     function createChart(canvasId, type, data, customOptions = {}) {
     const canvas = document.getElementById(canvasId);
     if (!canvas) return;
@@ -278,7 +255,6 @@ function exportToCSV(filename = 'data.csv') {
     });
 }
 
-// ==================== REAL-TIME UPDATES ====================
 function startRealtimeUpdates(interval = 30000) {
     setInterval(async () => {
         try {
@@ -292,7 +268,6 @@ function startRealtimeUpdates(interval = 30000) {
     }, interval);
 }
 
-// ==================== INIT ====================
 window.addEventListener('DOMContentLoaded', () => {
     console.log('Admin Panel loaded successfully');
     

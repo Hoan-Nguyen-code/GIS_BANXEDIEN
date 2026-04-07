@@ -1,8 +1,5 @@
-// ===== ADMIN USER FORM JS =====
-
 document.addEventListener('DOMContentLoaded', function () {
 
-    // Tự động ẩn alert messages sau 4 giây
     document.querySelectorAll('.alert').forEach(function (alert) {
         setTimeout(function () {
             alert.style.transition = 'opacity 0.5s ease';
@@ -11,7 +8,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 4000);
     });
 
-    // Validate form trước khi submit
     const form = document.querySelector('form');
     if (form) {
         form.addEventListener('submit', function (e) {

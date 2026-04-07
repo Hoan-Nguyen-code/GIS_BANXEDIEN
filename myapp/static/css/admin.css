@@ -1,5 +1,3 @@
-/* ===== ADMIN.CSS - CSS CHO ADMIN DASHBOARD ===== */
-
 * {
     margin: 0;
     padding: 0;
@@ -12,7 +10,6 @@ body {
     display: flex;
 }
 
-/* ===== SIDEBAR ===== */
 .sidebar {
     width: 260px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -74,12 +71,8 @@ body {
 }
 
 .menu-item i {
-    font-size: 18px;/* ==================== ADMIN DASHBOARD CSS ====================
-   WebGIS Xe Điện - Admin Panel
-   Theme: Gradient Xanh Cyan-Teal
-   ============================================================ */
+    font-size: 18px;
 
-/* ========== RESET & BASE ========== */
 * {
     margin: 0;
     padding: 0;
@@ -87,19 +80,16 @@ body {
 }
 
 :root {
-    /* Colors - Gradient xanh giống login */
     --primary: #0891b2;
     --primary-dark: #0e7490;
     --secondary: #14b8a6;
     --accent: #06b6d4;
     
-    /* Status colors */
     --success: #10b981;
     --warning: #f59e0b;
     --danger: #ef4444;
     --info: #3b82f6;
     
-    /* Neutrals */
     --white: #ffffff;
     --gray-50: #f9fafb;
     --gray-100: #f3f4f6;
@@ -109,7 +99,6 @@ body {
     --gray-800: #1f2937;
     --gray-900: #111827;
     
-    /* Layout */
     --sidebar-width: 260px;
     --navbar-height: 70px;
     --border-radius: 12px;
@@ -124,7 +113,6 @@ body {
     overflow-x: hidden;
 }
 
-/* ========== SIDEBAR ========== */
 .sidebar {
     position: fixed;
     left: 0;
@@ -166,7 +154,6 @@ body {
     font-weight: 600;
 }
 
-/* Menu */
 .menu {
     padding: 20px 0;
 }
@@ -204,7 +191,6 @@ body {
     font-weight: 500;
 }
 
-/* Sidebar Footer */
 .sidebar-footer {
     position: absolute;
     bottom: 0;
@@ -231,13 +217,11 @@ body {
     transform: translateX(5px);
 }
 
-/* ========== MAIN CONTENT ========== */
 .main-content {
     margin-left: var(--sidebar-width);
     min-height: 100vh;
 }
 
-/* ========== NAVBAR ========== */
 .navbar {
     height: var(--navbar-height);
     background: var(--white);
@@ -330,12 +314,10 @@ body {
     font-size: 18px;
 }
 
-/* ========== CONTENT AREA ========== */
 .content {
     padding: 30px;
 }
 
-/* ========== STATISTICS CARDS ========== */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -413,7 +395,6 @@ body {
     font-size: 14px;
 }
 
-/* ========== SECTIONS ========== */
 .section {
     background: var(--white);
     border-radius: var(--border-radius);
@@ -451,7 +432,6 @@ body {
     color: var(--white);
 }
 
-/* ========== DATA TABLE ========== */
 .table-container {
     overflow-x: auto;
 }
@@ -490,7 +470,6 @@ body {
     background: var(--gray-50);
 }
 
-/* Status Badges */
 .status-badge {
     padding: 6px 12px;
     border-radius: 20px;
@@ -554,7 +533,6 @@ body {
     color: var(--danger);
 }
 
-/* Action Buttons */
 .btn-action {
     padding: 8px 12px;
     border: none;
@@ -595,7 +573,6 @@ body {
     color: var(--white);
 }
 
-/* ========== QUICK ACTIONS ========== */
 .quick-actions {
     background: var(--white);
     border-radius: var(--border-radius);
@@ -643,11 +620,10 @@ body {
     font-weight: 500;
 }
 
-/* ========== CHARTS ========== */
 .chart-container {
     width: 100%;
-    max-width: 900px;   /* 👈 giới hạn chiều ngang */
-    height: 420px;      /* 👈 chiều cao cố định */
+    max-width: 900px;   
+    height: 420px;      
     margin: 20px auto;
     background: #fff;
     padding: 20px;
@@ -677,7 +653,6 @@ body {
     color: var(--gray-800);
 }
 
-/* ========== FORMS ========== */
 .form-group {
     margin-bottom: 20px;
 }
@@ -738,7 +713,6 @@ body {
     background: var(--gray-300);
 }
 
-/* ========== RESPONSIVE ========== */
 @media (max-width: 768px) {
     .sidebar {
         transform: translateX(-100%);
@@ -774,7 +748,6 @@ body {
     }
 }
 
-/* ========== ANIMATIONS ========== */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -790,7 +763,6 @@ body {
     animation: fadeIn 0.5s ease;
 }
 
-/* ========== PAGINATION ========== */
 .pagination {
     display: flex;
     justify-content: center;
@@ -846,14 +818,12 @@ body {
     background: rgba(255,255,255,0.2);
 }
 
-/* ===== MAIN CONTENT ===== */
 .main-content {
     margin-left: 260px;
     flex: 1;
     min-height: 100vh;
 }
 
-/* ===== NAVBAR ===== */
 .navbar {
     background: white;
     padding: 20px 30px;
@@ -894,12 +864,10 @@ body {
     font-size: 20px;
 }
 
-/* ===== CONTENT AREA ===== */
 .content {
     padding: 30px;
 }
 
-/* ===== STATISTICS CARDS ===== */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -962,7 +930,6 @@ body {
     font-size: 14px;
 }
 
-/* ===== SECTION ===== */
 .section {
     background: white;
     padding: 25px;
@@ -998,7 +965,6 @@ body {
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
-/* ===== TABLE ===== */
 .table-container {
     overflow-x: auto;
 }
@@ -1031,7 +997,6 @@ body {
     background: #f8f9fa;
 }
 
-/* ===== STATUS BADGE ===== */
 .status-badge {
     padding: 5px 12px;
     border-radius: 20px;
@@ -1065,7 +1030,6 @@ body {
     color: #721c24;
 }
 
-/* ===== ACTION BUTTONS ===== */
 .btn-action {
     padding: 6px 10px;
     border: none;
@@ -1107,7 +1071,6 @@ body {
     background: #c82333;
 }
 
-/* ===== QUICK ACTIONS ===== */
 .quick-actions {
     background: white;
     padding: 25px;
@@ -1153,7 +1116,6 @@ body {
     font-weight: 600;
 }
 
-/* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -1201,7 +1163,7 @@ body {
         margin-left: 0;
     }
 }
-/* ===== FIX CHART AUTO RESIZE ===== */
+
 .chart-card {
     height: 420px;
     position: relative;
@@ -1212,7 +1174,7 @@ body {
     height: 340px !important;
     max-height: 340px;
 }
-/* ========== USER FORM ========== */
+
 .form-card {
     background: var(--white);
     border-radius: var(--border-radius);
@@ -1315,7 +1277,6 @@ body {
     cursor: pointer;
 }
 
-/* ========== CONFIRM DELETE ========== */
 .confirm-wrapper {
     display: flex;
     justify-content: center;
@@ -1386,7 +1347,6 @@ body {
     transform: translateY(-2px);
 }
 
-/* ========== ALERT MESSAGES ========== */
 .alert-messages {
     margin-bottom: 20px;
 }
@@ -1427,7 +1387,7 @@ body {
         padding: 32px 20px;
     }
 }
-/* ========== USER DETAIL ========== */
+
 .user-detail-wrapper {
     display: grid;
     grid-template-columns: 300px 1fr;
@@ -1435,7 +1395,6 @@ body {
     align-items: start;
 }
 
-/* Profile card với gradient xanh dương - xanh lá */
 .user-profile-card {
     background: linear-gradient(135deg, #007bff 0%, #28a745 100%);
     border-radius: 12px;
@@ -1471,7 +1430,6 @@ body {
     margin-bottom: 16px;
 }
 
-/* Badges */
 .user-badges {
     display: flex;
     gap: 8px;
@@ -1516,7 +1474,6 @@ body {
     font-weight: 600;
 }
 
-/* Meta info */
 .user-meta {
     background: rgba(255,255,255,0.2);
     border-radius: 10px;
@@ -1539,7 +1496,6 @@ body {
     border-bottom: none;
 }
 
-/* Cards chi tiết */
 .user-detail-cards {
     display: flex;
     flex-direction: column;
@@ -1568,7 +1524,6 @@ body {
     color: #343a40;
 }
 
-/* Icon màu */
 .detail-section-icon {
     width: 40px;
     height: 40px;
@@ -1599,7 +1554,6 @@ body {
     color: #dc3545;
 }
 
-/* Grid nội dung */
 .detail-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1625,7 +1579,7 @@ body {
         grid-template-columns: 1fr;
     }
 }
-/* Card tổng */
+
 .form-card {
     background: #fff;
     border-radius: 12px;
@@ -1635,7 +1589,6 @@ body {
     margin: 20px auto;
 }
 
-/* Chia khung box cho từng phần */
 .section-box {
     background: #f8f9fa;
     border: 1px solid #e9ecef;
@@ -1647,14 +1600,13 @@ body {
 .section-title {
     font-size: 16px;
     font-weight: 600;
-    color: #007bff; /* xanh dương chủ đạo */
+    color: #007bff; 
     margin-bottom: 12px;
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
-/* Sidebar */
 .sidebar {
     background: linear-gradient(180deg, #6a11cb 0%, #2575fc 100%);
     color: #fff;
@@ -1689,7 +1641,6 @@ body {
     color: #fff;
 }
 
-/* Box chia phần */
 .section-box {
     background: #fff;
     border-radius: 12px;
@@ -1698,7 +1649,6 @@ body {
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
-/* Tiêu đề box */
 .section-title {
     font-size: 20px;
     font-weight: 700;
@@ -1712,30 +1662,29 @@ body {
     border-bottom: 2px solid #2575fc;
     padding-bottom: 8px;
 }
+
 .form-group input,
 .form-group select,
 .form-group textarea {
     width: 100%;
     padding: 12px 14px;
-    border: 1px solid #b6d4fe;   /* viền xanh nhạt */
+    border: 1px solid #b6d4fe;   
     border-radius: 8px;
-    background-color: #e7f1ff;   /* nền xanh nhạt */
+    background-color: #e7f1ff;   
     font-size: 15px;
     color: #212529;
     transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-/* Khi focus */
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
-    border-color: #2575fc;       /* xanh dương đậm */
+    border-color: #2575fc;       
     box-shadow: 0 0 0 3px rgba(37, 117, 252, 0.25);
     outline: none;
-    background-color: #fff;      /* nền trắng khi nhập */
+    background-color: #fff;      
 }
 
-/* Label */
 .form-group label {
     font-weight: 600;
     color: #343a40;
@@ -1745,14 +1694,13 @@ body {
     gap: 6px;
 }
 
-/* Placeholder */
 .form-group input::placeholder,
 .form-group textarea::placeholder {
     color: #6c757d;
     font-size: 14px;
 }
 .btn-save {
-    background-color: #dc3545;   /* đỏ */
+    background-color: #dc3545;   
     color: #fff;
     border: none;
     padding: 10px 18px;
@@ -1763,7 +1711,7 @@ body {
 }
 
 .btn-save:hover {
-    background-color: #a71d2a;   /* đỏ đậm khi hover */
+    background-color: #a71d2a;   
 }
 .form-row {
     display: flex;
@@ -1771,31 +1719,29 @@ body {
 }
 
 .form-row .form-group {
-    flex: 1; /* chia đều chiều rộng */
-}
-/* Cột thao tác */
-.actions {
-    display: flex;              /* nằm ngang */
-    justify-content: center;    /* căn giữa trong ô */
-    align-items: center;
-    gap: 10px;                  /* khoảng cách giữa nút */
+    flex: 1; 
 }
 
-/* Nút thao tác */
+.actions {
+    display: flex;              
+    justify-content: center;    
+    align-items: center;
+    gap: 10px;                  
+}
+
 .btn-action {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 36px;
     height: 36px;
-    border-radius: 6px;         /* bo góc nhẹ */
+    border-radius: 6px;         
     color: #fff;
     font-size: 14px;
     transition: background-color 0.3s;
     cursor: pointer;
 }
 
-/* Màu cho từng nút */
 .btn-action.view { background-color: #007bff; }
 .btn-action.view:hover { background-color: #0056b3; }
 
@@ -1806,19 +1752,18 @@ body {
 .btn-action.delete:hover { background-color: #a71d2a; }
 
 .detail-label {
-    font-weight: 700;           /* chữ đậm */
-    color: #c82333;             /* tím chủ đạo */
-    text-transform: uppercase;  /* viết hoa toàn bộ */
-    letter-spacing: 0.5px;      /* giãn nhẹ chữ */
+    font-weight: 700;           
+    color: #c82333;             
+    text-transform: uppercase;  
+    letter-spacing: 0.5px;      
     margin-right: 6px;
 }
 
-/* Thêm dấu ":" sau mỗi nhãn */
 .detail-label::after {
-    content: ":";               /* thêm dấu : */
+    content: ":";               
     margin-left: 2px;
 }
-/* ========== FILTER BUTTONS ========== */
+
 .filter-btn {
     padding: 8px 16px;
     border-radius: 6px;
@@ -1839,7 +1784,7 @@ body {
     background: var(--primary);
     color: var(--white);
 }
-/* ========== FIX ACTION BUTTONS INLINE ========== */
+
 .data-table td .btn-action {
     display: inline-flex !important;
     align-items: center;
@@ -1855,7 +1800,6 @@ body {
     display: table-cell;
 }
 
-/* ========== STATION FORM - ADDRESS AUTOCOMPLETE ========== */
 .address-wrapper {
     position: relative;
 }

@@ -1,9 +1,10 @@
 import feedparser
+import requests
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import render
 from bs4 import BeautifulSoup
-
+from rest_framework import status
 
 def extract_image(entry):
     if 'summary' in entry:
@@ -30,23 +31,60 @@ def clean_html(html):
 def get_news(request):
     url = "https://news.google.com/rss/search?q=xe+điện+OR+xăng+dầu&hl=vi&gl=VN&ceid=VN:vi"
 
-    feed = feedparser.parse(url)
+    try:
+        feed = feedparser.parse(url)
 
-    news_list = []
+        if feed.bozo:
+            return Response(
+                {"error": "RSS parse error"},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE
+            )
 
-    for entry in feed.entries[:50]:
-        image = extract_image(entry)
+        if not feed.entries:
+            return Response(
+                {"error": "No data"},
+                status=status.HTTP_204_NO_CONTENT
+            )
 
-        news_list.append({
-            "title": entry.title,
-            "content": clean_html(entry.summary),
-            "image": image,
-            "link": entry.link,
-            "created_at": entry.published
-        })
+        news_list = []
 
-    return Response(news_list)
+        for entry in feed.entries[:50]:
+            news_list.append({
+                "title": getattr(entry, "title", ""),
+                "content": clean_html(getattr(entry, "summary", "")),
+                "image": extract_image(entry),
+                "link": getattr(entry, "link", ""),
+                "created_at": getattr(entry, "published", "")
+            })
+
+        return Response(news_list, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response(
+            {"error": str(e)},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 
 def news_page(request):
-    return render(request, 'news/news.html')
+    try:
+        response = requests.get("http://127.0.0.1:8000/api/news/", timeout=5)
+
+        if response.status_code != 200:
+            return render(
+                request,
+                f"errors/{response.status_code}.html",
+                status=response.status_code
+            )
+
+        data = response.json()
+        return render(request, 'news/news.html', {"news": data})
+
+    except requests.exceptions.Timeout:
+        return render(request, 'errors/504.html', status=504)
+
+    except requests.exceptions.ConnectionError:
+        return render(request, 'errors/503.html', status=503)
+
+    except requests.exceptions.RequestException:
+        return render(request, 'errors/500.html', status=500)

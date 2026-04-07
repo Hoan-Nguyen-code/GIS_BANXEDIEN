@@ -368,7 +368,7 @@ class RevenueReport(models.Model):
         return f"Revenue {self.date}"
 
 # ==============================
-# 13. CHARGING STATION (TRẠM SẠC)
+# 13. CHARGING STATION 
 # ==============================
 
 class ChargingStation(models.Model):
@@ -408,7 +408,8 @@ class ChargingStation(models.Model):
 
     def __str__(self):
         return self.name
-    # ==============================
+
+# ==============================
 # 14. SEARCH HISTORY
 # ==============================
 class SearchHistory(models.Model):

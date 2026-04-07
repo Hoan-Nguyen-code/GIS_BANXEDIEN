@@ -22,7 +22,6 @@
       overflow: hidden;
     }
 
-    /* ── SIDEBAR ── */
     #sidebar {
       width: 340px;
       min-width: 340px;
@@ -68,7 +67,6 @@
       margin-bottom: 12px;
     }
 
-    /* API Key input */
     .input-row {
       display: flex;
       gap: 8px;
@@ -101,7 +99,6 @@
       margin-bottom: 6px;
     }
 
-    /* Radius slider */
     .slider-row {
       display: flex;
       align-items: center;
@@ -134,7 +131,6 @@
       text-align: right;
     }
 
-    /* Buttons */
     .btn {
       display: flex;
       align-items: center;
@@ -170,7 +166,6 @@
 
     .btn-sm:hover { border-color: var(--accent1); color: var(--accent1); }
 
-    /* Station list */
     .station-item {
       background: var(--card);
       border: 1px solid var(--border);
@@ -197,7 +192,6 @@
     .station-name { font-size: 12px; font-weight: 600; }
     .station-dist { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 
-    /* Route result cards */
     .route-card {
       background: var(--card);
       border: 1px solid var(--border);
@@ -241,7 +235,6 @@
     .stat-label { font-size: 10px; color: var(--text-muted); }
     .stat-val { font-size: 13px; font-weight: 700; color: var(--text); margin-top: 2px; }
 
-    /* Status bar */
     #status {
       font-size: 11px;
       color: var(--text-muted);
@@ -267,20 +260,16 @@
     .dot-ok { background: var(--success); animation: none; }
     .dot-err { background: #ef4444; animation: none; }
 
-    /* Legend */
     .legend-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
     .legend-line { width: 30px; height: 3px; border-radius: 2px; }
 
-    /* MAP */
     #map {
       flex: 1;
       background: #1a1f2e;
     }
 
-    /* Leaflet dark style override */
     .leaflet-tile { filter: brightness(0.7) saturate(0.8); }
 
-    /* Empty state */
     .empty {
       text-align: center;
       padding: 20px 0;
@@ -290,12 +279,10 @@
 
     .empty-icon { font-size: 28px; margin-bottom: 6px; }
 
-    /* Scrollbar */
     #sidebar::-webkit-scrollbar { width: 4px; }
     #sidebar::-webkit-scrollbar-track { background: transparent; }
     #sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-    /* Add station form */
     .add-station-row {
       display: grid;
       grid-template-columns: 1fr 80px 80px;
@@ -316,7 +303,6 @@
       margin-bottom: 10px;
     }
 
-    /* ── VEHICLE SELECTOR ── */
     #vehicleSelector {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -382,7 +368,6 @@
     border-radius:14px;
     box-shadow:0 8px 20px rgba(0,0,0,0.15);
 }
-/* ===== SEARCH BOX STYLES - THÊM VÀO MAP.CSS ===== */
 
 .search-box {
   position: relative;
@@ -523,7 +508,6 @@
   opacity: 0.5;
 }
 
-/* Place Detail Card */
 .place-detail-card {
   background: var(--card-bg, #1a1d29);
   border: 1px solid var(--border, #2d3348);
@@ -609,7 +593,6 @@
   background: var(--hover-bg, #2d3348);
 }
 
-/* Scrollbar for search results */
 .search-results::-webkit-scrollbar {
   width: 6px;
 }
@@ -627,14 +610,12 @@
   background: var(--accent2, #ff6b35);
 }
 
-/* Keyboard navigation highlight */
 .search-result-item.keyboard-focus {
   background: var(--hover-bg, #252936);
   outline: 2px solid var(--accent1, #00d4ff);
   outline-offset: -2px;
 }
 
-/* Loading spinner for search */
 .search-spinner {
   display: inline-block;
   width: 16px;
@@ -649,7 +630,7 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
-/* ===== SIDEBAR BUTTONS ===== */
+
 .sidebar-btn {
     display: flex;
     align-items: center;
@@ -697,7 +678,7 @@
     background: rgba(255,255,255,0.25);
     transform: translateY(-2px);
 }
-/* ===== SIDEBAR BUTTONS ===== */
+
 .sidebar-btn {
     display: flex;
     align-items: center;

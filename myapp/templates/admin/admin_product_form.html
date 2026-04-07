@@ -1,3 +1,4 @@
+{% load humanize %}
 {% load static %}
 <!DOCTYPE html>
 <html lang="vi">
@@ -125,7 +126,7 @@
                         <input type="file" name="image" accept="image/*">
                         {% if action == 'edit' and product.image %}
                         <div style="margin-top:8px;">
-                            <img src="{{ product.image.url }}" alt="{{ product.name }}"
+                            <img src="{% static 'images/' %}{{ product.image }}" alt="{{ product.name }}"
                                  style="width:80px; height:80px; object-fit:cover; border-radius:8px;">
                         </div>
                         {% endif %}

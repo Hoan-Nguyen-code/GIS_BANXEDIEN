@@ -81,7 +81,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "GIS_BANXEDIEN",
         "USER": "postgres",
-        "PASSWORD": "123456", # chỉnh lại mật khẩu là được
+        "PASSWORD": "1234", # chỉnh lại mật khẩu là được
         "HOST": "localhost",
         "PORT": "5432",
     }
@@ -123,20 +123,18 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = "static/"
-
-# Thư mục chứa static files trong quá trình development
 STATICFILES_DIRS = [
     BASE_DIR / "myapp" / "static",
 ]
-
-# Thư mục để collect static files khi deploy (production)
 STATIC_ROOT = BASE_DIR / "staticfiles"
-#URL chuyển hướng sau khi đăng nhập thành công
 LOGIN_REDIRECT_URL = '/'
-
-# URL chuyển hướng khi chưa đăng nhập  
 LOGIN_URL = '/login/'
-
-# URL chuyển hướng sau khi đăng xuất
 LOGOUT_REDIRECT_URL = '/'
 AUTH_USER_MODEL = 'myapp.User'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'vongominh2395@gmail.com'
+EMAIL_HOST_PASSWORD = 'gsrumvijykekgbgp'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

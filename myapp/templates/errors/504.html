@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Mất kết nối</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/error.css' %}">
+</head>
+<body>
+
+<div class="container">
+    <div class="icon pulse">⏳</div>
+    <h1>504</h1>
+    <h2>Hết thời gian chờ</h2>
+    <p>
+        Máy chủ phản hồi quá chậm. Vui lòng thử lại sau.
+    </p>
+
+    <div class="btn-group">
+        <a href="/" class="btn-home">Quay lại</a>
+        <button onclick="reloadPage()" class="btn-retry">🔄 Thử lại</button>
+    </div>
+</div>
+
+<script>
+    function reloadPage() {
+        location.reload();
+    }
+
+    window.addEventListener('online', () => location.reload());
+</script>
+
+</body>
+</html>

@@ -1,6 +1,3 @@
-/* =========================
-   Tổng thể
-========================= */
 body {
     background: #f4f6f9;
     font-family: Arial, Helvetica, sans-serif;
@@ -18,21 +15,17 @@ body {
     padding:40px;
 }
 
-/* Nút quay về */
 .back-home-btn {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-
     margin-bottom: 25px;
     padding: 10px 18px;
-
     background: #ffffff;
     color: #0a2540;
     font-weight: 600;
     font-size: 15px;
     text-decoration: none;
-
     border-radius: 30px;
     box-shadow: 0 6px 18px rgba(0,0,0,0.08);
     transition: all 0.25s ease;
@@ -44,9 +37,6 @@ body {
     color: #007bff;
 }
 
-/* =========================
-   MAIN PRODUCT
-========================= */
 .product-main {
     display: grid;
     grid-template-columns: 1fr 1.2fr;
@@ -89,29 +79,18 @@ body {
     gap:15px;
 }
 
-.buy-now-btn{
-    background:#ff4d4f;
-    color:white;
-    padding:12px 25px;
-    border:none;
-    border-radius:8px;
-}
-
 .add-cart-btn{
     background: #1677ff;
     color: white;
     padding: 12px 25px;
     border: none;
-    border-radius: 8px;
-
+    border-radius: 10px;
     font-size: 15px;
     font-weight: 500;
     cursor: pointer;
-
     display: inline-flex;
     align-items: center;
     gap: 8px;
-
     transition: all 0.25s ease;
 }
 
@@ -142,7 +121,6 @@ body {
     text-align:center;
 }
 
-/* Giá – LÀM NỔI BẬT */
 .price {
     font-size: 36px;
     font-weight: 800;
@@ -152,9 +130,6 @@ body {
     z-index: 2;
 }
 
-/* =========================
-   BUTTONS
-========================= */
 .action-buttons {
     display: flex;
     gap: 18px;
@@ -194,9 +169,6 @@ body {
     color: #fff;
 }
 
-/* =========================
-   RELATED PRODUCTS
-========================= */
 .related-section {
     margin-top: 60px;
 }
@@ -214,7 +186,6 @@ body {
     gap: 25px;
 }
 
-/* Card */
 .related-card {
     background: #fff;
     border-radius: 12px;
@@ -228,7 +199,6 @@ body {
     transform: translateY(-6px);
 }
 
-/* Ảnh card */
 .related-img {
     height: 160px;
     margin-bottom: 12px;
@@ -240,7 +210,6 @@ body {
     object-fit: contain;
 }
 
-/* Tên */
 .related-card h4 {
     font-size: 16px;
     font-weight: 600;
@@ -248,7 +217,6 @@ body {
     margin: 10px 0 6px;
 }
 
-/* Giá */
 .related-price {
     font-size: 18px;
     font-weight: 700;
@@ -256,7 +224,6 @@ body {
     margin-bottom: 10px;
 }
 
-/* Nút xem */
 .view-btn {
     display: inline-block;
     padding: 8px 18px;
@@ -272,9 +239,6 @@ body {
     background: #0056b3;
 }
 
-/* =========================
-   RESPONSIVE
-========================= */
 @media (max-width: 900px) {
     .product-main {
         grid-template-columns: 1fr;

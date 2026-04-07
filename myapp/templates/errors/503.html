@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Mất kết nối</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/error.css' %}">
+</head>
+<body>
+
+<div class="container">
+    <div class="icon pulse">📡</div>
+    <h1>503</h1>
+    <h2>Mất kết nối</h2>
+    <p>
+        Có vẻ bạn đang offline hoặc máy chủ đang tạm thời không phản hồi 😥. 
+        Hãy kiểm tra kết nối Internet và thử lại.
+    </p>
+
+    <div class="btn-group">
+        <a href="/" class="btn-home">Quay lại</a>
+        <button onclick="reloadPage()" class="btn-retry">🔄 Thử lại</button>
+    </div>
+</div>
+
+<script>
+    function reloadPage() {
+        location.reload();
+    }
+
+    window.addEventListener('online', () => location.reload());
+</script>
+
+</body>
+</html>

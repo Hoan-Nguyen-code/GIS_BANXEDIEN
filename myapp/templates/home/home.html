@@ -208,17 +208,15 @@
                         </div>
 
                         {% if user.is_authenticated %}
-                            <!-- ✅ User đã đăng nhập → thêm được vào giỏ -->
-                            <button class="add-to-cart-btn" data-product-id="{{ product.id }}">
+                            <button class="add-btn add-to-cart-btn" data-url="{% url 'add_to_cart' product.id %}">
                                 <i class="fas fa-shopping-cart"></i>
-                                Thêm
+                                Thêm vào giỏ
                             </button>
                         {% else %}
-                            <!-- ❌ Chưa đăng nhập → redirect login -->
-                            <a href="/login/" class="add-to-cart-btn">
+                            <button href="/login/" class="add-btn add-to-cart-btn">
                                 <i class="fas fa-shopping-cart"></i>
-                                Thêm
-                            </a>
+                                Thêm vào giỏ
+                            </button>
                         {% endif %}
 
                     </div>

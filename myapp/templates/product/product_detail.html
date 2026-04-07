@@ -48,16 +48,10 @@
             </p>
 
             <div class="product-actions">
-
-                <button class="buy-now-btn">
-                    Mua ngay
-                </button>
-
-                <button class="add-cart-btn">
+                <button class="add-btn add-to-cart-btn" data-url="{% url 'add_to_cart' product.id %}">
                     <i class="fas fa-shopping-cart"></i>
-                    Thêm vào giỏ
+                    Thêm vào giỏ ngay!
                 </button>
-
             </div>
 
         </div>
@@ -88,7 +82,7 @@
                     <h4>{{ p.name }}</h4>
 
                     <div class="related-price">
-                        {{ p.price|intcomma }} đ
+                        {{ product.price|floatformat:0|intcomma }}đ
                     </div>
 
                     <a href="{% url 'product_detail' p.id %}" class="view-btn">
@@ -105,5 +99,7 @@
     </div>
 
 </div>
-
+{% block extra_js %}
+<script src="{% static 'js/home.js' %}" defer></script>
+{% endblock %}
 {% endblock %}

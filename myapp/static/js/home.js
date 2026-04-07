@@ -1,18 +1,9 @@
 document.addEventListener("DOMContentLoaded", function () {
-
-    /* ===============================
-       SAFE SELECTORS
-    =============================== */
-
     const productCards = document.querySelectorAll(".product-card");
     const productsGrid = document.querySelector(".products-grid");
     const searchInput = document.querySelector('input[name="q"]');
     const viewButtons = document.querySelectorAll(".view-btn");
     const addToCartButtons = document.querySelectorAll(".add-to-cart-btn");
-
-    /* ===============================
-       NOTIFICATION SYSTEM
-    =============================== */
 
     function showNotification(message, type = "info") {
 
@@ -68,49 +59,57 @@ document.addEventListener("DOMContentLoaded", function () {
         }[type] || "linear-gradient(135deg,#007bff,#0056b3)";
     }
 
-    /* ===============================
-       ADD TO CART
-    =============================== */
-
     const cartCountElement = document.getElementById("cart-count");
 
-    addToCartButtons.forEach(button => {
+    if (!window.addToCartInitialized) {
 
-        button.addEventListener("click", function (e) {
+        document.addEventListener("click", function (e) {
+
+            const button = e.target.closest(".add-to-cart-btn");
+            if (!button) return;
 
             e.preventDefault();
-            e.stopPropagation();
 
-            const productId = this.dataset.productId;
+            if (button.classList.contains("loading")) return;
+            button.classList.add("loading");
 
-            fetch(`/cart/add/${productId}/`)
+            const url = button.dataset.url;
+
+            fetch(url)
             .then(response => response.json())
             .then(data => {
 
-                if(data.success){
+                if (data.success) {
 
-                    showNotification("Đã thêm sản phẩm vào giỏ hàng", "success");
+                    showNotification("Đã thêm sản phẩm vào giỏ hàng 😍", "success");
 
-                    if(cartCountElement){
+                    if (cartCountElement) {
                         cartCountElement.textContent = data.cart_count;
                     }
 
-                } else if(data.error === "login_required") {
+                    if (window.location.pathname.includes("cart")) {
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 800);
+                    }
+
+                } else if (data.error === "login_required") {
 
                     showNotification("Vui lòng đăng nhập", "warning");
                     window.location.href = "/login/";
-
                 }
 
+            })
+            .finally(() => {
+                setTimeout(() => {
+                    button.classList.remove("loading");
+                }, 500);
             });
 
         });
 
-    });
-
-    /* ===============================
-       VIEW TOGGLE
-    =============================== */
+        window.addToCartInitialized = true;
+    }
 
     if (productsGrid) {
         viewButtons.forEach(button => {
@@ -140,10 +139,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    /* ===============================
-       SEARCH FILTER
-    =============================== */
-
     if (searchInput && productCards.length > 0) {
         searchInput.addEventListener("input", function () {
 
@@ -160,10 +155,6 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
     }
-
-    /* ===============================
-       SORT DROPDOWN (SAFE VERSION)
-    =============================== */
 
     const dropdown = document.querySelector(".sort-dropdown");
 

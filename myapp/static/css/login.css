@@ -1,14 +1,9 @@
-/* ===== LOGIN.CSS - CSS RIÊNG CHO TRANG LOGIN ===== */
-
-/* ===== FORM STYLES ===== */
-/* ===== LOGIN CONTAINER ===== */
 .login-container {
     display: flex;
     min-height: 100vh;
     width: 100%;
 }
 
-/* ===== PHẦN BÊN TRÁI - BACKGROUND ===== */
 .login-left {
     flex: 1;
     background: linear-gradient(135deg, #007bff 0%, #00c896 100%);
@@ -110,14 +105,12 @@
     line-height: 1.4;
 }
 
-/* Button thứ 3 chiếm 2 cột */
 .feature-item:nth-child(3) {
     grid-column: 1 / -1;
     max-width: 240px;
     margin: 0 auto;
 }
 
-/* ===== PHẦN BÊN PHẢI - FORM ===== */
 .login-right {
     flex: 1;
     display: flex;
@@ -167,7 +160,6 @@
     color: #7f8c8d;
 }
 
-/* ===== DIVIDER ===== */
 .divider {
     display: flex;
     align-items: center;
@@ -188,7 +180,6 @@
     color: #7f8c8d;
 }
 
-/* ===== SOCIAL LOGIN ===== */
 .social-login {
     display: flex;
     gap: 15px;
@@ -233,7 +224,6 @@
     background: #f0f7ff;
 }
 
-/* ===== RESPONSIVE ===== */
 @media (max-width: 992px) {
     .login-container {
         flex-direction: column;
@@ -365,7 +355,6 @@
     text-decoration: underline;
 }
 
-/* ===== LOGIN BUTTON ===== */
 .btn-login {
     width: 100%;
     padding: 15px;
@@ -393,7 +382,6 @@
     transform: translateY(0);
 }
 
-/* ===== SIGNUP LINK ===== */
 .signup-link {
     text-align: center;
     margin-bottom: 25px;

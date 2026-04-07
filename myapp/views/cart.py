@@ -7,25 +7,24 @@ from django.db import transaction
 import uuid
 
 def cart_view(request):
-
     if not request.user.is_authenticated:
         return redirect("login")
 
     cart, created = Cart.objects.get_or_create(user=request.user)
-
     items = cart.items.select_related("product")
 
     total_price = sum(item.product.price * item.quantity for item in items)
 
-    cart_count = items.aggregate(
-        total=Sum("quantity")
-    )["total"] or 0
+    cart_count = items.aggregate(total=Sum("quantity"))["total"] or 0
+
+    recommended_products = Product.objects.order_by("-id")[:4]
 
     return render(request, "cart/cart.html", {
         "cart": cart,
         "items": items,
         "total_price": total_price,
-        "cart_count": cart_count
+        "cart_count": cart_count,
+        "recommended_products": recommended_products
     })
 
 
@@ -54,9 +53,9 @@ def add_to_cart(request, product_id):
 
     return JsonResponse({
         "success": True,
+        "message": "Đã thêm vào giỏ hàng 😍",
         "cart_count": cart_count
     })
-
 
 def remove_from_cart(request, item_id):
 
@@ -166,3 +165,29 @@ def payment_success(request, order_id):
 
 def order_success(request):
     return render(request, "checkout/success.html")
+
+def increase_quantity(request, item_id):
+    if not request.user.is_authenticated:
+        return redirect("login")
+
+    item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
+
+    item.quantity += 1
+    item.save()
+
+    return redirect("cart")
+
+
+def decrease_quantity(request, item_id):
+    if not request.user.is_authenticated:
+        return redirect("login")
+
+    item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
+
+    if item.quantity > 1:
+        item.quantity -= 1
+        item.save()
+    else:
+        item.delete()
+
+    return redirect("cart")

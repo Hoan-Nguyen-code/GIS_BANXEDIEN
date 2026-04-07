@@ -1,4 +1,3 @@
-// ── AUTOCOMPLETE ĐỊA CHỈ ──
 const addressInput = document.getElementById('addressInput');
 const suggestions  = document.getElementById('addressSuggestions');
 const latInput     = document.getElementById('latitude');
@@ -60,22 +59,18 @@ function selectAddress(index) {
     suggestions.classList.remove('active');
 }
 
-// Đóng khi click ra ngoài
 document.addEventListener('click', function(e) {
     if (!e.target.closest('#addressInput') && !e.target.closest('#addressSuggestions')) {
         suggestions.classList.remove('active');
     }
 });
 
-// ── SUBMIT ──
 document.querySelector('form').addEventListener('submit', async function(e) {
     const address = addressInput.value.trim();
     if (!address) return;
 
-    // Đã có lat/lon từ autocomplete → submit luôn
     if (latInput.value && latInput.value !== '0') return;
 
-    // Chưa chọn gợi ý → geocode lần cuối
     e.preventDefault();
     try {
         const res = await fetch(

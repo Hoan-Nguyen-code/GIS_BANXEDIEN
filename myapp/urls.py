@@ -1,8 +1,9 @@
 from django.urls import path
 from django.contrib import admin
-from myapp.views import auth_views, home_views, map_views, product_detail_views, admin_views, cart, news_views
+from myapp.views import auth_views, home_views, map_views, product_detail_views, admin_views, cart, news_views, errors
 
 urlpatterns = [
+    # USER CUSTOM
     path('login/', auth_views.login_view, name='login'),
     path('logout/', auth_views.logout_view, name='logout'),
     path('', home_views.home, name='home'),
@@ -18,7 +19,9 @@ urlpatterns = [
     path("checkout/qr/<int:order_id>/", cart.payment_qr, name="payment_qr"),
     path("checkout/success/", cart.order_success, name="order_success"),
     path("checkout/success/<int:order_id>/", cart.payment_success, name="payment_success"),
-
+    path("cart/increase/<int:item_id>/", cart.increase_quantity, name="increase_quantity"),
+    path("cart/decrease/<int:item_id>/", cart.decrease_quantity, name="decrease_quantity"),
+    
     # ADMIN CUSTOM
     path('dashboard/', admin_views.admin_dashboard, name='admin_dashboard'),
     path('dashboard/users/', admin_views.admin_users, name='admin_users'),
@@ -51,3 +54,7 @@ urlpatterns = [
     # Django Admin
     path('admin/', admin.site.urls),
 ]
+handler400 = 'myapp.views.errors.error_400'
+handler403 = 'myapp.views.errors.error_403'
+handler404 = 'myapp.views.errors.error_404'
+handler500 = 'myapp.views.errors.error_500'
