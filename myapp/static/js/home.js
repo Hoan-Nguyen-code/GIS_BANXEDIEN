@@ -193,6 +193,44 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    const slider = document.querySelector(".banner-slider");
+    const track = document.querySelector(".banner-track");
+
+    if (slider && track) {
+
+        const slides = track.querySelectorAll("img");
+        let index = 0;
+
+        function updateBackground() {
+            slider.style.backgroundImage = `url(${slides[index].src})`;
+        }
+
+        function moveSlide() {
+            index++;
+
+            if (index >= slides.length) {
+                index = 0;
+            }
+
+            track.style.transform = `translateX(-${index * 100}%)`;
+            updateBackground();
+        }
+
+        // init
+        updateBackground();
+
+        let interval = setInterval(moveSlide, 3000);
+
+        // pause khi hover
+        slider.addEventListener("mouseenter", () => {
+            clearInterval(interval);
+        });
+
+        slider.addEventListener("mouseleave", () => {
+            interval = setInterval(moveSlide, 3000);
+        });
+    }
+
     console.log("Home.js loaded safely");
 
 });
