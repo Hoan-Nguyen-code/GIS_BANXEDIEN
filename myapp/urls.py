@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib import admin
-from myapp.views import auth_views, home_views, map_views, product_detail_views, admin_views, cart, news_views, errors
+from myapp.views import auth_views, home_views, map_views, product_detail_views, admin_views, cart, news_views, errors, info_views
 
 urlpatterns = [
     # USER CUSTOM
@@ -21,6 +21,7 @@ urlpatterns = [
     path("checkout/success/<int:order_id>/", cart.payment_success, name="payment_success"),
     path("cart/increase/<int:item_id>/", cart.increase_quantity, name="increase_quantity"),
     path("cart/decrease/<int:item_id>/", cart.decrease_quantity, name="decrease_quantity"),
+    path('info/', info_views.info, name='info'),
     
     # ADMIN CUSTOM
     path('dashboard/', admin_views.admin_dashboard, name='admin_dashboard'),
