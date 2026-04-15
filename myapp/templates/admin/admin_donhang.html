@@ -6,7 +6,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản lý Đơn hàng - Admin</title>
+    
     <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin_donhang.css' %}"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -60,7 +62,6 @@
         </div>
 
         <div class="content fade-in">
-
             {% if messages %}
             <div class="alert-messages">
                 {% for message in messages %}
@@ -72,7 +73,6 @@
             </div>
             {% endif %}
 
-            <!-- Stats -->
             <div class="stats-grid">
                 <div class="stat-card blue">
                     <div class="stat-icon"><i class="fas fa-shopping-bag"></i></div>
@@ -92,24 +92,24 @@
                 </div>
             </div>
 
-            <!-- Table -->
-            <div class="section">
-                    <div class="section-header">
-        <h2>Danh sách đơn hàng</h2>
-        <select id="statusFilter" onchange="filterStatus(this.value)"
-                style="padding: 10px 16px; border-radius: 8px;
-                    border: 1px solid var(--gray-300); font-size: 14px;
-                    font-family: inherit; cursor: pointer;
-                    background: var(--white); color: var(--gray-700);
-                    min-width: 180px;">
-            <option value="" {% if not status_filter %}selected{% endif %}>🔘 Tất cả</option>
-            <option value="PENDING" {% if status_filter == 'PENDING' %}selected{% endif %}>🟡 Chờ xác nhận</option>
-            <option value="CONFIRMED" {% if status_filter == 'CONFIRMED' %}selected{% endif %}>🔵 Đã xác nhận</option>
-            <option value="SHIPPED" {% if status_filter == 'SHIPPED' %}selected{% endif %}>🟣 Đang giao</option>
-            <option value="COMPLETED" {% if status_filter == 'COMPLETED' %}selected{% endif %}>🟢 Hoàn thành</option>
-            <option value="CANCELLED" {% if status_filter == 'CANCELLED' %}selected{% endif %}>🔴 Đã hủy</option>
-        </select>
-    </div>
+            <div class="section shadow-sm">
+                <div class="section-header">
+                    <h2 class="m-0">Danh sách đơn hàng</h2>
+                    
+                    <div class="header-actions">
+                        <select id="statusFilter" onchange="filterStatus(this.value)" class="custom-filter">
+                            <option value="" {% if not status_filter %}selected{% endif %}>🔘 Tất cả trạng thái</option>
+                            <option value="PENDING" {% if status_filter == 'PENDING' %}selected{% endif %}>🟡 Chờ xác nhận</option>
+                            <option value="CONFIRMED" {% if status_filter == 'CONFIRMED' %}selected{% endif %}>🔵 Đã xác nhận</option>
+                            <option value="SHIPPED" {% if status_filter == 'SHIPPED' %}selected{% endif %}>🟣 Đang giao</option>
+                            <option value="COMPLETED" {% if status_filter == 'COMPLETED' %}selected{% endif %}>🟢 Hoàn thành</option>
+                            <option value="CANCELLED" {% if status_filter == 'CANCELLED' %}selected{% endif %}>🔴 Đã hủy</option>
+                        </select>
+
+                        <a href="{% url 'export_orders_excel' %}" class="btn-excel-custom">
+                            <i class="fas fa-file-excel"></i> Xuất file Excel
+                        </a>
+                    </div>
                 </div>
 
                 <div class="table-container">
@@ -122,7 +122,7 @@
                                 <th>Tổng tiền</th>
                                 <th>Trạng thái</th>
                                 <th>Ngày đặt</th>
-                                <th>Thao tác</th>
+                                <th class="text-center">Thao tác</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -130,37 +130,39 @@
                             <tr>
                                 <td><strong>#{{ order.id }}</strong></td>
                                 <td>{{ order.user.get_full_name|default:order.user.username }}</td>
-                                <td>
+                                <td style="max-width: 220px;" class="text-truncate">
                                     {% for item in order.items.all %}
                                         {{ item.product.name }}{% if not forloop.last %}, {% endif %}
                                     {% endfor %}
                                 </td>
-                                <td><strong>{{ order.total_price|floatformat:0 }} VNĐ</strong></td>
+                                <td><span class="text-primary-bold">{{ order.total_price|floatformat:0 }} VNĐ</span></td>
                                 <td>
                                     <span class="status-badge {{ order.status|lower }}">
                                         {{ order.get_status_display }}
                                     </span>
                                 </td>
                                 <td>{{ order.created_at|date:"d/m/Y" }}</td>
-                                <td>
-                                    <a href="{% url 'admin_order_detail' order.id %}" class="btn-action view">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{% url 'admin_order_edit' order.id %}" class="btn-action edit">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <button class="btn-action delete btn-delete-order"
-                                            data-id="{{ order.id }}"
-                                            data-url="{% url 'admin_order_delete' order.id %}">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+                                <td class="text-center">
+                                    <div class="header-actions" style="justify-content: center;">
+                                        <a href="{% url 'admin_order_detail' order.id %}" class="btn-action view" title="Xem">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{% url 'admin_order_edit' order.id %}" class="btn-action edit" title="Sửa">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button class="btn-action delete btn-delete-order"
+                                                data-id="{{ order.id }}"
+                                                data-url="{% url 'admin_order_delete' order.id %}" title="Xóa">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="7" style="text-align:center; padding:40px; color:var(--gray-700);">
-                                    <i class="fas fa-shopping-cart" style="font-size:32px; margin-bottom:8px; display:block;"></i>
-                                    Chưa có đơn hàng nào
+                                <td colspan="7" style="text-align:center; padding:50px;">
+                                    <i class="fas fa-box-open" style="font-size:40px; color:#ccc; display:block; margin-bottom:10px;"></i>
+                                    Không tìm thấy đơn hàng nào.
                                 </td>
                             </tr>
                             {% endfor %}
@@ -168,10 +170,16 @@
                     </table>
                 </div>
             </div>
-
         </div>
     </div>
 
     <script src="{% static 'js/admin_donhang.js' %}"></script>
+    <script>
+        function filterStatus(status) {
+            let url = window.location.pathname;
+            if (status) { url += '?status=' + status; }
+            window.location.href = url;
+        }
+    </script>
 </body>
 </html>

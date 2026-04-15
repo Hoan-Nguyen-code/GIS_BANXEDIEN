@@ -1852,3 +1852,175 @@ body {
     font-size: 11px;
     color: #9ca3af;
 }
+
+/* Container header của danh sách */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Tùy chỉnh bộ lọc Select */
+.custom-filter {
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    background: white;
+    color: #333;
+    outline: none;
+    min-width: 200px;
+    transition: 0.3s;
+}
+
+.custom-filter:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1);
+}
+
+/* Nút Xuất Excel phong cách hiện đại */
+.btn-excel-custom {
+    background-color: #27ae60;
+    color: white !important;
+    padding: 10px 20px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.3s;
+    border: none;
+}
+
+.btn-excel-custom:hover {
+    background-color: #219150;
+    box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+    transform: translateY(-1px);
+}
+
+/* Làm đẹp Badge trạng thái */
+.status-badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+/* Hiệu ứng dòng trong bảng */
+.data-table tbody tr:hover {
+    background-color: #f8faff !important;
+}
+
+.text-primary-bold {
+    color: #3498db;
+    font-weight: bold;
+}
+/* Đảm bảo Sidebar luôn hiển thị đúng */
+.sidebar {
+    width: 260px;
+    background: #5d3fd3; /* Màu tím đặc trưng của bạn */
+    min-height: 100vh;
+    padding: 20px;
+    position: fixed; /* Giữ cố định bên trái */
+    left: 0;
+    top: 0;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 0 30px 0;
+}
+
+.logo i {
+    font-size: 24px;
+    color: #f1c40f; /* Màu vàng icon sét */
+}
+
+.logo h2 {
+    color: white !important;
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+    display: block !important; /* Đảm bảo không bị ẩn */
+}
+
+/* Đảm bảo Main Content không đè lên Sidebar */
+.main-content {
+    margin-left: 260px; /* Bằng đúng độ rộng sidebar */
+    width: calc(100% - 260px);
+}
+/* Layout cơ bản */
+body {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Sidebar cố định bên trái */
+.sidebar {
+    width: 260px;
+    background: #5d3fd3; /* Màu tím đặc trưng */
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    color: white;
+    padding: 20px;
+    z-index: 1000;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 40px;
+}
+
+.logo h2 {
+    font-size: 20px;
+    font-weight: bold;
+    color: white !important;
+}
+
+/* Main Content đẩy sang phải để không bị Sidebar đè */
+.main-content {
+    margin-left: 260px; 
+    width: calc(100% - 260px);
+    background: #f4f7fe;
+    min-height: 100vh;
+}
+
+/* Các style khác cho bảng và nút Huy giữ nguyên */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.btn-excel-custom {
+    background-color: #27ae60;
+    color: white !important;
+    padding: 10px 15px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}

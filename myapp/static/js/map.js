@@ -7,6 +7,8 @@ let selectedStation = null; // Trạm đích được chọn thủ công
 let map, userMarker, radiusCircle;
 let stationMarkers = [];
 let routeLayers = [];
+let manualStartMarker = null; // Lưu dấu ghim trên bản đồ
+let manualStartCoords = null; // Lưu tọa độ [lat, lon] để tính toán
 
 // ✅ THÊM: Phương tiện mặc định
 let selectedProfile = 'driving-car';
@@ -344,10 +346,29 @@ function haversine(lat1, lon1, lat2, lon2) {
 async function findRoutes() {
   const apiKey = document.getElementById('apiKey').value.trim();
   if (!apiKey) { setStatus('Vui lòng nhập ORS API Key', 'err'); return; }
-  if (!userLat) { setStatus('Vui lòng lấy vị trí trước', 'err'); return; }
+
+  // --- PHẦN THAY ĐỔI ---
+  let startLat, startLon;
+
+  if (manualStartCoords) {
+    // Nếu Huy đã ghim vị trí thủ công
+    startLat = manualStartCoords[0];
+    startLon = manualStartCoords[1];
+  } else if (userLat) {
+    // Nếu không ghim thì dùng vị trí GPS hiện tại
+    startLat = userLat;
+    startLon = userLon;
+  } else {
+    setStatus('Vui lòng lấy vị trí GPS hoặc ghim một điểm trên bản đồ', 'err');
+    return;
+  }
+  // ---------------------
+
   if (!stations.length) { setStatus('Chưa có dữ liệu trạm sạc', 'err'); return; }
 
   const radius = parseInt(document.getElementById('radiusSlider').value);
+  
+
 
   // ✅ THÊM: Lấy profile và thông tin phương tiện
   const vehicle = VEHICLE_PROFILES[selectedProfile];
@@ -954,3 +975,81 @@ if (typeof document !== 'undefined') {
     initPlaceSearch();
   }
 }
+// Hàm để đặt điểm xuất phát thủ công
+function setManualStartPoint(lat, lon, label) {
+    manualStartCoords = [lat, lon];
+    
+    // Nếu đã có ghim cũ thì xóa đi trước khi đặt ghim mới
+    if (manualStartMarker) map.removeLayer(manualStartMarker);
+    
+    // Tạo marker mới màu xanh dương
+    manualStartMarker = L.marker([lat, lon], {
+        icon: L.divIcon({
+            className: '',
+            html: `<div style="position:relative; width:32px; height:42px;">
+                <svg viewBox="0 0 32 42" xmlns="http://www.w3.org/2000/svg" style="width:32px;height:42px;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.4));">
+                  <path d="M16 0 C7.163 0 0 7.163 0 16 C0 28 16 42 16 42 C16 42 32 28 32 16 C32 7.163 24.837 0 16 0 Z" fill="#2563eb"/>
+                  <circle cx="16" cy="16" r="7" fill="white"/>
+                </svg>
+            </div>`,
+            iconSize: [32, 42], iconAnchor: [16, 42]
+        })
+    }).addTo(map).bindPopup(`<b>🚀 Điểm xuất phát:</b><br>${label}`).openPopup();
+    
+    setStatus(`Đã chọn điểm khởi hành thủ công`, 'ok');
+}
+
+// Cho phép click trực tiếp lên bản đồ để ghim
+map.on('click', function(e) {
+    setManualStartPoint(e.latlng.lat, e.latlng.lng, "Vị trí đã chọn trên bản đồ");
+});
+
+// ═══════════════════════════════════════════
+// HÀM GHIM VỊ TRÍ (THAY THẾ GPS)
+// ═══════════════════════════════════════════
+function setManualStartPoint(lat, lon, label) {
+    // 1. Cập nhật tọa độ chính để các hàm khác (bán kính, tìm trạm) dùng chung
+    userLat = lat;
+    userLon = lon;
+    manualStartCoords = [lat, lon];
+
+    // 2. Cập nhật UI: Hiển thị tọa độ lên bảng điều khiển (giống khi bấm GPS)
+    const locInfo = document.getElementById('locInfo');
+    if (locInfo) {
+        locInfo.innerHTML = `<span style="color:#00d4ff">📍 Ghim: ${lat.toFixed(5)}, ${lon.toFixed(5)}</span>`;
+    }
+
+    // 3. Xử lý Marker (Ghim màu xanh để phân biệt)
+    if (manualStartMarker) map.removeLayer(manualStartMarker);
+    if (userMarker) map.removeLayer(userMarker); // Xóa dấu GPS cũ nếu có
+
+    manualStartMarker = L.marker([lat, lon], {
+        icon: L.divIcon({
+            className: '',
+            html: `<div style="position:relative; width:32px; height:42px;">
+                <svg viewBox="0 0 32 42" xmlns="http://www.w3.org/2000/svg" style="width:32px;height:42px;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.4));">
+                  <path d="M16 0 C7.163 0 0 7.163 0 16 C0 28 16 42 16 42 L32 16 C32 7.163 24.837 0 16 0 Z" fill="#2563eb"/>
+                  <circle cx="16" cy="16" r="7" fill="white"/>
+                </svg>
+            </div>`,
+            iconSize: [32, 42], iconAnchor: [16, 42]
+        })
+    }).addTo(map).bindPopup(`<b>🚀 Điểm đi tùy chọn</b>`).openPopup();
+
+    // 4. Vẽ lại vòng tròn bán kính tại điểm mới ghim
+    const radius = parseInt(document.getElementById('radiusSlider').value);
+    drawRadius(radius);
+
+    // 5. Tính toán lại danh sách trạm trong bán kính mới
+    filterStationsInRadius();
+    
+    // 6. Kích hoạt nút tìm đường
+    checkReady();
+    
+    setStatus(`Đã đặt điểm đi tại vị trí ghim`, 'ok');
+}
+
+// Lắng nghe sự kiện click trên bản đồ
+map.on('click', function(e) {
+    setManualStartPoint(e.latlng.lat, e.latlng.lng, "Vị trí tùy chọn");
+});

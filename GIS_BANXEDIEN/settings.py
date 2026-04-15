@@ -81,7 +81,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "GIS_BANXEDIEN",
         "USER": "postgres",
-        "PASSWORD": "1234", # chỉnh lại mật khẩu là được
+        "PASSWORD": "123456", # chỉnh lại mật khẩu là được
         "HOST": "localhost",
         "PORT": "5432",
     }
@@ -135,6 +135,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'vongominh2395@gmail.com'
-EMAIL_HOST_PASSWORD = 'gsrumvijykekgbgp'
+EMAIL_HOST_USER = 'phanhuy150305@gmail.com'
+EMAIL_HOST_PASSWORD = 'ncqhxzsubjflgcen'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
