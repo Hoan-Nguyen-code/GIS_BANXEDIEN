@@ -12,4 +12,11 @@
     <p>Cảm ơn bạn đã mua hàng!</p>
     <a href="/" class="btn-order">Về trang chủ</a>
 </div>
+{% block extra_js %}
+<script>
+function toggleMenu() {
+    document.getElementById("navMenu").classList.toggle("show");
+}
+</script>
+{% endblock %}
 {% endblock %}

@@ -101,5 +101,10 @@
 </div>
 {% block extra_js %}
 <script src="{% static 'js/home.js' %}" defer></script>
+<script>
+function toggleMenu() {
+    document.getElementById("navMenu").classList.toggle("show");
+}
+</script>
 {% endblock %}
 {% endblock %}

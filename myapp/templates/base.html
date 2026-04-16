@@ -21,40 +21,29 @@
 
   <body>
     <!-- ================= HEADER ================= -->
-    <header
-      class="no-print"
-      style="background: white; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08)"
-    >
-      <div
-        style="
-          max-width: 1400px;
-          margin: auto;
-          padding: 15px 25px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        "
-      >
+    <header class="header no-print">
+      <div class="header-container">
+        
         <!-- Logo -->
-        <a href="{% url 'home' %}" style="text-decoration: none">
-          <h2 style="color: #007bff; font-weight: 800">
-            <i class="fas fa-bolt"></i> WebGIS XE ĐIỆN
-          </h2>
+        <a href="{% url 'home' %}" class="logo">
+          <h2><i class="fas fa-bolt"></i> WebGIS XE ĐIỆN</h2>
         </a>
 
+        <!-- Menu button -->
+        <button class="menu-toggle" onclick="toggleMenu()">
+          <i class="fas fa-bars"></i>
+        </button>
+
         <!-- Navigation -->
-        <nav style="display: flex; gap: 25px; align-items: center">
-          <a href="{% url 'info' %}" class="btn btn-outline"> Giới thiệu </a>
-
-          <a href="{% url 'home' %}" class="btn btn-outline"> Trang chủ </a>
-
-          <a href="{% url 'news_page' %}" class="btn btn-outline"> Tin tức </a>
-
-          <a href="{% url 'map' %}" class="btn btn-outline"> Trạm sạc </a>
+        <nav class="nav-menu" id="navMenu">
+          <a href="{% url 'info' %}" class="btn btn-outline">Giới thiệu</a>
+          <a href="{% url 'home' %}" class="btn btn-outline">Trang chủ</a>
+          <a href="{% url 'news_page' %}" class="btn btn-outline">Tin tức</a>
+          <a href="{% url 'map' %}" class="btn btn-outline">Trạm sạc</a>
         </nav>
 
         <!-- Auth Area -->
-        <div style="display: flex; gap: 15px; align-items: center">
+        <div class="auth-area">
           <a href="{% url 'cart' %}" class="cart-icon">
             <i class="fa-solid fa-cart-shopping"></i>
             {% if cart_count > 0 %}
@@ -63,7 +52,6 @@
           </a>
 
           {% if user.is_authenticated %}
-
           <span class="badge badge-primary">
             <i class="fas fa-user"></i>
             {{ user.username }}
@@ -73,14 +61,11 @@
             <i class="fas fa-sign-out-alt"></i>
             Đăng xuất
           </a>
-
           {% else %}
-
           <a href="{% url 'login' %}" class="btn btn-primary">
             <i class="fas fa-sign-in-alt"></i>
             Đăng nhập
           </a>
-
           {% endif %}
         </div>
       </div>
@@ -138,6 +123,12 @@
       </div>
     </footer>
 
-    {% block extra_js %}{% endblock %}
+    {% block extra_js %}
+    <script>
+    function toggleMenu() {
+        document.getElementById("navMenu").classList.toggle("show");
+    }
+    </script>
+{% endblock %}
   </body>
 </html>

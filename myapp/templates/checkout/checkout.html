@@ -113,6 +113,11 @@
 </div>
 {% block extra_js %}
 <script src="{% static 'js/checkout.js' %}"></script>
+<script>
+function toggleMenu() {
+    document.getElementById("navMenu").classList.toggle("show");
+}
+</script>
 {% endblock %}
 
 {% endblock %}

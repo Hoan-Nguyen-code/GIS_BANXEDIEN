@@ -30,4 +30,11 @@
     </a>
 
 </div>
+{% block extra_js %}
+<script>
+function toggleMenu() {
+    document.getElementById("navMenu").classList.toggle("show");
+}
+</script>
+{% endblock %}
 {% endblock %}

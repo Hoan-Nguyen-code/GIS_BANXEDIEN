@@ -57,18 +57,21 @@
     </table>
 
     <div class="cart-summary">
+        <h3 class="summary-title">Tóm tắt đơn hàng</h3>
 
-        <h3>
-            Tổng tiền:
-            <span class="total-price">
-                {{ total_price|floatformat:0|intcomma }}đ
-            </span>
-        </h3>
+        <div class="summary-row">
+            <span>Tạm tính</span>
+            <span>{{ total_price|floatformat:0|intcomma }}đ</span>
+        </div>
+
+        <div class="summary-total">
+            <span>Tổng cộng</span>
+            <span class="total-price">{{ total_price|floatformat:0|intcomma }}đ</span>
+        </div>
 
         <a href="{% url 'checkout' %}" class="checkout-btn">
             Thanh toán
         </a>
-
     </div>
 
     {% else %}
@@ -110,5 +113,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
 <script src="{% static 'js/home.js' %}" defer></script>
 <script src="{% static 'js/cart.js' %}" defer></script>
+<script>
+function toggleMenu() {
+    document.getElementById("navMenu").classList.toggle("show");
+}
+</script>
 {% endblock %}
 {% endblock %}

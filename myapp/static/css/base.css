@@ -678,45 +678,140 @@ a:focus {
     text-decoration: none;
 }
 
-@media (max-width: 1024px) {
+.header {
+    background: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
 
-    header h2 {
-        font-size: 18px;
+.header-container {
+    max-width: 1400px;
+    margin: auto;
+    padding: 15px 25px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    gap: 20px;
+}
+
+.logo {
+    text-decoration: none;
+}
+
+.logo h2 {
+    color: #007bff;
+    font-weight: 800;
+    font-size: 1.5rem;
+    white-space: nowrap;
+}
+
+/* Navigation */
+.nav-menu {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+/* Auth */
+.auth-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Menu button */
+.menu-toggle {
+    display: none;
+    font-size: 24px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #007bff;
+}
+
+@media (max-width: 992px) {
+
+    .menu-toggle {
+        display: block;
+        order: 2;
     }
 
-    nav {
-        gap: 12px !important;
+    .nav-menu {
+        display: none;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        position: absolute;
+        top: 75px;
+        left: 20px;
+        right: 20px;
+        background: white;
+        padding: 15px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        animation: slideIn 0.3s ease;
+        z-index: 999;
     }
 
-    .btn {
-        padding: 8px 14px;
-        font-size: 13px;
+    .nav-menu.show {
+        display: flex;
     }
 
-    .cart-icon {
-        font-size: 18px;
+    .nav-menu .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .auth-area {
+        gap: 8px;
+    }
+
+    .auth-area .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
     }
 }
 
 @media (max-width: 768px) {
 
-    header > div {
-        flex-direction: column;
-        gap: 15px;
+    .header-container {
+        padding: 12px 15px;
+        gap: 10px;
     }
 
-    nav {
-        flex-wrap: wrap;
-        justify-content: center;
+    .logo h2 {
+        font-size: 1.1rem;
     }
 
-    .btn {
-        padding: 6px 12px;
+    .auth-area .btn {
+        padding: 7px 10px;
         font-size: 12px;
     }
 
-    header h2 {
-        font-size: 16px;
-        text-align: center;
+    .cart-icon i {
+        font-size: 22px;
+    }
+}
+
+@media (max-width: 576px) {
+
+    .logo h2 {
+        font-size: 1rem;
+    }
+
+    .auth-area .btn span {
+        display: none;
+    }
+
+    .auth-area .btn {
+        padding: 6px 8px;
+    }
+
+    .header-container {
+        padding: 10px;
     }
 }
