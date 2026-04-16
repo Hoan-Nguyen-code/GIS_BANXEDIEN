@@ -6,6 +6,9 @@ urlpatterns = [
     # USER CUSTOM
     path('login/', auth_views.login_view, name='login'),
     path('logout/', auth_views.logout_view, name='logout'),
+    path('forget_password/', auth_views.forget_password, name='forget_password'),  # Quên mật khẩu
+    path('reset/<uidb64>/<token>/', auth_views.password_reset_confirm, name='password_reset_confirm'),  # Xác nhận mật khẩu mới
+
     path('', home_views.home, name='home'),
     path('register/', auth_views.register_view, name='register'),
     path("cart/", cart.cart_view, name="cart"),
