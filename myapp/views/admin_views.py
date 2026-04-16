@@ -12,6 +12,11 @@ from datetime import timedelta
 import json
 from myapp.models import User  # ✅ Sửa chỗ 1: import đúng custom User
 from myapp.models import Order
+import openpyxl
+from django.http import HttpResponse
+from django.db.models import F
+from myapp.models import StockIn, StockOut, Inventory, Order, Product
+from openpyxl.styles import Font, Alignment, PatternFill
 # Decorator kiểm tra user là admin
 def admin_required(user):
     return user.is_authenticated and user.role == User.Role.ADMIN  # ✅ Sửa chỗ 2
@@ -73,22 +78,49 @@ def admin_users(request):
 @login_required
 @user_passes_test(admin_required, login_url='/login/')
 def admin_kho(request):
-    from myapp.models import Product, Inventory, Category
+    # Xử lý khi nhấn nút Nhập hoặc Xuất trên giao diện
+    if request.method == "POST":
+        action = request.POST.get('action') # 'IMPORT' hoặc 'EXPORT'
+        product_id = request.POST.get('product_id')
+        quantity = int(request.POST.get('quantity', 0))
+        
+        try:
+            product = get_object_or_404(Product, id=product_id)
+            if action == 'IMPORT':
+                # Giá nhập lấy từ form, nếu không có lấy giá sản phẩm hiện tại
+                price = request.POST.get('import_price', product.price)
+                StockIn.objects.create(
+                    product=product,
+                    quantity=quantity,
+                    import_price=price,
+                    imported_by=request.user
+                )
+                messages.success(request, f"Đã nhập kho {quantity} {product.name}")
+            
+            elif action == 'EXPORT':
+                StockOut.objects.create(
+                    product=product,
+                    quantity=quantity,
+                    exported_by=request.user
+                )
+                messages.success(request, f"Đã xuất kho {quantity} {product.name}")
+                
+        except ValueError as e:
+            messages.error(request, str(e)) # Hiện lỗi "Không đủ hàng" từ Model
+        except Exception as e:
+            messages.error(request, f"Lỗi hệ thống: {str(e)}")
+        
+        return redirect('admin_kho')
 
+    # Hiển thị dữ liệu như cũ
     products = Product.objects.select_related('category', 'inventory').all()
-
     stats = {
         'total_products': products.count(),
         'in_stock': sum(1 for p in products if hasattr(p, 'inventory') and p.inventory.stock_quantity > 5),
         'low_stock': sum(1 for p in products if hasattr(p, 'inventory') and 0 < p.inventory.stock_quantity <= 5),
         'out_of_stock': sum(1 for p in products if not hasattr(p, 'inventory') or p.inventory.stock_quantity == 0),
     }
-
-    context = {
-        'products': products,
-        'stats': stats,
-    }
-    return render(request, 'admin/admin_kho.html', context)
+    return render(request, 'admin/admin_kho.html', {'products': products, 'stats': stats})
 
 
 @login_required
@@ -797,3 +829,69 @@ def api_search_history(request):
         return JsonResponse({'history': history_list})
 
     return JsonResponse({'status': 'error'}, status=405)
+
+# ==================== export_orders_excel ====================
+@login_required
+@user_passes_test(admin_required, login_url='/login/')
+def export_orders_excel(request):
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Báo cáo đơn hàng"
+
+    # Định dạng tiêu đề (Header) cho đẹp
+    header_font = Font(bold=True, color="FFFFFF")
+    # Sử dụng PatternFill trực tiếp từ thư viện đã import
+    header_fill = PatternFill(start_color="4F81BD", end_color="4F81BD", fill_type="solid")
+    
+    headers = ['Mã ĐH', 'Khách hàng', 'Sản phẩm', 'Tổng tiền (VNĐ)', 'Trạng thái', 'Ngày đặt']
+    ws.append(headers)
+
+    # Apply style cho header
+    for cell in ws[1]:
+        cell.font = header_font
+        cell.fill = header_fill
+        cell.alignment = Alignment(horizontal="center")
+
+    # Lấy dữ liệu
+    orders = Order.objects.all().select_related('user').prefetch_related('items__product').order_by('-created_at')
+
+    for order in orders:
+        product_names = ", ".join([item.product.name for item in order.items.all()])
+        customer_name = f"{order.user.last_name} {order.user.first_name}" if order.user.last_name else order.user.username
+        
+        # Thêm dòng dữ liệu
+        row = [
+            f"#{order.id}",
+            customer_name,
+            product_names,
+            float(order.total_price), 
+            order.get_status_display(), 
+            order.created_at.strftime('%d/%m/%Y')
+        ]
+        ws.append(row)
+
+    # --- TỐI ƯU HIỂN THỊ ---
+
+    # 1. Định dạng cột Tiền (Cột D) có dấu phân cách phần nghìn (Sửa lỗi 8.5E+08)
+    for cell in ws['D']:
+        if cell.row > 1: # Bỏ qua tiêu đề
+            cell.number_format = '#,##0' 
+            cell.alignment = Alignment(horizontal="right")
+
+    # 2. Tự động giãn độ rộng cột (Auto-fit - Sửa lỗi mất chữ)
+    for col in ws.columns:
+        max_length = 0
+        column = col[0].column_letter 
+        for cell in col:
+            try:
+                if len(str(cell.value)) > max_length:
+                    max_length = len(str(cell.value))
+            except:
+                pass
+        ws.column_dimensions[column].width = max_length + 5
+
+    # Xuất file
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=danh_sach_don_hang.xlsx'
+    wb.save(response)
+    return response

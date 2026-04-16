@@ -18,7 +18,7 @@ urlpatterns = [
     path("cart/remove/<int:item_id>/", cart.remove_from_cart, name="remove_from_cart"),
     path("checkout/", cart.checkout, name="checkout"),
     path("news/", news_views.news_page, name="news_page"),
-    path("api/news/", news_views.get_news, name="api_news"),
+    path("api/newss/", news_views.get_news, name="api_news"),
     path("checkout/qr/<int:order_id>/", cart.payment_qr, name="payment_qr"),
     path("checkout/success/", cart.order_success, name="order_success"),
     path("checkout/success/<int:order_id>/", cart.payment_success, name="payment_success"),
@@ -39,6 +39,7 @@ urlpatterns = [
     path('dashboard/kho/<int:product_id>/edit/', admin_views.admin_product_edit, name='admin_product_edit'),
     path('dashboard/kho/<int:product_id>/delete/', admin_views.admin_product_delete, name='admin_product_delete'),
     path('dashboard/taichinh/', admin_views.admin_taichinh, name='admin_taichinh'),
+    path('dashboard/donhang/export/', admin_views.export_orders_excel, name='export_orders_excel'),
     path('dashboard/donhang/', admin_views.admin_donhang, name='admin_donhang'),
     path('dashboard/donhang/<int:order_id>/', admin_views.admin_order_detail, name='admin_order_detail'),
     path('dashboard/donhang/<int:order_id>/edit/', admin_views.admin_order_edit, name='admin_order_edit'),
@@ -49,6 +50,7 @@ urlpatterns = [
     path('dashboard/tramsac/<int:station_id>/edit/', admin_views.admin_station_edit, name='admin_station_edit'),
     path('dashboard/tramsac/<int:station_id>/delete/', admin_views.admin_station_delete, name='admin_station_delete'),
     path('dashboard/thongke/', admin_views.admin_thongke, name='admin_thongke'),
+    
     
     # API Station
     path('api/stations/', admin_views.api_stations, name='api_stations'),

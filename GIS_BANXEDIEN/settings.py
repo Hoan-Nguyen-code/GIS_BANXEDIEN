@@ -139,3 +139,4 @@ EMAIL_HOST_USER = 'vongominh2395@gmail.com'
 EMAIL_HOST_PASSWORD = 'gsrumvijykekgbgp'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 SITE_URL = 'http://localhost:8000'
+
