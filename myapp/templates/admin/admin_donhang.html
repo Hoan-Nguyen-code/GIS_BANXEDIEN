@@ -126,7 +126,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for order in orders %}
+                            {% for order in page_obj %}
                             <tr>
                                 <td><strong>#{{ order.id }}</strong></td>
                                 <td>{{ order.user.get_full_name|default:order.user.username }}</td>
@@ -169,6 +169,46 @@
                         </tbody>
                     </table>
                 </div>
+            <nav>
+                <ul class="pagination-list" style="display: flex; list-style: none; gap: 8px; margin: 0; padding: 0;">
+                    {% if page_obj.has_previous %}
+                        <li><a href="?page=1" class="page-btn"><i class="fas fa-angle-double-left"></i></a></li>
+                        <li><a href="?page={{ page_obj.previous_page_number }}" class="page-btn">Trước</a></li>
+                    {% endif %}
+
+                    <li class="page-item active"><span class="page-btn current">Trang {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span></li>
+
+                    {% if page_obj.has_next %}
+                        <li><a href="?page={{ page_obj.next_page_number }}" class="page-btn">Tiếp</a></li>
+                        <li><a href="?page={{ page_obj.paginator.num_pages }}" class="page-btn"><i class="fas fa-angle-double-right"></i></a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+
+        <style>
+            /* Dùng chung style với trang Kho cho đồng bộ */
+            .page-btn {
+                padding: 6px 12px;
+                border: 1px solid #e0e0e0;
+                border-radius: 6px;
+                text-decoration: none;
+                color: #4e73df;
+                font-size: 0.85rem;
+                transition: all 0.2s;
+                background: white;
+            }
+            .page-btn:hover {
+                background: #f8f9fc;
+                border-color: #4e73df;
+            }
+            .page-btn.current {
+                background: #4e73df;
+                color: white;
+                border-color: #4e73df;
+                font-weight: bold;
+            }
+        </style>
             </div>
         </div>
     </div>

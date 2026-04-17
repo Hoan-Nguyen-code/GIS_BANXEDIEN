@@ -8,49 +8,53 @@
     <title>Quản lý Kho - Admin</title>
     <link rel="stylesheet" href="{% static 'css/admin.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* CSS ẩn mũi tên tăng giảm số lượng */
+        .no-spin::-webkit-outer-spin-button,
+        .no-spin::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .no-spin {
+            -moz-appearance: textfield;
+        }
+
+        .btn-kho {
+            width: 32px;
+            height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-kho:hover { filter: brightness(90%); }
+    </style>
 </head>
 <body>
 
     <div class="sidebar">
-        <div class="logo">
-            <i class="fas fa-bolt"></i>
-            <h2>Admin Panel</h2>
-        </div>
+        <div class="logo"><i class="fas fa-bolt"></i><h2>Admin Panel</h2></div>
         <nav class="menu">
-            <a href="{% url 'admin_dashboard' %}" class="menu-item">
-                <i class="fas fa-dashboard"></i><span>Dashboard</span>
-            </a>
-            <a href="{% url 'admin_users' %}" class="menu-item">
-                <i class="fas fa-users"></i><span>Quản lý Users</span>
-            </a>
-            <a href="{% url 'admin_kho' %}" class="menu-item active">
-                <i class="fas fa-warehouse"></i><span>Quản lý Kho</span>
-            </a>
-            <a href="{% url 'admin_taichinh' %}" class="menu-item">
-                <i class="fas fa-chart-line"></i><span>Tài chính</span>
-            </a>
-            <a href="{% url 'admin_donhang' %}" class="menu-item">
-                <i class="fas fa-shopping-cart"></i><span>Đơn hàng</span>
-            </a>
-            <a href="{% url 'admin_tramsac' %}" class="menu-item">
-                <i class="fas fa-charging-station"></i><span>Trạm sạc</span>
-            </a>
-            <a href="{% url 'admin_thongke' %}" class="menu-item">
-                <i class="fas fa-chart-pie"></i><span>Thống kê</span>
-            </a>
+            <a href="{% url 'admin_dashboard' %}" class="menu-item"><i class="fas fa-dashboard"></i><span>Dashboard</span></a>
+            <a href="{% url 'admin_users' %}" class="menu-item"><i class="fas fa-users"></i><span>Quản lý Users</span></a>
+            <a href="{% url 'admin_kho' %}" class="menu-item active"><i class="fas fa-warehouse"></i><span>Quản lý Kho</span></a>
+            <a href="{% url 'admin_taichinh' %}" class="menu-item"><i class="fas fa-chart-line"></i><span>Tài chính</span></a>
+            <a href="{% url 'admin_donhang' %}" class="menu-item"><i class="fas fa-shopping-cart"></i><span>Đơn hàng</span></a>
+            <a href="{% url 'admin_tramsac' %}" class="menu-item"><i class="fas fa-charging-station"></i><span>Trạm sạc</span></a>
+            <a href="{% url 'admin_thongke' %}" class="menu-item"><i class="fas fa-chart-pie"></i><span>Thống kê</span></a>
         </nav>
         <div class="sidebar-footer">
-            <a href="{% url 'logout' %}" class="logout-btn">
-                <i class="fas fa-sign-out-alt"></i><span>Đăng xuất</span>
-            </a>
+            <a href="{% url 'logout' %}" class="logout-btn"><i class="fas fa-sign-out-alt"></i><span>Đăng xuất</span></a>
         </div>
     </div>
 
     <div class="main-content">
         <div class="navbar">
-            <div class="navbar-left">
-                <h1><i class="fas fa-warehouse"></i> Quản lý Kho</h1>
-            </div>
+            <div class="navbar-left"><h1><i class="fas fa-warehouse"></i> Quản lý Kho</h1></div>
             <div class="navbar-right">
                 <div class="admin-info">
                     <span class="admin-name">{{ request.user.username }}</span>
@@ -60,43 +64,36 @@
         </div>
 
         <div class="content fade-in">
-
             {% if messages %}
             <div class="alert-messages">
-                {% for message in messages %}
-                <div class="alert {{ message.tags }}">
-                    <i class="fas fa-{% if message.tags == 'error' %}times-circle{% else %}check-circle{% endif %}"></i>
-                    {{ message }}
-                </div>
-                {% endfor %}
+                {% for message in messages %}<div class="alert {{ message.tags }}"><i class="fas fa-info-circle"></i> {{ message }}</div>{% endfor %}
             </div>
             {% endif %}
 
             <div class="stats-grid">
-                <div class="stat-card blue">
-                    <div class="stat-icon"><i class="fas fa-boxes"></i></div>
-                    <div class="stat-info"><h3>{{ stats.total_products }}</h3><p>Tổng sản phẩm</p></div>
-                </div>
-                <div class="stat-card green">
-                    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
-                    <div class="stat-info"><h3>{{ stats.in_stock }}</h3><p>Còn hàng</p></div>
-                </div>
-                <div class="stat-card orange">
-                    <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
-                    <div class="stat-info"><h3>{{ stats.low_stock }}</h3><p>Sắp hết</p></div>
-                </div>
-                <div class="stat-card red">
-                    <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
-                    <div class="stat-info"><h3>{{ stats.out_of_stock }}</h3><p>Hết hàng</p></div>
-                </div>
+                <div class="stat-card blue"><div class="stat-icon"><i class="fas fa-boxes"></i></div><div class="stat-info"><h3>{{ stats.total_products }}</h3><p>Tổng sản phẩm</p></div></div>
+                <div class="stat-card green"><div class="stat-icon"><i class="fas fa-check-circle"></i></div><div class="stat-info"><h3>{{ stats.in_stock }}</h3><p>Còn hàng</p></div></div>
+                <div class="stat-card orange"><div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div><div class="stat-info"><h3>{{ stats.low_stock }}</h3><p>Sắp hết</p></div></div>
+                <div class="stat-card red"><div class="stat-icon"><i class="fas fa-times-circle"></i></div><div class="stat-info"><h3>{{ stats.out_of_stock }}</h3><p>Hết hàng</p></div></div>
             </div>
 
             <div class="section">
-                <div class="section-header">
+               <div class="section-header" style="display: flex; align-items: center; gap: 15px;">
                     <h2>Danh sách sản phẩm</h2>
-                    <a href="{% url 'admin_product_add' %}" class="btn-primary">
-                        <i class="fas fa-plus"></i> Thêm sản phẩm
-                    </a>
+                    
+                    <div style="display: flex; gap: 10px; margin-left: auto;">
+                        <a href="{% url 'export_stock_in' %}" class="btn-primary" style="background: #1cc88a; border-color: #1cc88a;">
+                            <i class="fas fa-file-export"></i> Xuất Nhập Kho
+                        </a>
+                        
+                        <a href="{% url 'export_stock_out' %}" class="btn-primary" style="background: #e74a3b; border-color: #e74a3b;">
+                            <i class="fas fa-file-download"></i> Xuất Xuất Kho
+                        </a>
+
+                        <a href="{% url 'admin_product_add' %}" class="btn-primary">
+                            <i class="fas fa-plus"></i> Thêm sản phẩm
+                        </a>
+                    </div>
                 </div>
                 <div class="table-container">
                     <table class="data-table">
@@ -112,19 +109,13 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for product in products %}
+                            {% for product in page_obj %}
                             <tr>
                                 <td>{{ product.id }}</td>
                                 <td><strong>{{ product.name }}</strong></td>
                                 <td>{{ product.category.name }}</td>
-                                <td><strong>{{ product.price|floatformat:0 }} VNĐ</strong></td>
-                                <td>
-                                    {% if product.inventory %}
-                                        {{ product.inventory.stock_quantity }}
-                                    {% else %}
-                                        0
-                                    {% endif %}
-                                </td>
+                                <td><strong>{{ product.price|floatformat:0|intcomma }} VNĐ</strong></td>
+                                <td>{% if product.inventory %}{{ product.inventory.stock_quantity }}{% else %}0{% endif %}</td>
                                 <td>
                                     {% if not product.inventory or product.inventory.stock_quantity == 0 %}
                                         <span class="status-badge out_of_stock">Hết hàng</span>
@@ -134,37 +125,100 @@
                                         <span class="status-badge in_stock">Còn hàng</span>
                                     {% endif %}
                                 </td>
-                                <td>
-                                    <a href="{% url 'admin_product_detail' product.id %}" class="btn-action view">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{% url 'admin_product_edit' product.id %}" class="btn-action edit">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <button class="btn-action delete btn-delete-product"
-                                            data-id="{{ product.id }}"
-                                            data-name="{{ product.name }}"
-                                            data-url="{% url 'admin_product_delete' product.id %}">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+                                <td style="white-space: nowrap;">
+                                    <div style="display: flex; gap: 5px; align-items: center;">
+                                        <button type="button" class="btn-kho" onclick="openModal('{{ product.id }}', 'IMPORT')" style="background: #1cc88a;" title="Nhập kho">
+                                            <i class="fas fa-plus-square"></i>
+                                        </button>
+                                        <button type="button" class="btn-kho" onclick="openModal('{{ product.id }}', 'EXPORT')" style="background: #f6c23e;" title="Xuất kho">
+                                            <i class="fas fa-minus-square"></i>
+                                        </button>
+                                        <span style="border-left: 1px solid #ddd; height: 20px; margin: 0 5px;"></span>
+                                        <a href="{% url 'admin_product_detail' product.id %}" class="btn-action view"><i class="fas fa-eye"></i></a>
+                                        <a href="{% url 'admin_product_edit' product.id %}" class="btn-action edit"><i class="fas fa-edit"></i></a>
+                                        <button class="btn-action delete btn-delete-product" data-id="{{ product.id }}" data-url="{% url 'admin_product_delete' product.id %}"><i class="fas fa-trash"></i></button>
+                                    </div>
                                 </td>
                             </tr>
                             {% empty %}
-                            <tr>
-                                <td colspan="7" style="text-align:center; padding:40px; color:var(--gray-700);">
-                                    <i class="fas fa-boxes" style="font-size:32px; margin-bottom:8px; display:block;"></i>
-                                    Chưa có sản phẩm nào
-                                </td>
-                            </tr>
+                            <tr><td colspan="7" style="text-align:center; padding:40px;">Chưa có sản phẩm nào</td></tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
-            </div>
 
+                <div class="pagination-footer" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: white; border-top: 1px solid #eee;">
+                    <div class="pagination-info">Hiển thị <strong>{{ page_obj.start_index }} - {{ page_obj.end_index }}</strong> / <strong>{{ stats.total_products }}</strong></div>
+                    <nav><ul class="pagination-list" style="display: flex; list-style: none; gap: 8px;">
+                        {% if page_obj.has_previous %}<li><a href="?page=1" class="page-btn">Đầu</a></li>{% endif %}
+                        <li class="active"><span class="page-btn current">Trang {{ page_obj.number }}</span></li>
+                        {% if page_obj.has_next %}<li><a href="?page={{ page_obj.next_page_number }}" class="page-btn">Tiếp</a></li>{% endif %}
+                    </ul></nav>
+                </div>
+            </div>
         </div>
     </div>
 
-    <script src="{% static 'js/admin_kho.js' %}"></script>
+    <div id="importModal" class="modal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.5);">
+        <div style="background:white; margin:10% auto; padding:25px; width:450px; border-radius:12px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+            <h3 id="modalTitle" style="margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px;">Nhập hàng</h3>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="IMPORT" id="modalAction">
+                
+                <div style="margin-bottom:15px;">
+                    <label style="display:block; margin-bottom:5px; font-weight:600;">Chọn sản phẩm:</label>
+                    <select name="product_id" id="modalProductId" style="width:100%; border:1px solid #ddd; padding:10px; border-radius:6px; outline: none;">
+                        {% for p in all_products %}
+                            <option value="{{ p.id }}">{{ p.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div style="margin-bottom:15px;">
+                    <label style="display:block; margin-bottom:5px; font-weight:600;">Số lượng:</label>
+                    <input type="number" name="quantity" id="modalQuantity" min="1" value="1" required class="no-spin"
+                           style="width:100%; border:1px solid #ddd; padding:10px; border-radius:6px; outline: none;">
+                </div>
+                
+                <div id="priceField" style="margin-bottom:20px;">
+                    <label style="display:block; margin-bottom:5px; font-weight:600;">Giá nhập (VNĐ):</label>
+                    <input type="number" name="import_price" id="modalPrice" min="0" placeholder="0" class="no-spin"
+                           style="width:100%; border:1px solid #ddd; padding:10px; border-radius:6px; outline: none;">
+                </div>
+                
+                <div style="display:flex; gap:10px;">
+                    <button type="submit" style="flex:1; background:#4e73df; color:white; border:none; padding:12px; border-radius:6px; cursor:pointer; font-weight:600;">Xác nhận</button>
+                    <button type="button" onclick="closeModal()" style="flex:1; background:#858796; color:white; border:none; padding:12px; border-radius:6px; cursor:pointer;">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    function openModal(id, type) {
+        document.getElementById('importModal').style.display = 'block';
+        
+        // 1. Tự động chọn sản phẩm trong Select
+        const selectProduct = document.getElementById('modalProductId');
+        selectProduct.value = id;
+        
+        // 2. Cập nhật Action & Title
+        document.getElementById('modalAction').value = type;
+        document.getElementById('modalQuantity').value = 1;
+        
+        if(type === 'EXPORT') {
+            document.getElementById('modalTitle').innerText = 'Xuất kho';
+            document.getElementById('priceField').style.display = 'none';
+        } else {
+            document.getElementById('modalTitle').innerText = 'Nhập kho';
+            document.getElementById('priceField').style.display = 'block';
+        }
+    }
+
+    function closeModal() {
+        document.getElementById('importModal').style.display = 'none';
+    }
+    </script>
 </body>
 </html>

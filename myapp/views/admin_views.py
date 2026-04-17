@@ -17,6 +17,8 @@ from django.http import HttpResponse
 from django.db.models import F
 from myapp.models import StockIn, StockOut, Inventory, Order, Product
 from openpyxl.styles import Font, Alignment, PatternFill
+from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required, user_passes_test
 # Decorator kiểm tra user là admin
 def admin_required(user):
     return user.is_authenticated and user.role == User.Role.ADMIN  # ✅ Sửa chỗ 2
@@ -49,28 +51,31 @@ def admin_dashboard(request):
     return render(request, 'admin/admin_dashboard.html', context)
 
 # ==================== QUẢN LÝ USERS ====================
+from django.core.paginator import Paginator # Đảm bảo đã import cái này ở đầu file
+
 @login_required
 @user_passes_test(admin_required, login_url='/login/')
 def admin_users(request):
-    """
-    Quản lý Users - Danh sách, thêm, sửa, xóa
-    """
-    users = User.objects.all().order_by('-date_joined')
+    users_list = User.objects.all().order_by('-date_joined')
+    
+    # Chia 10 người dùng mỗi trang
+    paginator = Paginator(users_list, 10) 
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     
     stats = {
-        'total': users.count(),
-        'active': users.filter(is_active=True).count(),
-        'admin': users.filter(role=User.Role.ADMIN).count(),  # ✅ Dùng role
-        'new_this_month': users.filter(
+        'total': users_list.count(),
+        'active': users_list.filter(is_active=True).count(),
+        'admin': users_list.filter(role=User.Role.ADMIN).count(),
+        'new_this_month': users_list.filter(
             date_joined__gte=timezone.now() - timedelta(days=30)
         ).count()
     }
     
     context = {
-        'users': users,
+        'page_obj': page_obj,  # Chuyển sang dùng page_obj để quản lý trang
         'stats': stats,
     }
-    
     return render(request, 'admin/admin_users.html', context)
 
 
@@ -79,25 +84,27 @@ def admin_users(request):
 @user_passes_test(admin_required, login_url='/login/')
 def admin_kho(request):
     # Xử lý khi nhấn nút Nhập hoặc Xuất trên giao diện
+# Trong hàm admin_kho(request):
     if request.method == "POST":
-        action = request.POST.get('action') # 'IMPORT' hoặc 'EXPORT'
+        action = request.POST.get('action')
         product_id = request.POST.get('product_id')
         quantity = int(request.POST.get('quantity', 0))
         
         try:
             product = get_object_or_404(Product, id=product_id)
             if action == 'IMPORT':
-                # Giá nhập lấy từ form, nếu không có lấy giá sản phẩm hiện tại
-                price = request.POST.get('import_price', product.price)
+                # Lấy giá nhập từ form, nếu không nhập thì lấy giá bán hiện tại làm mặc định
+                import_price = request.POST.get('import_price') or product.price
                 StockIn.objects.create(
                     product=product,
                     quantity=quantity,
-                    import_price=price,
+                    import_price=import_price,
                     imported_by=request.user
                 )
                 messages.success(request, f"Đã nhập kho {quantity} {product.name}")
             
             elif action == 'EXPORT':
+                # Model của Huy sẽ tự raise ValueError nếu không đủ hàng
                 StockOut.objects.create(
                     product=product,
                     quantity=quantity,
@@ -106,11 +113,35 @@ def admin_kho(request):
                 messages.success(request, f"Đã xuất kho {quantity} {product.name}")
                 
         except ValueError as e:
-            messages.error(request, str(e)) # Hiện lỗi "Không đủ hàng" từ Model
+            # Bắt lỗi "Không đủ hàng trong kho" từ Model
+            messages.error(request, f"Lỗi: {str(e)}")
         except Exception as e:
             messages.error(request, f"Lỗi hệ thống: {str(e)}")
         
         return redirect('admin_kho')
+# 2. XỬ LÝ HIỂN THỊ VÀ PHÂN TRANG (Phần Huy cần sửa)
+    products_list = Product.objects.select_related('category', 'inventory').all().order_by('-id')
+    
+    # Lấy toàn bộ sản phẩm cho danh sách xổ xuống trong Modal
+    all_products = Product.objects.all().order_by('name') 
+    
+    paginator = Paginator(products_list, 10) 
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    stats = {
+        'total_products': products_list.count(),
+        'in_stock': sum(1 for p in products_list if hasattr(p, 'inventory') and p.inventory.stock_quantity > 5),
+        'low_stock': sum(1 for p in products_list if hasattr(p, 'inventory') and 0 < p.inventory.stock_quantity <= 5),
+        'out_of_stock': sum(1 for p in products_list if not hasattr(p, 'inventory') or p.inventory.stock_quantity == 0),
+    }
+
+    # Trả về context đầy đủ
+    return render(request, 'admin/admin_kho.html', {
+        'page_obj': page_obj, 
+        'all_products': all_products, # PHẢI CÓ DÒNG NÀY ĐỂ MODAL HIỆN DANH SÁCH
+        'stats': stats
+    })
 
     # Hiển thị dữ liệu như cũ
     products = Product.objects.select_related('category', 'inventory').all()
@@ -186,23 +217,36 @@ def admin_product_edit(request, product_id):
     inventory, _ = Inventory.objects.get_or_create(product=product)
 
     if request.method == 'POST':
+        # 1. Cập nhật thông tin sản phẩm
         product.name = request.POST.get('name', '').strip()
         product.category_id = request.POST.get('category')
         product.description = request.POST.get('description', '').strip()
         product.price = request.POST.get('price', product.price)
         product.is_active = request.POST.get('is_active') == 'on'
-
         if request.FILES.get('image'):
             product.image = request.FILES.get('image')
-
         product.save()
 
-        inventory.stock_quantity = int(request.POST.get('stock_quantity', inventory.stock_quantity))
-        inventory.save()
+        # 2. Xử lý logic tồn kho (CHỖ NÀY NÈ)
+        try:
+            stock_input = int(request.POST.get('stock_quantity', inventory.stock_quantity))
+            if stock_input < 0:
+                messages.error(request, "Số lượng tồn kho không thể là số âm!")
+                # Nếu lỗi, render lại form với dữ liệu hiện tại để user sửa lại
+                categories = Category.objects.all()
+                return render(request, 'admin/admin_product_form.html', {
+                    'action': 'edit', 'product': product, 'categories': categories, 'inventory': inventory
+                })
+            
+            inventory.stock_quantity = stock_input
+            inventory.save()
+            messages.success(request, f'Đã cập nhật sản phẩm "{product.name}" thành công!')
+            return redirect('admin_kho')
+            
+        except ValueError:
+            messages.error(request, "Vui lòng nhập số hợp lệ cho tồn kho!")
 
-        messages.success(request, f'Đã cập nhật sản phẩm "{product.name}" thành công!')
-        return redirect('admin_kho')
-
+    # Nếu là GET request thì hiển thị form như bình thường
     categories = Category.objects.all()
     return render(request, 'admin/admin_product_form.html', {
         'action': 'edit',
@@ -225,6 +269,7 @@ def admin_product_delete(request, product_id):
         return redirect('admin_kho')
 
     return render(request, 'admin/admin_product_confirm_delete.html', {'product': product})
+
 
 # ==================== QUẢN LÝ TÀI CHÍNH ====================
 @login_required
@@ -334,16 +379,27 @@ def admin_taichinh(request):
 @user_passes_test(admin_required, login_url='/login/')
 def admin_donhang(request):
     from myapp.models import Order
+    from django.core.paginator import Paginator
 
-    # Lọc theo trạng thái nếu có
+    # 1. Lấy tham số lọc và trang hiện tại
     status_filter = request.GET.get('status', '')
-    orders = Order.objects.all().select_related('user').prefetch_related('items__product')
+    page_number = request.GET.get('page')
 
+    # 2. Lấy danh sách gốc (tối ưu bằng select_related và prefetch_related)
+    orders_queryset = Order.objects.all().select_related('user').prefetch_related('items__product')
+
+    # 3. Áp dụng bộ lọc nếu có
     if status_filter:
-        orders = orders.filter(status=status_filter)
+        orders_queryset = orders_queryset.filter(status=status_filter)
 
-    orders = orders.order_by('-created_at')
+    # Sắp xếp mới nhất lên đầu
+    orders_queryset = orders_queryset.order_by('-created_at')
 
+    # 4. THIẾT LẬP PHÂN TRANG (10 đơn hàng/trang)
+    paginator = Paginator(orders_queryset, 10)
+    page_obj = paginator.get_page(page_number)
+
+    # 5. Thống kê (Tính trên toàn bộ database để con số luôn chính xác)
     stats = {
         'total': Order.objects.count(),
         'pending': Order.objects.filter(status='PENDING').count(),
@@ -353,13 +409,13 @@ def admin_donhang(request):
         'cancelled': Order.objects.filter(status='CANCELLED').count(),
     }
 
+    # Trong admin_views.py
     context = {
-        'orders': orders,
+        'page_obj': page_obj,   # ĐÚNG: page_obj
         'stats': stats,
         'status_filter': status_filter,
     }
     return render(request, 'admin/admin_donhang.html', context)
-
 
 @login_required
 @user_passes_test(admin_required, login_url='/login/')
@@ -406,18 +462,26 @@ def admin_order_delete(request, order_id):
 @user_passes_test(admin_required, login_url='/login/')
 def admin_tramsac(request):
     from myapp.models import ChargingStation
+    from django.core.paginator import Paginator
 
-    stations = ChargingStation.objects.all()
+    # 1. Lấy toàn bộ danh sách trạm sạc, sắp xếp theo ID mới nhất
+    stations_list = ChargingStation.objects.all().order_by('-id')
 
+    # 2. Thiết lập phân trang (10 trạm mỗi trang)
+    paginator = Paginator(stations_list, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # 3. Thống kê (Tính trên stations_list để con số luôn chính xác)
     stats = {
-        'total': stations.count(),
-        'active': stations.filter(status='ACTIVE').count(),
-        'maintenance': stations.filter(status='MAINTENANCE').count(),
-        'inactive': stations.filter(status='INACTIVE').count(),
+        'total': stations_list.count(),
+        'active': stations_list.filter(status='ACTIVE').count(),
+        'maintenance': stations_list.filter(status='MAINTENANCE').count(),
+        'inactive': stations_list.filter(status='INACTIVE').count(),
     }
 
     context = {
-        'stations': stations,
+        'page_obj': page_obj,  # Huy nhớ đổi tên biến này nhé
         'stats': stats,
     }
     return render(request, 'admin/admin_tramsac.html', context)
@@ -893,5 +957,104 @@ def export_orders_excel(request):
     # Xuất file
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = 'attachment; filename=danh_sach_don_hang.xlsx'
+    wb.save(response)
+    return response
+
+# ==================== export Nhập và xuất kho ====================
+@login_required
+@user_passes_test(admin_required, login_url='/login/')
+def export_stock_in(request):
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Báo cáo nhập kho"
+
+    # Style Header giống file đơn hàng của Huy
+    header_font = Font(bold=True, color="FFFFFF")
+    header_fill = PatternFill(start_color="4F81BD", end_color="4F81BD", fill_type="solid")
+    
+    headers = ['ID', 'Sản phẩm', 'Số lượng', 'Giá nhập (VNĐ)', 'Người nhập', 'Ngày nhập']
+    ws.append(headers)
+
+    for cell in ws[1]:
+        cell.font = header_font
+        cell.fill = header_fill
+        cell.alignment = Alignment(horizontal="center")
+
+    # Lấy dữ liệu
+    queryset = StockIn.objects.select_related('product', 'imported_by').all().order_by('-imported_at')
+
+    for item in queryset:
+        ws.append([
+            f"IN#{item.id}",
+            item.product.name,
+            item.quantity,
+            float(item.import_price),
+            item.imported_by.username,
+            item.imported_at.strftime('%d/%m/%Y %H:%M')
+        ])
+
+    # Định dạng tiền và Auto-fit
+    for cell in ws['D']:
+        if cell.row > 1:
+            cell.number_format = '#,##0'
+            cell.alignment = Alignment(horizontal="right")
+
+    for col in ws.columns:
+        max_length = 0
+        column = col[0].column_letter
+        for cell in col:
+            try:
+                if len(str(cell.value)) > max_length:
+                    max_length = len(str(cell.value))
+            except: pass
+        ws.column_dimensions[column].width = max_length + 5
+
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=bao_cao_nhap_kho.xlsx'
+    wb.save(response)
+    return response
+
+# Hàm xuất file XUẤT KHO
+@login_required
+@user_passes_test(admin_required, login_url='/login/')
+def export_stock_out(request):
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Báo cáo xuất kho"
+
+    header_font = Font(bold=True, color="FFFFFF")
+    header_fill = PatternFill(start_color="4F81BD", end_color="4F81BD", fill_type="solid")
+    
+    headers = ['ID', 'Sản phẩm', 'Số lượng', 'Người xuất', 'Ngày xuất']
+    ws.append(headers)
+
+    for cell in ws[1]:
+        cell.font = header_font
+        cell.fill = header_fill
+        cell.alignment = Alignment(horizontal="center")
+
+    queryset = StockOut.objects.select_related('product', 'exported_by').all().order_by('-exported_at')
+
+    for item in queryset:
+        ws.append([
+            f"OUT#{item.id}",
+            item.product.name,
+            item.quantity,
+            item.exported_by.username,
+            item.exported_at.strftime('%d/%m/%Y %H:%M')
+        ])
+
+    for col in ws.columns:
+        max_length = 0
+        column = col[0].column_letter
+        for cell in col:
+            try:
+                if len(str(cell.value)) > max_length:
+                    max_length = len(str(cell.value))
+            except: pass
+        ws.column_dimensions[column].width = max_length + 5
+
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=bao_cao_xuat_kho.xlsx'
     wb.save(response)
     return response

@@ -134,7 +134,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for user in users %}
+                            {% for user in page_obj %}
                             <tr>
                                 <td>{{ user.id }}</td>
                                 <td><strong>{{ user.username }}</strong></td>
@@ -181,6 +181,26 @@
                         </tbody>
                     </table>
                 </div>
+                    <div class="pagination-footer" style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: white; border-top: 1px solid #eee;">
+        <div class="text-muted small">
+            Hiển thị {{ page_obj.start_index }} - {{ page_obj.end_index }} trong tổng số {{ stats.total }} users
+        </div>
+        <nav>
+            <ul class="pagination" style="display: flex; list-style: none; gap: 5px; margin: 0;">
+                {% if page_obj.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page=1" style="padding: 5px 10px; border: 1px solid #ddd; border-radius: 4px; text-decoration: none; color: #4e73df;">&laquo; Đầu</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}" style="padding: 5px 10px; border: 1px solid #ddd; border-radius: 4px; text-decoration: none; color: #4e73df;">Trước</a></li>
+                {% endif %}
+
+                <li class="page-item active"><span class="page-link" style="padding: 5px 10px; background: #4e73df; color: white; border-radius: 4px;">Trang {{ page_obj.number }}</span></li>
+
+                {% if page_obj.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}" style="padding: 5px 10px; border: 1px solid #ddd; border-radius: 4px; text-decoration: none; color: #4e73df;">Tiếp</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" style="padding: 5px 10px; border: 1px solid #ddd; border-radius: 4px; text-decoration: none; color: #4e73df;">Cuối &raquo;</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
             </div>
 
         </div>
