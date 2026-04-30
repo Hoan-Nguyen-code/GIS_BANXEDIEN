@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
@@ -26,7 +25,6 @@ SECRET_KEY = "django-insecure-jk+$zv8!78ubk1w(m)+9-tt(^nf5fq!($&-$zx8y4_6#c4fftx
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -39,6 +37,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     'django.contrib.humanize',
     'rest_framework',
+    'ckeditor',
+    'ckeditor_uploader',
     "myapp"
 ]
 
@@ -72,7 +72,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "GIS_BANXEDIEN.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
@@ -81,12 +80,11 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "GIS_BANXEDIEN",
         "USER": "postgres",
-        "PASSWORD": "hoan2606", # chỉnh lại mật khẩu là được
+        "PASSWORD": "1234", # chỉnh lại mật khẩu là được
         "HOST": "localhost",
         "PORT": "5432",
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
@@ -106,6 +104,19 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+CKEDITOR_ALLOW_NONIMAGE_FILES = True
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+        'height': 300,
+        'width': '100%',
+        'extraPlugins': ','.join([
+            'uploadimage',
+            'image2',
+        ]),
+    },
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
@@ -117,7 +128,6 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
@@ -139,4 +149,6 @@ EMAIL_HOST_USER = 'vongominh2395@gmail.com'
 EMAIL_HOST_PASSWORD = 'gsrumvijykekgbgp'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 SITE_URL = 'http://localhost:8000'
-
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+CKEDITOR_UPLOAD_PATH = "uploads/"
