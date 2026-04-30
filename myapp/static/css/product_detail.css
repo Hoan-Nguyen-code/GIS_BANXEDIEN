@@ -79,6 +79,22 @@ body {
     margin-top: 15px;
 }
 
+.product-description img {
+    max-width: 100%;
+    height: auto;
+}
+
+.product-description .image-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.product-description .image-row img {
+    width: 30%;
+    border-radius: 8px;
+}
+
 .product-actions {
     margin-top: 25px;
 }

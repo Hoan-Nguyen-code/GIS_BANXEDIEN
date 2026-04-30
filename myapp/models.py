@@ -2,7 +2,7 @@ from django.db import models, transaction
 from django.contrib.auth.models import AbstractUser
 from django.db.models import TextChoices, Sum, F
 from django.core.validators import MinValueValidator, MaxValueValidator
-
+from ckeditor_uploader.fields import RichTextUploadingField
 
 # ==============================
 # 1. USER
@@ -39,7 +39,6 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
-
 # ==============================
 # 2. CATEGORY
 # ==============================
@@ -61,7 +60,6 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
-
 # ==============================
 # 3. PRODUCT
 # ==============================
@@ -69,7 +67,7 @@ class Category(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length=200)
     category = models.ForeignKey(Category, on_delete=models.PROTECT)
-    description = models.TextField()
+    description = RichTextUploadingField()
     price = models.DecimalField(
         max_digits=12,
         decimal_places=2,
@@ -97,7 +95,6 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
-
 # ==============================
 # 4. INVENTORY
 # ==============================
@@ -117,7 +114,6 @@ class Inventory(models.Model):
 
     def __str__(self):
         return f"{self.product.name} - {self.stock_quantity}"
-
 
 # ==============================
 # 5. IMPORT (STOCK IN)
@@ -146,7 +142,6 @@ class StockIn(models.Model):
 
     def __str__(self):
         return f"Stock In - {self.product.name} ({self.quantity})"
-
 
 # ==============================
 # 6. EXPORT (STOCK OUT)
@@ -178,7 +173,6 @@ class StockOut(models.Model):
     def __str__(self):
         return f"Stock Out - {self.product.name} ({self.quantity})"
 
-
 # ==============================
 # 7. CART
 # ==============================
@@ -189,7 +183,6 @@ class Cart(models.Model):
 
     def __str__(self):
         return f"Cart - {self.user.username}"
-
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="items")
@@ -210,7 +203,6 @@ class CartItem(models.Model):
 
     def __str__(self):
         return f"{self.product.name} x {self.quantity}"
-
 
 # ==============================
 # 8. ORDER
@@ -253,7 +245,6 @@ class Order(models.Model):
     def __str__(self):
         return f"Order #{self.id}"
 
-
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="items")
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
@@ -273,7 +264,6 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.product.name} x {self.quantity}"
-
 
 # ==============================
 # 9. PAYMENT
@@ -302,7 +292,6 @@ class Payment(models.Model):
     def __str__(self):
         return f"Payment for Order #{self.order.id}"
 
-
 # ==============================
 # 10. INVOICE
 # ==============================
@@ -315,7 +304,6 @@ class Invoice(models.Model):
 
     def __str__(self):
         return f"Invoice {self.invoice_number}"
-
 
 # ==============================
 # 11. REVIEW
@@ -349,7 +337,6 @@ class Review(models.Model):
 
     def __str__(self):
         return f"Review - {self.product.name}"
-
 
 # ==============================
 # 12. REVENUE REPORT (Snapshot)
