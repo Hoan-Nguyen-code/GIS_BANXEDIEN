@@ -1,6 +1,8 @@
-from django.urls import path
+from django.urls import path, include
 from django.contrib import admin
 from myapp.views import auth_views, home_views, map_views, product_detail_views, admin_views, cart, news_views, errors, info_views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     # USER CUSTOM
@@ -25,6 +27,7 @@ urlpatterns = [
     path("cart/increase/<int:item_id>/", cart.increase_quantity, name="increase_quantity"),
     path("cart/decrease/<int:item_id>/", cart.decrease_quantity, name="decrease_quantity"),
     path('info/', info_views.info, name='info'),
+    path("ckeditor/", include("ckeditor_uploader.urls")),
     
     # ADMIN CUSTOM
     path('dashboard/', admin_views.admin_dashboard, name='admin_dashboard'),
@@ -58,10 +61,11 @@ urlpatterns = [
     path('api/stations/', admin_views.api_stations, name='api_stations'),
     path('api/search-history/', admin_views.api_search_history, name='api_search_history'),
     path('search/', admin_views.search_page, name='search_page'),
-    
-    # Django Admin
-    path('admin/', admin.site.urls),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 handler400 = 'myapp.views.errors.error_400'
 handler403 = 'myapp.views.errors.error_403'
 handler404 = 'myapp.views.errors.error_404'

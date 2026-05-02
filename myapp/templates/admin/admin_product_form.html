@@ -156,5 +156,22 @@
     </div>
 
     <script src="{% static 'js/admin_user_form.js' %}"></script>
+    <script src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
+    <script>
+        CKEDITOR.replace('description', {
+            height: 300,
+            width: '100%',
+            filebrowserUploadUrl: "{% url 'ckeditor_upload' %}",
+            filebrowserBrowseUrl: "{% url 'ckeditor_browse' %}",
+        });
+    </script>
+    <script>
+    CKEDITOR.on('instanceReady', function () {
+        CKEDITOR.instances.description.on('fileUploadRequest', function (evt) {
+            var xhr = evt.data.fileLoader.xhr;
+            xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+        });
+    });
+    </script>
 </body>
 </html>
