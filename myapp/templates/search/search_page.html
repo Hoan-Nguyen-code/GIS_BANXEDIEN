@@ -1,0 +1,118 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tìm kiếm địa danh</title>
+    <link rel="stylesheet" href="{% static 'css/search.css' %}" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+        <a href="{% url 'map' %}" class="topbar-logo">
+            <i class="fas fa-bolt"></i>
+            WebGIS Xe Điện
+        </a>
+
+        <div class="search-bar-wrapper">
+            <input type="text" id="searchInput" class="search-bar"
+                   placeholder="Tìm kiếm địa danh, địa chỉ..."
+                   autocomplete="off">
+            <button class="search-btn" onclick="doSearch()">
+                <i class="fas fa-search"></i>
+            </button>
+            <div id="searchResultsPanel" class="search-results-panel"></div>
+        </div>
+
+ <div class="topbar-actions">
+    <a href="{% url 'map' %}" class="topbar-btn secondary">
+        <i class="fas fa-map"></i> Bản đồ
+    </a>
+    <a href="{% url 'admin_dashboard' %}" class="topbar-btn secondary">
+        <i class="fas fa-th-large"></i> Dashboard
+    </a>
+    {% if request.user.is_authenticated %}
+    <a href="{% url 'logout' %}" class="topbar-btn" 
+       style="background:#fee2e2; color:#dc2626;">
+        <i class="fas fa-sign-out-alt"></i> Đăng xuất
+    </a>
+    {% endif %}
+</div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+
+        <!-- LEFT PANEL -->
+        <div class="left-panel">
+
+            <!-- Place Detail -->
+            <div id="placeDetail" class="place-detail">
+                <div id="placeImageContainer"></div>
+                <div class="place-info">
+                    <div id="placeName" class="place-name"></div>
+                    <div id="placeTypeBadge" class="place-type-badge"></div>
+                    <div id="placeAddress" class="place-address">
+                        <i class="fas fa-map-marker-alt" style="color:#0891b2; margin-top:2px;"></i>
+                        <span></span>
+                    </div>
+                    <div id="placeCoords" class="place-coords">
+                        <i class="fas fa-crosshairs"></i>
+                        <span></span>
+                    </div>
+                    <div class="place-actions">
+                        <button class="action-btn primary" onclick="goToMap()">
+                            <i class="fas fa-directions"></i> Chỉ đường
+                        </button>
+                        <button class="action-btn secondary" onclick="copyCoords()">
+                            <i class="fas fa-copy"></i> Sao chép tọa độ
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History -->
+            <div id="historySection" class="history-section">
+                <div class="history-title">
+                    <i class="fas fa-history"></i>
+                    Lịch sử tìm kiếm
+                </div>
+                <div id="historyList">
+                    {% if history %}
+                        {% for item in history %}
+                        <div class="history-item" onclick="selectFromHistory('{{ item.query }}', {{ item.latitude }}, {{ item.longitude }}, '{{ item.display_name|escapejs }}', '{{ item.image_url }}')">
+                            <div class="history-icon">
+                                <i class="fas fa-history"></i>
+                            </div>
+                            <div class="history-info">
+                                <div class="history-name">{{ item.query }}</div>
+                                <div class="history-time">{{ item.searched_at|date:"d/m/Y H:i" }}</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-history">
+                            <div class="empty-history-icon">🔍</div>
+                            <div style="font-size:14px; font-weight:500; margin-bottom:4px;">Chưa có lịch sử</div>
+                            <div style="font-size:12px;">Bắt đầu tìm kiếm để lưu lịch sử</div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+
+        <!-- MAP -->
+        <div id="map"></div>
+
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="{% static 'js/search_page.js' %}"></script>
+</body>
+</html>

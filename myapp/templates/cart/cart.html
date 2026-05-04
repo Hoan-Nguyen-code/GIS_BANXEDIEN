@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/cart.css' %}">
+{% endblock %}
+{% block content %}
+
+<div class="cart-container">
+
+    <h2 class="cart-title">Giỏ hàng của bạn</h2>
+
+    {% if cart.items.all %}
+
+    <table class="cart-table">
+        <thead>
+            <tr>
+                <th>Sản phẩm</th>
+                <th>Giá</th>
+                <th>Số lượng</th>
+                <th>Tạm tính</th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for item in cart.items.all %}
+            <tr>
+               <td>{{ item.product.name }}</td>
+
+                <td class="product-price">
+                    {{ item.product.price|floatformat:0|intcomma }}đ
+                </td>
+
+                <td class="quantity-control">
+                    <a href="{% url 'decrease_quantity' item.id %}" class="qty-btn">-</a>
+
+                    <span class="qty-number">{{ item.quantity }}</span>
+
+                    <a href="{% url 'increase_quantity' item.id %}" class="qty-btn">+</a>
+                </td>
+
+                <td class="product-subtotal">
+                    {{ item.subtotal|floatformat:0|intcomma }}đ
+                </td>
+
+                <td>
+                    <a href="{% url 'remove_from_cart' item.id %}" class="remove-btn">
+                        Xóa
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+
+    <div class="cart-summary">
+        <h3 class="summary-title">Tóm tắt đơn hàng</h3>
+
+        <div class="summary-row">
+            <span>Tạm tính</span>
+            <span>{{ total_price|floatformat:0|intcomma }}đ</span>
+        </div>
+
+        <div class="summary-total">
+            <span>Tổng cộng</span>
+            <span class="total-price">{{ total_price|floatformat:0|intcomma }}đ</span>
+        </div>
+
+        <a href="{% url 'checkout' %}" class="checkout-btn">
+            Thanh toán
+        </a>
+    </div>
+
+    {% else %}
+
+    <div class="empty-cart">
+        <div class="empty-content">
+            <h3 class="empty-title">Giỏ hàng của bạn đang trống</h3>
+            <p class="empty-desc">Hãy khám phá thêm sản phẩm hấp dẫn nhé!</p>
+
+            <a href="{% url 'home' %}" class="shop-btn">
+                Mua sắm ngay
+            </a>
+        </div>
+    </div>
+
+    <div class="recommend-section">
+        <h3>Sản phẩm dành cho bạn</h3>
+
+        <div class="recommend-list">
+            {% for product in recommended_products %}
+            <div class="product-card">
+                <img src="{% static 'images/' %}{{ product.image }}" alt="{{ product.name }}">
+                <h4>{{ product.name }}</h4>
+                <p>{{ product.price|floatformat:0|intcomma }}đ</p>
+
+                <button class="add-btn add-to-cart-btn" 
+                        data-url="{% url 'add_to_cart' product.id %}">
+                    Thêm vào giỏ
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% endif %}
+
+</div>
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+<script src="{% static 'js/home.js' %}" defer></script>
+<script src="{% static 'js/cart.js' %}" defer></script>
+<script>
+function toggleMenu() {
+    document.getElementById("navMenu").classList.toggle("show");
+}
+</script>
+{% endblock %}
+{% endblock %}

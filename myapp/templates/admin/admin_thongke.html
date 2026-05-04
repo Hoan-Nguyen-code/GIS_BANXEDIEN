@@ -1,0 +1,83 @@
+{% load humanize %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thống kê & Báo cáo - Admin</title>
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo"><i class="fas fa-bolt"></i><h2>Admin Panel</h2></div>
+        <nav class="menu">
+            <a href="{% url 'admin_dashboard' %}" class="menu-item"><i class="fas fa-dashboard"></i><span>Dashboard</span></a>
+            <a href="{% url 'admin_users' %}" class="menu-item"><i class="fas fa-users"></i><span>Quản lý Users</span></a>
+            <a href="{% url 'admin_kho' %}" class="menu-item"><i class="fas fa-warehouse"></i><span>Quản lý Kho</span></a>
+            <a href="{% url 'admin_taichinh' %}" class="menu-item"><i class="fas fa-chart-line"></i><span>Tài chính</span></a>
+            <a href="{% url 'admin_donhang' %}" class="menu-item"><i class="fas fa-shopping-cart"></i><span>Đơn hàng</span></a>
+            <a href="{% url 'admin_tramsac' %}" class="menu-item"><i class="fas fa-charging-station"></i><span>Trạm sạc</span></a>
+            <a href="{% url 'admin_thongke' %}" class="menu-item active"><i class="fas fa-chart-pie"></i><span>Thống kê</span></a>
+        </nav>
+        <div class="sidebar-footer"><a href="{% url 'logout' %}" class="logout-btn"><i class="fas fa-sign-out-alt"></i><span>Đăng xuất</span></a></div>
+    </div>
+
+    <div class="main-content">
+        <div class="navbar">
+            <div class="navbar-left"><h1><i class="fas fa-chart-pie"></i> Thống kê & Báo cáo</h1></div>
+            <div class="navbar-right">
+                <div class="admin-info"><span class="admin-name">Admin</span><div class="admin-avatar"><i class="fas fa-user-shield"></i></div></div>
+            </div>
+        </div>
+
+        <div class="content fade-in">
+            <div class="chart-grid">
+                <div class="chart-card">
+                    <h3><i class="fas fa-chart-bar"></i> Doanh thu theo ngày</h3>
+                    <canvas id="dailyChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h3><i class="fas fa-chart-pie"></i> Phân bổ sản phẩm</h3>
+                    <canvas id="productChart"></canvas>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-crown"></i> Top khách hàng VIP</h2>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead><tr><th>Khách hàng</th><th>Số đơn</th><th>Tổng chi tiêu</th></tr></thead>
+                        <tbody>
+                            {% for customer in top_customers %}
+                            <tr>
+                                <td><strong>{{ customer.name }}</strong></td>
+                                <td>{{ customer.orders }}</td>
+                                <td><strong>{{ customer.spent }} VNĐ</strong></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chartData = {{ chart_data|safe }};
+        
+        new Chart(document.getElementById('dailyChart'), {
+            type: 'bar',
+            data: {labels: chartData.daily_revenue.labels, datasets: [{label: 'Doanh thu (Triệu VNĐ)', data: chartData.daily_revenue.data, backgroundColor: '#0891b2'}]},
+            options: {responsive: true, maintainAspectRatio: false}
+        });
+
+        new Chart(document.getElementById('productChart'), {
+            type: 'doughnut',
+            data: {labels: chartData.product_distribution.labels, datasets: [{data: chartData.product_distribution.data, backgroundColor: ['#0891b2', '#10b981', '#f59e0b', '#ef4444']}]},
+            options: {responsive: true, maintainAspectRatio: false}
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if action == 'add' %}Thêm User{% else %}Sửa User{% endif %} - Admin</title>
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body data-action="{{ action }}">
+
+    <div class="sidebar">
+        <div class="logo">
+            <i class="fas fa-bolt"></i>
+            <h2>Admin Panel</h2>
+        </div>
+        <nav class="menu">
+            <a href="{% url 'admin_dashboard' %}" class="menu-item">
+                <i class="fas fa-dashboard"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="{% url 'admin_users' %}" class="menu-item active">
+                <i class="fas fa-users"></i>
+                <span>Quản lý Users</span>
+            </a>
+            <a href="{% url 'admin_kho' %}" class="menu-item">
+                <i class="fas fa-warehouse"></i>
+                <span>Quản lý Kho</span>
+            </a>
+            <a href="{% url 'admin_taichinh' %}" class="menu-item">
+                <i class="fas fa-chart-line"></i>
+                <span>Tài chính</span>
+            </a>
+            <a href="{% url 'admin_donhang' %}" class="menu-item">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Đơn hàng</span>
+            </a>
+            <a href="{% url 'admin_tramsac' %}" class="menu-item">
+                <i class="fas fa-charging-station"></i>
+                <span>Trạm sạc</span>
+            </a>
+            <a href="{% url 'admin_thongke' %}" class="menu-item">
+                <i class="fas fa-chart-pie"></i>
+                <span>Thống kê</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="{% url 'logout' %}" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Đăng xuất</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="navbar">
+            <div class="navbar-left">
+                <h1>
+                    <i class="fas fa-user-{% if action == 'add' %}plus{% else %}edit{% endif %}"></i>
+                    {% if action == 'add' %}Thêm User Mới{% else %}Sửa User: {{ user.username }}{% endif %}
+                </h1>
+            </div>
+            <div class="navbar-right">
+                <div class="admin-info">
+                    <span class="admin-name">{{ request.user.username }}</span>
+                    <div class="admin-avatar">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content fade-in">
+
+            {% if messages %}
+            <div class="alert-messages">
+                {% for message in messages %}
+                <div class="alert {{ message.tags }}">
+                    <i class="fas fa-{% if message.tags == 'error' %}times-circle{% else %}check-circle{% endif %}"></i>
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="form-card">
+    <form method="POST">
+        {% csrf_token %}
+
+        <!-- Box Thông tin cá nhân -->
+        <div class="section-box">
+            <div class="section-title"><i class="fas fa-id-card"></i> Thông tin cá nhân</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Username *</label>
+                    <input type="text" name="username" value="{{ user.username }}">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" name="email" value="{{ user.email }}">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label><i class="fas fa-id-card"></i> Họ</label>
+                    <input type="text" name="last_name" value="{{ user.last_name }}">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-id-card"></i> Tên</label>
+                    <input type="text" name="first_name" value="{{ user.first_name }}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-phone"></i> Số điện thoại</label>
+                <input type="text" name="phone" value="{{ user.phone }}">
+            </div>
+        </div>
+
+        <!-- Box Địa chỉ -->
+        <div class="section-box">
+            <div class="section-title"><i class="fas fa-map-marker-alt"></i> Địa chỉ</div>
+            <div class="form-group">
+                <textarea name="address" rows="2">{{ user.address }}</textarea>
+            </div>
+        </div>
+
+        <!-- Box Tài khoản -->
+        <div class="section-box">
+            <div class="section-title"><i class="fas fa-shield-alt"></i> Tài khoản</div>
+            <div class="form-group">
+                <label><i class="fas fa-shield-alt"></i> Quyền</label>
+                <select name="role">
+                    {% for value, label in roles %}
+                    <option value="{{ value }}" {% if user.role == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-lock"></i> Mật khẩu</label>
+                <input type="password" name="password" placeholder="Nhập mật khẩu mới nếu muốn đổi...">
+            </div>
+            <div class="form-group checkbox-group">
+                <input type="checkbox" name="is_active" id="is_active" {% if user.is_active %}checked{% endif %}>
+                <label for="is_active">Kích hoạt tài khoản</label>
+            </div>
+        </div>
+        
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-save">
+                            <i class="fas fa-save"></i>
+                            {% if action == 'add' %}Thêm User{% else %}Lưu thay đổi{% endif %}
+                        </button>
+                        <a href="{% url 'admin_users' %}" class="btn-cancel">
+                            <i class="fas fa-times"></i> Hủy
+                        </a>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+    
+    <script src="{% static 'js/admin_user_form.js' %}"></script>
+</body>
+</html>

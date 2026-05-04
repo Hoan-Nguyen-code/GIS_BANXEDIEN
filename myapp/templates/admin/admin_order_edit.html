@@ -1,0 +1,160 @@
+{% load humanize %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cập nhật Đơn hàng - Admin</title>
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="logo">
+            <i class="fas fa-bolt"></i>
+            <h2>Admin Panel</h2>
+        </div>
+        <nav class="menu">
+            <a href="{% url 'admin_dashboard' %}" class="menu-item">
+                <i class="fas fa-dashboard"></i><span>Dashboard</span>
+            </a>
+            <a href="{% url 'admin_users' %}" class="menu-item">
+                <i class="fas fa-users"></i><span>Quản lý Users</span>
+            </a>
+            <a href="{% url 'admin_kho' %}" class="menu-item">
+                <i class="fas fa-warehouse"></i><span>Quản lý Kho</span>
+            </a>
+            <a href="{% url 'admin_taichinh' %}" class="menu-item">
+                <i class="fas fa-chart-line"></i><span>Tài chính</span>
+            </a>
+            <a href="{% url 'admin_donhang' %}" class="menu-item active">
+                <i class="fas fa-shopping-cart"></i><span>Đơn hàng</span>
+            </a>
+            <a href="{% url 'admin_tramsac' %}" class="menu-item">
+                <i class="fas fa-charging-station"></i><span>Trạm sạc</span>
+            </a>
+            <a href="{% url 'admin_thongke' %}" class="menu-item">
+                <i class="fas fa-chart-pie"></i><span>Thống kê</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="{% url 'logout' %}" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i><span>Đăng xuất</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="navbar">
+            <div class="navbar-left">
+                <h1><i class="fas fa-edit"></i> Cập nhật Đơn hàng #{{ order.id }}</h1>
+            </div>
+            <div class="navbar-right">
+                <div class="admin-info">
+                    <span class="admin-name">{{ request.user.username }}</span>
+                    <div class="admin-avatar"><i class="fas fa-user-shield"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content fade-in">
+
+            {% if messages %}
+            <div class="alert-messages">
+                {% for message in messages %}
+                <div class="alert {{ message.tags }}">
+                    <i class="fas fa-{% if message.tags == 'error' %}times-circle{% else %}check-circle{% endif %}"></i>
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="form-card">
+
+                <!-- Thông tin đơn hàng -->
+                <div style="background:var(--gray-50); border-radius:10px; padding:20px; margin-bottom:24px;">
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Mã đơn hàng</span>
+                            <span class="detail-value">#{{ order.id }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Khách hàng</span>
+                            <span class="detail-value">{{ order.user.get_full_name|default:order.user.username }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Ngày đặt</span>
+                            <span class="detail-value">{{ order.created_at|date:"d/m/Y H:i" }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Tổng tiền</span>
+                            <span class="detail-value" style="color:var(--primary); font-weight:700;">
+                                {{ order.total_price|floatformat:0 }} VNĐ
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Danh sách sản phẩm -->
+                <div style="margin-bottom:24px;">
+                    <label style="font-weight:600; color:var(--gray-700); font-size:14px; display:block; margin-bottom:12px;">
+                        <i class="fas fa-box"></i> Sản phẩm trong đơn
+                    </label>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Sản phẩm</th>
+                                <th>Đơn giá</th>
+                                <th>SL</th>
+                                <th>Thành tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order.items.all %}
+                            <tr>
+                                <td>{{ item.product.name }}</td>
+                                <td>{{ item.price|floatformat:0 }} VNĐ</td>
+                                <td>{{ item.quantity }}</td>
+                                <td><strong>{{ item.subtotal|floatformat:0 }} VNĐ</strong></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Form cập nhật trạng thái -->
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label><i class="fas fa-tasks"></i> Cập nhật trạng thái</label>
+                        <select name="status" style="width:100%; padding:10px 14px;
+                                border:1px solid var(--gray-300); border-radius:8px;
+                                font-size:14px; font-family:inherit;">
+                            {% for value, label in status_choices %}
+                            <option value="{{ value }}"
+                                {% if order.status == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-save">
+                            <i class="fas fa-save"></i> Lưu thay đổi
+                        </button>
+                        <a href="{% url 'admin_order_detail' order.id %}" class="btn-cancel">
+                            <i class="fas fa-times"></i> Hủy
+                        </a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

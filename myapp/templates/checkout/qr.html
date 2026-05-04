@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/qr.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="qr-container" style="text-align:center; padding:40px;">
+
+    <h2>Thanh toán đơn hàng</h2>
+
+    <!-- Thay qr_url bằng ảnh QR Vietinbank cố định -->
+  <img src="{% static 'images/QR/qr_vietinbank.png' %}" width="300" style="margin:20px 0;">
+
+    <p><b>Số tiền:</b> {{ order.total_price|floatformat:0|intcomma }}đ</p>
+
+    <p><b>Nội dung chuyển khoản:</b></p>
+    <p style="font-size:18px; font-weight:bold; color:#e74c3c;">
+        ORDER {{ order.id }}
+    </p>
+
+    <p style="color:#666;">
+        Sau khi chuyển khoản, vui lòng bấm xác nhận bên dưới
+    </p>
+
+    <a href="{% url 'payment_success' order.id %}" class="btn-order" style="margin-top:20px; display:inline-block;">
+        ✅ Tôi đã thanh toán
+    </a>
+
+</div>
+{% block extra_js %}
+<script>
+function toggleMenu() {
+    document.getElementById("navMenu").classList.toggle("show");
+}
+</script>
+{% endblock %}
+{% endblock %}

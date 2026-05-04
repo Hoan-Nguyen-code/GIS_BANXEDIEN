@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/product_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<a href="{% url 'home' %}" class="back-home-btn">
+    ← Quay về trang chủ
+</a>
+
+<div class="product-detail-container">
+
+    <!-- ================= MAIN PRODUCT ================= -->
+    <div class="product-main">
+
+        <!-- IMAGE -->
+        <div class="product-image">
+            {% if product.image %}
+                <img src="{% static 'images/' %}{{ product.image }}" alt="{{ product.name }}">
+            {% else %}
+                <img src="https://via.placeholder.com/400x300">
+            {% endif %}
+        </div>
+
+        <!-- INFO -->
+        <div class="product-info">
+
+            <h1 class="product-title">
+                {{ product.name }}
+            </h1>
+
+            <div class="product-price">
+                {{ product.price|floatformat:0|intcomma }}đ
+            </div>
+
+            <div class="product-stock">
+                Còn {{ product.inventory.stock_quantity }} sản phẩm
+            </div>
+
+            <p class="product-description">
+                {{ product.description|safe }}
+            </p>
+
+            <div class="product-actions">
+                <button class="add-btn add-to-cart-btn" data-url="{% url 'add_to_cart' product.id %}">
+                    <i class="fas fa-shopping-cart"></i>
+                    Thêm vào giỏ ngay!
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= RELATED PRODUCTS ================= -->
+    <div class="related-products-section">
+
+        <h2>Sản phẩm gợi ý</h2>
+
+        <div class="related-products-grid">
+
+            {% for p in related_products %}
+            <div class="related-product-card">
+
+                <div class="related-img">
+                    {% if p.image %}
+                        <img src="{% static 'images/' %}{{ p.image }}" alt="{{ p.name }}">
+                    {% else %}
+                        <img src="https://via.placeholder.com/300x200">
+                    {% endif %}
+                </div>
+
+                <div class="related-info">
+
+                    <h4>{{ p.name }}</h4>
+
+                    <div class="related-price">
+                        {{ product.price|floatformat:0|intcomma }}đ
+                    </div>
+
+                    <a href="{% url 'product_detail' p.id %}" class="view-btn">
+                        Xem chi tiết
+                    </a>
+
+                </div>
+
+            </div>
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+{% block extra_js %}
+<script src="{% static 'js/home.js' %}" defer></script>
+<script>
+function toggleMenu() {
+    document.getElementById("navMenu").classList.toggle("show");
+}
+</script>
+{% endblock %}
+{% endblock %}
