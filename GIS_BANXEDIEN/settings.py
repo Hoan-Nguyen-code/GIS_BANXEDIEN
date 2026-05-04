@@ -80,7 +80,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "GIS_BANXEDIEN",
         "USER": "postgres",
-        "PASSWORD": "123456", # chỉnh lại mật khẩu là được
+        "PASSWORD": "1234", # chỉnh lại mật khẩu là được
         "HOST": "localhost",
         "PORT": "5432",
     }
